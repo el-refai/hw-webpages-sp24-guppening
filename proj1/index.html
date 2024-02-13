@@ -14,10 +14,11 @@
       color: #121212;
       /* cursor: url(https://rsha256.github.io/teapot-clear32.png), default!important;
       cursor: url(https://rsha256.github.io/teapot-clear32.png), pointer!important; */
-      /* cursor: url(https://rsha256.github.io/dragon-clear32.png), default!important;
-      cursor: url(https://rsha256.github.io/dragon-clear32.png), pointer!important; */
-      cursor: url(https://rsha256.github.io/cloth-dropped-32.png), default!important;
-      cursor: url(https://rsha256.github.io/cloth-dropped-32.png), pointer!important;
+      /* cursor: url(https://rsha256.github.io/dragon-clear32.png), default!important; */
+      /* cursor: url(https://rsha256.github.io/dragon-clear32.png), pointer!important;  */
+      cursor: url(images/dwagon.png), default!important;
+      cursor: url(images/dwagon.png), pointer!important;
+      /* cursor: url(https://rsha256.github.io/cloth-dropped-32.png), pointer!important; */
     }
     h1, h2, h3, h4 {
       font-family: 'Source Sans Pro', sans-serif;
@@ -93,14 +94,14 @@
   style="padding-top: 50px;">
 
   <div align="middle">
-    <img src="https://drive.google.com/uc?id=1DZQwwl_aq1IEPGaZFk4bAYzEJNrqHRN4" 
+    <img src="images/triangle_dragon_banner.webp" 
         align="middle" 
         width="1000vw" />
   </div>
   
-  <h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
-  <h1 align="left">Project 4: Cloth Simulator</h1>
-  <h2 align="left">Calvin Yan, Rahul Shah, CS184-cloth-droppers</h2>
+  <h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
+  <h1 align="left">Homework 1: Rasterizer</h1>
+  <h2 align="left">James Deloye, Karim El-Refai, cs-184-guppening</h2>
 
   <hr />
   <br />
@@ -108,19 +109,22 @@
   <div>
     <h2 align="left">Overview</h2>
     <p>
-      A high-level overview of what we implemented in this project would be a cloth simulator. In real-time. 
-      That uses mass-spring dynamics and physical constraints that model what happens to cloth in real life. 
-      And utilizes tricks seen in lecture to make the simulation more efficient. From numerical integration to 
-      collision detection, we've implemented it all. 
+      We implemented everything from rasterizing single-color triangles to then antialiasing these triangles through supersampling. 
+      We then got to take a little break designing the matrices in homogenous coordinates that describe translation, scaling, and rotation in 2D. 
+      After that we worked on barycentric coordinates to interpolate the values of points along various shapes. 
+      From there we got to deal with texture maps and rasterizing them in pixel-space with pixel sampling both using near-neighbors and bilinear sampling.
+      Leading us to the last required task which was figuting out which mipmap level to sample from and adding in trilinear interpolation across mipmap levels.
+      </p>
+      <p>
       <br />
-      But at the end of the day, we've made a cloth simulator. As a whole, this means that we have implemented 
-      a cloth simulator that can be used to realistically simulate cloth in real-time.
+      However, this was not everything we did as we worked on all pieces of extra credit including increasing the speed of our rasterization by ~80x, jittered sampling, 
+      more GUI features [James TALK ABOUT THIS] and lastly the implementation of anisotropic filtering according to the Nvidia specification.
       <br />
-      After completing the project, we have learned many interesting things related to physics and simulating movement. 
-      We especially learned a lot from our mistakes as that allowed us to correct our understanding 
-      about the true physics behind cloth dropping. 
-      We also have thoughts on how games are made and how they work under the hood 
-      -- we're pretty proud of what we've accomplished!
+    </p>
+    <p>
+      We found this homework to be deeply instructive in demystifying the task of working with graphics. Neither of us had prior graphics experience but were able to 
+      tackle all the tasks and achieve really cool results from our work on the extra credit. The most interesting things we dealt with in this project were how to 
+      greatly speed up triangle rasterization and working on anisotropic filtering. 
     </p>
   </div>
 
@@ -128,15 +132,11 @@
 
   <hr />
   <br />
-  <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-1">
-  <h2 align="middle">Part 1: Masses and springs</h2>
-  </a>
+  <h2 align="middle">Task 1: Drawing Single-Color Triangles</h2>
 
   <h3>Overview</h3>
     <p>
-      We started out this project by building an evenly grid of masses connected by springs to model a piece of cloth.
-      We made sure to check if the point is pinned and if the cloth's orientation is <code>HORIZONTAL</code>, 
-      then we set the y coordinate for all point masses to 1.
+      We rasterize 
       <br />
       We then construct the spring with <i>Structural</i>, <i>Shearing</i>, and <i>Bending</i> constraint types using <code>emplace_back</code>.
     </p>
@@ -168,74 +168,118 @@
     </p>
   
     <blockquote><b>
-      Show us what the wireframe looks like (1) without any shearing constraints, 
-      (2) with only shearing constraints, and (3) with all constraints.
+      Show a png screenshot of basic/test4.svg with the default viewing parameters and with the pixel inspector centered on an interesting part of the scene.
     </b></blockquote>
 
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/t1-no_shear.png" align="middle" width="300vw" />
-            <figcaption>No shearing constraints</figcaption>
-          </td>
-          <td>
-            <img src="images/t1-only_shear.png" align="middle" width="300vw" />
-            <figcaption>Only shearing constraints</figcaption>
-          </td>
-          <td>
-            <img src="images/t1-all.png" align="middle" width="300vw" />
-            <figcaption>All constraints</figcaption>
+            <img src="images/task1.png" align="middle" width="700vw" />
+            <figcaption>Here is the rasterizer working on basic/test4.svg. An interesting thing, as evidenced by the pixel inspector is how on the rightmost end of the red triangle it thins down to just a single pixel in thickness and actually oscillates between rasterizing any of the triangle and not. </figcaption>
           </td>
         </tr>
       </table>
     </div>
 
 
+    <blockquote><b>
+      Extra credit: Explain any special optimizations you did beyond simple bounding box triangle rasterization, with a timing comparison table (we suggest using the c++ clock() function around the svg.draw() command in DrawRend::redraw() to compare millisecond timings with your various optimizations off and on).
+    </b></blockquote>    
+    <head>
+      <title>Performance Table</title>
+      <style>
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        table, th, td {
+          border: 1px solid black;
+        }
+        th, td {
+          padding: 8px;
+          text-align: center;
+        }
+        th {
+          background-color: #f2f2f2;
+        }
+      </style>
+      </head>
+      <div align="middle">
+      
+      <table>
+        <tr>
+          <th>Slow (naive with bounding box)</th>
+          <th>Fast (repetitive computations removed)</th>
+          <th>Faster (new algorithm)</th>
+          <th>Fastest (for loop)</th>
+        </tr>
+        <tr>
+          <td>6464845470</td>
+          <td>1461548720</td>
+          <td>49709560</td>
+          <td>46949350</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>4.423284275</td>
+          <td>130.0523575</td>
+          <td>137.6982955</td>
+        </tr>
+        <tr>
+          <td>243896120</td>
+          <td>60255410</td>
+          <td>4316990</td>
+          <td>3689590</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>4.047704928</td>
+          <td>56.49679985</td>
+          <td>66.10385436</td>
+        </tr>
+        <tr>
+          <td>451933440</td>
+          <td>129664750</td>
+          <td>10191510</td>
+          <td>9694460</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>3.485399386</td>
+          <td>44.34410995</td>
+          <td>46.61770124</td>
+        </tr>
+        <tr>
+          <td>916919410</td>
+          <td>223390930</td>
+          <td>11490170</td>
+          <td>11520110</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>4.104550753</td>
+          <td>79.80033455</td>
+          <td>79.59293878</td>
+        </tr>
+      </table>
+      
+    </div>
+    <p>AAAA</p>
+
+    
+
   <br />
   <hr />
   <br />
-  <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-2">
-  <h2 align="middle">Part 2: Simulation via numerical integration</h2>
-  </a>
+  <h2 align="middle">Task 2: Antialiasing by Supersampling</h2>
 
+ 
   <h3>Overview</h3>
   <p>
-    Now that we've constructed the spring-mass model for cloths, we need to simulate how it will respond to external and
-    internal forces. The first step is to compute the forces acting on each mass. We are given a set of external
-    accelerations acting on the entire cloth, the sum of which we apply to each point based on their mass using 
-    Newton's second law $F = ma$. Second, we apply the spring correction forces to each point mass according to Hooke's
-    Law, where, given a spring with constant $k_s$, rest length $l$, and point masses $p_a, p_b$:
-    $$
-      ||F_s|| = k_s * (||p_a - p_b|| - l)
-    $$
-    Then the force is applied on each mass towards the other mass (For $p_a$, in the direction $p_b - p_a$ and in $p_b$,
-    in the direction $p_a - p_b$). Third, now that all of the forces have been calculated, and thus the acceleration at
-    each point, we use Verlet integration to estimate the trajectory of each point in discrete time. If $x_t$ is the
-    position of a single point mass at time $t$, then given mass $m$, acceleration $a_t$, and discrete time step $dt$,
-    we estimate
-    $$
-      x_{t + dt} = x_t + (1 - d)(x_t - x_{t - dt}) + a_t d_t^2
-    $$
-    Here $d$ represents a damping coefficient used to model the loss of energy in the cloth as it moves.
-    There are limitations to this spring-mass model; for example, the springs have no limit to how much they can deform,
-    which can result in unrealistically violent motion. Real life cloth fibers don't demonstrate this, and we will
-    account for this by naively capping the change in each spring's length to $10\%$ of its original length.
   </p>
 
-    <blockquote><b>
-      Experiment with some the parameters in the simulation. 
-      To do so, pause the simulation at the start with <kbd>P</kbd>, modify the values of interest, and then resume by pressing <kbd>P</kbd> again. 
-      You can also restart the simulation at any time from the cloth's starting position by pressing <kbd>R</kbd>.
-      <br />
-      For each of the below, observe any noticeable differences in the cloth compared to the default parameters 
-      and show us some screenshots of those interesting differences and describe when they occur.
-      <br />
-      <small>
-      Describe the effects of changing the spring constant <code>ks</code>; how does the cloth behave from start to rest with a very low <code>ks</code>? 
-      A high <code>ks</code>?
-      </small>
-    </b></blockquote>
+
 
     <div align="middle">
       <table style="width:100%">
@@ -397,41 +441,24 @@
   <br />
   <hr />
   <br />
-  <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-3">
-  <h2 align="middle">Part 3: Handling collisions with other objects</h2>
-  </a>
+
+  <h2 align="middle">Task 3: Transforms</h2>
   
   <h3>Overview</h3>
   <p>
-    Our cloth simulator does not currently handle collisions with other objects. In this section, we added support for 
-    collisions with spheres and planes. 
-    We did this by modifying the <code>Sphere::collide</code> and <code>Plane::collide</code> methods 
-    in <code>plane.cpp</code> and <code>sphere.cpp</code> respectively.
-    Specifically we checked if the trajectory of the point mass has intersected with the sphere or plane, and if so, 
-    we apply a correction to the last non-colliding position of the mass, such that it lies tangent to the surface of 
-    the sphere or plane. In addition, we account for the friction of the point mass by scaling the correction down by 
-    $1 - f$.
+    [Write some stuff here about what we did to get the transforms, ig also maybe latex the matrices and explain them]
   </p>
   
   <blockquote><b>
-    Show us screenshots of your shaded cloth from <i>scene/sphere.json</i> in its final resting state 
-    on the sphere using the default <code>ks = 5000</code> as well as with <code>ks = 500</code> and <code>ks = 50000</code>. 
+    Create an updated version of svg/transforms/robot.svg with cubeman doing something more interesting, like waving or running. Feel free to change his colors or proportions to suit your creativity. Save your svg file as my_robot.svg in your docs/ directory and show a png screenshot of your rendered drawing in your write-up. Explain what you were trying to do with cubeman in words.
   </b></blockquote>
 
   <div align="middle">
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/t3-ks_500.png" align="middle" width="300vw" />
-            <figcaption>$\text{ks} = 500$</figcaption>
-          </td>
-          <td>
-            <img src="images/t3-ks_5000.png" align="middle" width="300vw" />
-            <figcaption>Initial configuration ($\text{ks} = 5,000$)</figcaption>
-          </td>
-          <td>
-            <img src="images/t3-ks_50000.png" align="middle" width="300vw" />
-            <figcaption>$\text{ks} = 50,000$</figcaption>
+            <img src="images/robot_meditate.png" align="middle" width="700vw" />
+            <figcaption> Here we have the cubeman crossing its knees while have its arms outstretched. The idea was to go for a more meditative pose with the cubeman while also incorporating a rainbow-like gradient across each major body part.</figcaption>
           </td>
         </tr>
       </table>
@@ -467,8 +494,8 @@
   <br />
   <hr />
   <br />
-  <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-4">
-  <h2 align="middle">Part 4: Handling self-collisions</h2>
+
+  <h2 align="middle">Task 4: Barycentric coordinates</h2>
   </a>
   <h3>Overview</h3>
   <p>
@@ -575,8 +602,8 @@
   <br />
   <hr />
   <br />
-  <a href="https://cs184.eecs.berkeley.edu/sp23/docs/proj4-part-5">
-  <h2 align="middle">Part 5: Cloth Sim</h2>
+
+  <h2 align="middle">Task 5: "Pixel sampling" for texture mapping</h2>
   </a>
 
     <blockquote><b>
@@ -810,7 +837,13 @@
 
     <p>
 
+      
   <hr />
+
+
+
+  <h2 align="middle">Task 6: "Level sampling" with mipmaps for texture mapping</h2>
+
   <h2 align="middle">Contributions</h2>
   <p>
     We both contributed at least some work to each part of this project. Rahul took the lead on parts 3 and 4, as well
@@ -820,51 +853,7 @@
 
 
 
-  <hr />
-  <h2 align="middle">Mesh Competition Extra Credit (optional)</h2>
-  <blockquote><b>
-    The final (optional) part for the mesh competition is where you have the opportunity to be creative and individual, 
-    so be sure to provide a good description of what you were going for, what you did, and how you did it.
-  </b></blockquote>
-
-  <p>
-    N/A
-  </p>
-
-
-
-  <hr />
-  <h2 align="middle">Extra Credit (optional)</h2>
-    <blockquote><b>
-    If you implemented any additional technical features for the cloth simulation, 
-    clearly describe what you did and provide screenshots that illustrate your work. 
-    If it is an improvement compared to something already existing on the cloth simulation, 
-    compare and contrast them both in words and in images.
-    </b></blockquote>
-
-    <h3> Custom shading </h3>
-    <p>
-      We implemented a custom shader that synthesized all of the previous approaches to shading, as described above.
-    </p>
-    <br />
-    
-    <h3> Wind </h3>
-    <p>
-      In addition, we implemented wind as a vector field by computing additional forces on each point mass as a function
-      of their position. The final formula we used was
-      $$
-        \mathbf{F}(x, y, z) = (-2, 0, -2) * e^{-y(z - 1)}
-      $$
-      In other words, the wind blows the cloth in the $-x$ and $-z$ directions, acting more strongly on the lower parts
-      of the cloth and tapering off in the $+z$ direction. Observe the result on <code>pinned2.json</code>:
-    </p>
-
-    <div align="center">
-      <img src="images/ec-wind.gif" align="middle" width="400px" />
-      <figcaption>Wind goes brrrrrr</figcaption>
-    </div>
-
-    <hr />
+   
 
 </body>
 </html>

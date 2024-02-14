@@ -109,7 +109,7 @@
       We then got to take a little break designing the matrices in homogenous coordinates that describe translation, scaling, and rotation in 2D. 
       After that we worked on barycentric coordinates to interpolate the values of points along various shapes. 
       From there we got to deal with texture maps and rasterizing them in pixel-space with pixel sampling both using near-neighbors and bilinear sampling.
-      Leading us to the last required task which was figuting out which mipmap level to sample from and adding in trilinear interpolation across mipmap levels.
+      Leading us to the last required task which was figuring out which mipmap level to sample from and adding in trilinear interpolation across mipmap levels.
       </p>
       <p>
       <br />
@@ -132,10 +132,13 @@
 
   <h3>Overview</h3>
     <p>
+      <ul>
       Our initial attempt at rasterizating the triangle begins by determining if the vertices are given in a clockwise or counter-clockwise order. If they are clockwise then we change them to be counter-clockwise. We then determine the tightest bounding box around the triangle. 
       We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the vectors corresponding to vectors perpendicular to the lines of the triangle, i.e. given vertex A,B,C we calculate Perp(A->B), Perp(B->C), Perp(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. Since we're evaluating the points counter-clockwise if all of the dot products are greater than or equal to 0, i.e. they lie on the line or are above it we will then add that pixel to the sample buffer.
-      <br />
+    </ul>
+    <ul>
       This naive implementation is no worse than an implementation that checks each sample within the bounding box of the triangle as it is doing exactly that. Note that in the extra credit section below we make <b>substantial</b> improvements to our rasterization algorithm that severely outperforms the bounding box implementation. 
+    </ul>
     </p>
 
     
@@ -148,7 +151,7 @@
         <tr align="center">
           <td>
             <img src="images/task1.png" align="middle" width="700vw" />
-            <figcaption>Here is the rasterizer working on basic/test4.svg. An interesting thing, as evidenced by the pixel inspector is how on the rightmost end of the red triangle it thins down to just a single pixel in thickness and actually oscillates between rasterizing any of the triangle and not. </figcaption>
+            <figcaption>Here is the rasterizer working on basic/test4.svg. An interesting thing, as evidenced by the pixel inspector, is how on the rightmost end of the red triangle it thins down to just a single pixel in thickness and actually oscillates between rasterizing parts of the triangle and not. </figcaption>
           </td>
         </tr>
       </table>
@@ -159,17 +162,17 @@
       Extra credit: Explain any special optimizations you did beyond simple bounding box triangle rasterization.
     </b></blockquote>    
     <p>
-      Before doing any optimizing we designed a consistent testing methodology in order to compare between rasterization methods. For each method, we rasterized each of the 4 basic SVGs 10 times at 16x supersampling and took the average of all of them. This was done in order to show the greatest possible differences in the rendering methods. We used the std::chrono::steadyclock to measure the time that it took to render all the triangles for maximum consistency and then found the speedup against the naiive baseline bounding box method. We did the optimizations in stages as follows:
+      Before doing any optimization, we designed a consistent testing methodology in order to compare between rasterization methods. For each method, we rasterized each of the 4 basic SVGs 10 times at 16x supersampling and took the average of all of them. This was done in order to show the greatest possible differences in the rendering methods. We used the <code> std::chrono::steadyclock </code>to measure the time that it took to render all the triangles for maximum consistency and then found the speedup against the naiive baseline bounding box method. We did the optimizations in stages as follows:
     </p>
     <ol>
       <li>
-        We started with just the basic bounding box algorithm implemented in the most naiive way possible. We used this as our baseline that we compared other methods to. 
+        We started with just the basic bounding box algorithm implemented in the most naive way possible. We used this as our baseline that we compared other methods to. 
       </li>
       <li>
-        We began by removing unnecessary computations, like repeated square roots for supersampling computations and the subtractions (like y1-y0) that were previously repeated for checking if each pixel was inside the triangle. Though this does result in more memory accesses, assuming good caching there will be less operations in total. These results are in the second column below. 
+      We began by removing unnecessary computations, like repeated square roots for supersampling computations and the subtractions (like $y_1-y_0$) that were previously repeated for checking if each pixel was inside the triangle. Though this does result in more memory accesses, assuming good caching, there will be less operations in total. These results are in the second column below. 
       </li>
       <li>
-        From this point on, we apprached the rendering in a completely different method than was done previously. Instead of trying individual pixels to determine whether they were in the triangle, we started at the minimum y value in the triangle, found the pixels at which the triangle's edges intercepted that y value, then used the std::fill function to fill all the values between the two (sub)pixels. This was done until the entire triangle had been scanned. Technically, this was done in two phases, first where the triangle was widening and then when it was thinning, identifying the appropriate right and left edges using information about the orientation of the vertices. The loops were done with a while loop method, as this was simplest to implement intially. These results are in the third column below.
+        From this point on, we approached the rendering in a completely different method than was done previously. Instead of trying individual pixels to determine whether they were in the triangle, we started at the minimum $y$ value in the triangle, found the pixels at which the triangle's edges intercepted that $y$ value, then used the <code> std::fill</code> function to fill all the values between the two (sub)pixels. This was done until the entire triangle had been scanned. Technically, this was done in two phases, first where the triangle was widening and then when it was thinning, identifying the appropriate right and left edges using information about the orientation of the vertices. The loops were done with a while loop method, as this was simplest to implement intially. These results are in the third column below.
       </li>
       <li>
         In preparation for a final optimization using multithreading in order to parallelize the triangle filling loops, we switched the while loops to for loops. While it turned out that the overhead of spawning the threads was too high for the relatively small triangles, the for loops did slightly speed up the overall computation, likely due to assembly and branch prediction compiler optimizations. These results are in the fourth column below.
@@ -205,21 +208,21 @@
           <th>Fastest (for loop)</th>
         </tr>
         <tr>
-          <th>Dragon Time</th>
+          <th>Dragon Time (ns)</th>
           <td>6464845470</td>
           <td>1461548720</td>
           <td>49709560</td>
           <td>46949350</td>
         </tr>
         <tr>
-          <th>Dragon Speedup</th>
+          <th>Dragon Speedup </th>
           <td>1</td>
           <td>4.423284275</td>
           <td>130.0523575</td>
           <td>137.6982955</td>
         </tr>
         <tr>
-          <th>Triangles Time</th>
+          <th>Triangles Time (ns)</th>
           <td>243896120</td>
           <td>60255410</td>
           <td>4316990</td>
@@ -233,7 +236,7 @@
           <td>66.10385436</td>
         </tr>
         <tr>
-          <th>Cube Time</th>
+          <th>Cube Time (ns)</th>
           <td>451933440</td>
           <td>129664750</td>
           <td>10191510</td>
@@ -247,7 +250,7 @@
           <td>46.61770124</td>
         </tr>
         <tr>
-          <th>Stars and Hexagons Time</th>
+          <th>Stars and Hexagons Time (ns)</th>
           <td>916919410</td>
           <td>223390930</td>
           <td>11490170</td>
@@ -264,7 +267,7 @@
       
     </div>
     <p>As can be seen above, simply removing unnecesary computations was enough to speed up overall rasterization by 3-4x. However, the most significant jump came when using the new algorithm, 
-      which allowed for a speedup over baseline of two orders of magnitude, up to over 130x. In the future, these algorithms could be further sped up by using effective multiprocessing to simultaneously render triangles. 
+      which allowed for a speedup over baseline of two orders of magnitude, up to <b>over 130x</b >. In the future, these algorithms could be further sped up by using effective multiprocessing to simultaneously render triangles. 
     </p>
 
     
@@ -385,7 +388,7 @@
   <hr />
   <br />
 
-  <h2 align="middle">Task 4: Barycentric coordinates</h2>
+  <h2 align="middle">Task 4: Barycentric Coordinates</h2>
   </a>
   <h3>Overview</h3>
   <p>
@@ -423,8 +426,12 @@
 
   <h3>Overview</h3>
   <p>
+    <ul>
     Pixel sampling is a method in which we decide which texel in the texture map should be sampled for the value of a given pixel in the image. This is determined by using the barycentric coordinates of the pixel in the image and then scaling these coordinates according to the resolution of the texture map in order to get the proper barycentric coords for the corresponding texel in the texture map. 
-    It is often that the barycentric coords of the texel do not cleanly align to a given texel and this where we must decide which texel to sample. Nearest neighbor sampling will choose the nearest texel to the given coordinates while bilinear interpolation will look at the four closest texels to the point 
+    It is often that the barycentric coords of the texel do not exactly align to the coordinates of any given texel center and this where we must decide which texel to sample. 
+  </ul>
+    <ul>Nearest neighbor sampling will choose the nearest texel to the given coordinates while bilinear interpolation will look at the four closest texels to the point. These points are then bilinearly interpolated (linearly interpolated horizontally and vertically) to get a linear combination of the texture to sample for the pixel.   
+      </ul>
   </p>
     <blockquote><b>
       Check out the svg files in the svg/texmap/ directory. Use the pixel inspector to find a good example of where bilinear sampling clearly defeats nearest sampling. Show and compare four png screenshots using nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear
@@ -461,11 +468,19 @@
       </table>
 
     </div>
+    <blockquote>
+    Comment on the relative differences. Discuss when there will be a large difference between the two methods and why.
+  </blockquote>
+    <p>
+      When the supersample rate is low we find that there is a substantial difference in the smoothness of nearest neighbors vs bilinear sampling with bilinear pixel sampling. 
+      This is due to the fact that nearest neighbors will only select one texel to sample from while bilinear sampling is able to average across four texels which include both the grid and the ocean in the cause of the pixel inspector, reducing discontinuities.
+      When supersampling is increased to 16 samples per pixel the difference between nearest neighbor and bilinear is reduced however there are still more noticeable high and low points in nearest neighbor.
+    </p>
   <hr />
 
 
 
-  <h2 align="middle">Task 6: "Level sampling" with mipmaps for texture mapping</h2>
+  <h2 align="middle">Task 6: "Level Sampling" with Mipmaps for Texture Mapping</h2>
 
   <div align="middle">
     <table style="width:100%">

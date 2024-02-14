@@ -1,0 +1,9 @@
+{
+    "grammarly.selectors": [
+        {
+            "language": "html",
+            "scheme": "file",
+            "pattern": "proj1/index.html"
+        }
+    ]
+}

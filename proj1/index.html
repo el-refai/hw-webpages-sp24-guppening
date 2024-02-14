@@ -12,13 +12,8 @@
       font-weight: 300;
       font-family: 'Open Sans', sans-serif;
       color: #121212;
-      /* cursor: url(https://rsha256.github.io/teapot-clear32.png), default!important;
-      cursor: url(https://rsha256.github.io/teapot-clear32.png), pointer!important; */
-      /* cursor: url(https://rsha256.github.io/dragon-clear32.png), default!important; */
-      /* cursor: url(https://rsha256.github.io/dragon-clear32.png), pointer!important;  */
       cursor: url(images/dwagon.png), default!important;
       cursor: url(images/dwagon.png), pointer!important;
-      /* cursor: url(https://rsha256.github.io/cloth-dropped-32.png), pointer!important; */
     }
     h1, h2, h3, h4 {
       font-family: 'Source Sans Pro', sans-serif;
@@ -160,8 +155,25 @@
 
 
     <blockquote><b>
-      <b>Extra credit:</b> Explain any special optimizations you did beyond simple bounding box triangle rasterization, with a timing comparison table (we suggest using the c++ clock() function around the svg.draw() command in DrawRend::redraw() to compare millisecond timings with your various optimizations off and on).
+      Extra credit: Explain any special optimizations you did beyond simple bounding box triangle rasterization.
     </b></blockquote>    
+    <p>
+      Before doing any optimizing we designed a consistent testing methodology in order to compare between rasterization methods. For each method, we rasterized each of the 4 basic SVGs 10 times at 16x supersampling and took the average of all of them. This was done in order to show the greatest possible differences in the rendering methods. We used the std::chrono::steadyclock to measure the time that it took to render all the triangles for maximum consistency and then found the speedup against the naiive baseline bounding box method. We did the optimizations in stages as follows:
+    </p>
+    <ol>
+      <li>
+        We started with just the basic bounding box algorithm implemented in the most naiive way possible. We used this as our baseline that we compared other methods to. 
+      </li>
+      <li>
+        We began by removing unnecessary computations, like repeated square roots for supersampling computations and the subtractions (like y1-y0) that were previously repeated for checking if each pixel was inside the triangle. Though this does result in more memory accesses, assuming good caching there will be less operations in total. These results are in the second column below. 
+      </li>
+      <li>
+        From this point on, we apprached the rendering in a completely different method than was done previously. Instead of trying individual pixels to determine whether they were in the triangle, we started at the minimum y value in the triangle, found the pixels at which the triangle's edges intercepted that y value, then used the std::fill function to fill all the values between the two (sub)pixels. This was done until the entire triangle had been scanned. Technically, this was done in two phases, first where the triangle was widening and then when it was thinning, identifying the appropriate right and left edges using information about the orientation of the vertices. The loops were done with a while loop method, as this was simplest to implement intially. These results are in the third column below.
+      </li>
+      <li>
+        In preparation for a final optimization using multithreading in order to parallelize the triangle filling loops, we switched the while loops to for loops. While it turned out that the overhead of spawning the threads was too high for the relatively small triangles, the for loops did slightly speed up the overall computation, likely due to assembly and branch prediction compiler optimizations. These results are in the fourth column below.
+      </li>
+    </ol>
     <head>
       <title>Performance Table</title>
       <style>
@@ -185,54 +197,63 @@
       
       <table>
         <tr>
+          <th>SVG File</th>
           <th>Slow (naive with bounding box)</th>
           <th>Fast (repetitive computations removed)</th>
           <th>Faster (new algorithm)</th>
           <th>Fastest (for loop)</th>
         </tr>
         <tr>
+          <th>Dragon Time</th>
           <td>6464845470</td>
           <td>1461548720</td>
           <td>49709560</td>
           <td>46949350</td>
         </tr>
         <tr>
+          <th>Dragon Speedup</th>
           <td>1</td>
           <td>4.423284275</td>
           <td>130.0523575</td>
           <td>137.6982955</td>
         </tr>
         <tr>
+          <th>Triangles Time</th>
           <td>243896120</td>
           <td>60255410</td>
           <td>4316990</td>
           <td>3689590</td>
         </tr>
         <tr>
+          <th>Triangles Speedup</th>
           <td>1</td>
           <td>4.047704928</td>
           <td>56.49679985</td>
           <td>66.10385436</td>
         </tr>
         <tr>
+          <th>Cube Time</th>
           <td>451933440</td>
           <td>129664750</td>
           <td>10191510</td>
           <td>9694460</td>
         </tr>
         <tr>
+          <th>Cube Speedup</th>
           <td>1</td>
           <td>3.485399386</td>
           <td>44.34410995</td>
           <td>46.61770124</td>
         </tr>
         <tr>
+          <th>Stars and Hexagons Time</th>
           <td>916919410</td>
           <td>223390930</td>
           <td>11490170</td>
           <td>11520110</td>
         </tr>
         <tr>
+          <th>Stars and Hexagons Speedup</th>
           <td>1</td>
           <td>4.104550753</td>
           <td>79.80033455</td>
@@ -241,7 +262,9 @@
       </table>
       
     </div>
-    <p>AAAA</p>
+    <p>As can be seen above, simply removing unnecesary computations was enough to speed up overall rasterization by 3-4x. However, the most significant jump came when using the new algorithm, 
+      which allowed for a speedup over baseline of two orders of magnitude, up to over 130x. In the future, these algorithms could be further sped up by using effective multiprocessing to simultaneously render triangles. 
+    </p>
 
     
 

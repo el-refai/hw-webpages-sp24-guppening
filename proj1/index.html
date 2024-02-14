@@ -366,7 +366,7 @@
   
   <h3>Overview</h3>
   <p>
-    For task 3 it was relatively straightforward to find the appropiate matrices for rotation, scaling, and translation. Since we are working in 2D space our matrix in homogenous coordinates will be 3x3 with the top-left 2x2 of the matrix corresponding to the rotation/scaling of the object and the last 2 elements of the first 2 rows corresponding to the translation vector.  
+    For task 3 it was relatively straightforward to find the appropriate matrices for rotation, scaling, and translation. Since we are working in 2D space our matrix in homogenous coordinates will be 3x3 with the top-left 2x2 of the matrix corresponding to the rotation/scaling of the object and the last 2 elements of the first 2 rows corresponding to the translation vector.  
   </p>
   
   <blockquote><b>
@@ -395,7 +395,7 @@
     <ul>Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal one or else the point will not lie within the triangle. A clear example of this is when we consider a vertex itself. 
     In this scenario the coefficient corresponding to that vertex is 1 and all other coefficients are 0. If this were not the case, say that the coefficient for the vertex was greater than 1 then the point would actually be past the vertex and outside of the triangle. 
     </ul>
-    <ul> With barycentric coordinates, color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points to set the color of the pixel equal to the linear comination of the colors of the vertices. Take the color triangle below as an example. Each vertex is one of red, green, or blue (the colors of the vertices). The color of each point in the triangle is just a linear combination of red, green, and blue.
+    <ul> With barycentric coordinates, color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points to set the color of the pixel equal to the linear combination of the colors of the vertices. Take the color triangle below as an example. Each vertex is one of red, green, or blue (the colors of the vertices). The color of each point in the triangle is just a linear combination of red, green, and blue.
      As the point gets closer to a given vertex we see it taking on more of that vertex's color. 
   </ul>
     </p>
@@ -482,16 +482,16 @@
 
   <h2 align="middle">Task 6: "Level Sampling" with Mipmaps for Texture Mapping</h2>
   <p>
-    Level sampling is a method in which we decide the mipmap level to sample from based on how a sample is changing in the $x$ or $y$ direction. Mipmaps store a series of downsampled versions of the original texture that filter out high frequencies, allowing for less aliasing for textures that are compressed (or viewed from a distance). 
-    We select the mipmap level by estimating the texture footprint at that (sub)pixel by using the uv coordinate distances between our point $(x, y)$ and that of the neighboring points $(x, y+1)$ and $(x+1, y)$. From this we determine the mipmap level by taking the log of the max of these distances. When performing our texture mapping, we sample from the mipmap level that corresponds to the calculated level. 
+    Level sampling is a method in which we decide the mipmap level to sample from based on how a sample is changing in the x or y direction. Mipmaps store a series of downsampled versions of the original texture that filter out high frequencies, allowing for less aliasing for textures that are compressed (or viewed from a distance). 
+    We select the mipmap level by estimating the texture footprint at that (sub)pixel by using the $(u,v)$ coordinate distances between our point $(x, y)$ and that of the neighboring points $(x, y+1)$ and $(x+1, y)$. From this we determine the mipmap level by taking the log of the max of these distances. When performing our texture mapping, we sample from the mipmap level that corresponds to the calculated level. 
   </p>
 
   <p>
     Pixel sampling, level sampling, and supersampling all present possible methods for dealing with aliasing when rendering textures. 
-    Pixel sampling allows for the bridging of the gap beween our texture space and screen space by linearly interpolating between texels to get our pixel color. This is relatively low cost, not using any extra memory for storage while using a modest amount of computation in the form of 3 Lerp operations. 
+    Pixel sampling allows for the bridging of the gap between our texture space and screen space by linearly interpolating between texels to get our pixel color. This is relatively low cost, not using any extra memory for storage while using a modest amount of computation in the form of 3 Lerp operations. 
     However, compared to nearest pixel sampling it typically does not provide significant antialiasing benefits. 
-    Level sampling significantly improves antialiasing benefits by using mipmaps in order to sample from a downsampled texture appropriate to the size of the texture footprint at a given pixel. This improves antialiasing in compressed textures far away becuase the high frequencies are filtered out. However, creating a mipmap requires $\frac 43$ of the memory of the original texture. In addition, there is additional computational overhead for determining the mipmap level, since you need to convert two more $(x, y)$ coordinates to $(u, v)$ coordinates and then do additional calculations with those values. However, this gives excellent antialiasing performance that adapts to the position of the texture on the screen, and combined with bilinear pixel sampling gives trilinear filtering which offers excellent antialiasing behavior. 
-    Supersampling averages the values of some number of samples within a given pixel, essentially multiplying the per-pixel computation by however many subsamples that there are, which of course is quite computationally expensive. In addition, you need $n$ times the memory to store the sample buffer, where $n$ is the number of subsamples per pixel. However, this is extremely effective at reducing antialiasing in almost all cases, and is a very reliable method when computation time and memory isnt a concern. Combined with the other methods above, it prevents a critical component to any antialiasing toolkit. 
+    Level sampling significantly improves antialiasing benefits by using mipmaps in order to sample from a downsampled texture appropriate to the size of the texture footprint at a given pixel. This improves antialiasing in compressed textures far away because the high frequencies are filtered out. However, creating a mipmap requires $\frac 43$ of the memory of the original texture. In addition, there is additional computational overhead for determining the mipmap level, since you need to convert two more $(x, y)$ coordinates to $(u, v)$ coordinates and then do additional calculations with those values. However, this gives excellent antialiasing performance that adapts to the position of the texture on the screen, and combined with bilinear pixel sampling gives trilinear filtering which offers excellent antialiasing behavior. 
+    Supersampling averages the values of some number of samples within a given pixel, essentially multiplying the per-pixel computation by however many subsamples that there are, which of course is quite computationally expensive. In addition, you need $n$ times the memory to store the sample buffer, where $n$ is the number of subsamples per pixel. However, this is extremely effective at reducing antialiasing in almost all cases, and is a very reliable method when computation time and memory isn't a concern. Combined with the other methods above, it prevents a critical component to any antialiasing toolkit. 
   </p>
   <div align="middle">
     <table style="width:100%">
@@ -530,7 +530,7 @@
 
   </div>
   <p>
-    We implemented trilinear sampling 
+    We implemented trilinear sampling by taking the weighted sum of the texels in the adjacent texture maps. This produces results that were blurrier than both level zero and nearest nearest neighbors texture sampling.   
   </p>
 
   <blockquote><b>

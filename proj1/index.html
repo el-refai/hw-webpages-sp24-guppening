@@ -321,7 +321,7 @@
     </p>
 
     <blockquote><b>
-      Extra Credit: Jitter supersampling
+      Extra Credit: Jitter Supersampling
     </b></blockquote>
 
     <p>
@@ -392,7 +392,7 @@
   </a>
   <h3>Overview</h3>
   <p>
-    <ul>Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal to one or else the point will not lie within the triangle. A clear example of this is when we consider a vertex itself. 
+    <ul>Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal one or else the point will not lie within the triangle. A clear example of this is when we consider a vertex itself. 
     In this scenario the coefficient corresponding to that vertex is 1 and all other coefficients are 0. If this were not the case, say that the coefficient for the vertex was greater than 1 then the point would actually be past the vertex and outside of the triangle. 
     </ul>
     <ul> With barycentric coordinates, color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points to set the color of the pixel equal to the linear comination of the colors of the vertices. Take the color triangle below as an example. Each vertex is one of red, green, or blue (the colors of the vertices). The color of each point in the triangle is just a linear combination of red, green, and blue.
@@ -421,7 +421,7 @@
   <hr />
   <br />
 
-  <h2 align="middle">Task 5: "Pixel sampling" for texture mapping</h2>
+  <h2 align="middle">Task 5: "Pixel Sampling" for Texture Mapping</h2>
   </a>
 
   <h3>Overview</h3>
@@ -480,15 +480,11 @@
 
 
 
-<<<<<<< HEAD
   <h2 align="middle">Task 6: "Level Sampling" with Mipmaps for Texture Mapping</h2>
-=======
-  <h2 align="middle">Task 6: "Level sampling" with mipmaps for texture mapping</h2>
   <p>
-    Level sampling is a method in which we decide the mipmap level to sample from based on how a sample is changing in the x or y direction. Mipmaps store a series of downsampled versions of the original texture that filter out high frequencies, allowing for less aliasing for textures that are compressed (or viewed from a distance). 
+    Level sampling is a method in which we decide the mipmap level to sample from based on how a sample is changing in the $x$ or $y$ direction. Mipmaps store a series of downsampled versions of the original texture that filter out high frequencies, allowing for less aliasing for textures that are compressed (or viewed from a distance). 
     We select the mipmap level by estimating the texture footprint at that (sub)pixel by using the uv coordinate distances between our point $(x, y)$ and that of the neighboring points $(x, y+1)$ and $(x+1, y)$. From this we determine the mipmap level by taking the log of the max of these distances. When performing our texture mapping, we sample from the mipmap level that corresponds to the calculated level. 
   </p>
->>>>>>> refs/remotes/origin/master
 
   <p>
     Pixel sampling, level sampling, and supersampling all present possible methods for dealing with aliasing when rendering textures. 
@@ -523,17 +519,19 @@
       <tr align="center">
         <td>
             <img src="images/lbi_pbi.png" align="middle" width="500px" />
-            <figcaption>$\text{Linear Level Bilinear Sampling}$</figcaption>
+            <figcaption>$\text{Trilinear Level Bilinear Sampling}$</figcaption>
         </td>
         <td>
             <img src="images/lbi_pnear.png" align="middle" width="500px" />
-            <figcaption>$\text{Linear Level Nearest Sampling}$</figcaption>
+            <figcaption>$\text{Trilinear Level Nearest Sampling}$</figcaption>
         </td>
       </tr>
     </table>
 
   </div>
-  
+  <p>
+    We implemented trilinear sampling 
+  </p>
 
   <blockquote><b>
     Extra credit: If you implemented any extra filtering methods, describe them and show comparisons between your results with the other above methods.
@@ -571,7 +569,7 @@
 
    <p align="left">
      From these, we can see that the anisotropic filtering better captures detail by accounting for how quickly the texture changes 
-     in either the x or y direction. We can see this in how anisotropic filtering captures the graunular details of the texture, while others tend to blur them out. 
+     in either the $x$ or $y$ direction. We can see this in how anisotropic filtering captures the graunular details of the texture, while others tend to blur them out. 
      Performance-wise, anisotropic filtering takes around 1.3x as long as nearest pixel and bilinear filtering, while it takes around 1.2x as long as trilinear filtering. 
      Depending on the application, this difference may be worth it depending on the visual fidelity required.
    </p>

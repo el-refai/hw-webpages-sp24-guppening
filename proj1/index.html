@@ -109,7 +109,7 @@
       We then got to take a little break designing the matrices in homogenous coordinates that describe translation, scaling, and rotation in 2D. 
       After that we worked on barycentric coordinates to interpolate the values of points along various shapes. 
       From there we got to deal with texture maps and rasterizing them in pixel-space with pixel sampling both using near-neighbors and bilinear sampling.
-      Leading us to the last required task which was figuting out which mipmap level to sample from and adding in trilinear interpolation across mipmap levels.
+      Leading us to the last required task which was figuring out which mipmap level to sample from and adding in trilinear interpolation across mipmap levels.
       </p>
       <p>
       <br />
@@ -132,7 +132,7 @@
 
   <h3>Overview</h3>
     <p>
-      Our initial attempt at rasterizating the triangle begins by determining if the vertices are given in a clockwise or counter-clockwise order. If they are clockwise then we change them to be counter-clockwise. We then determine the tightest bounding box around the triangle. 
+      Our initial attempt at rasterizing the triangle begins by determining if the vertices are given in a clockwise or counter-clockwise order. If they are clockwise then we change them to be counter-clockwise. We then determine the tightest bounding box around the triangle. 
       We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the vectors corresponding to vectors perpendicular to the lines of the triangle, i.e. given vertex A,B,C we calculate Perp(A->B), Perp(B->C), Perp(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. Since we're evaluating the points counter-clockwise if all of the dot products are greater than or equal to 0, i.e. they lie on the line or are above it we will then add that pixel to the sample buffer.
       <br />
       This naive implementation is no worse than an implementation that checks each sample within the bounding box of the triangle as it is doing exactly that. Note that in the extra credit section below we make <b>substantial</b> improvements to our rasterization algorithm that severely outperforms the bounding box implementation. 
@@ -159,17 +159,17 @@
       Extra credit: Explain any special optimizations you did beyond simple bounding box triangle rasterization.
     </b></blockquote>    
     <p>
-      Before doing any optimizing we designed a consistent testing methodology in order to compare between rasterization methods. For each method, we rasterized each of the 4 basic SVGs 10 times at 16x supersampling and took the average of all of them. This was done in order to show the greatest possible differences in the rendering methods. We used the std::chrono::steadyclock to measure the time that it took to render all the triangles for maximum consistency and then found the speedup against the naiive baseline bounding box method. We did the optimizations in stages as follows:
+      Before doing any optimizing we designed a consistent testing methodology in order to compare between rasterization methods. For each method, we rasterized each of the 4 basic SVGs 10 times at 16x supersampling and took the average of all of them. This was done in order to show the greatest possible differences in the rendering methods. We used the std::chrono::steadyclock to measure the time that it took to render all the triangles for maximum consistency and then found the speedup against the naive baseline bounding box method. We did the optimizations in stages as follows:
     </p>
     <ol>
       <li>
-        We started with just the basic bounding box algorithm implemented in the most naiive way possible. We used this as our baseline that we compared other methods to. 
+        We started with just the basic bounding box algorithm implemented in the most naive way possible. We used this as our baseline that we compared other methods to. 
       </li>
       <li>
         We began by removing unnecessary computations, like repeated square roots for supersampling computations and the subtractions (like y1-y0) that were previously repeated for checking if each pixel was inside the triangle. Though this does result in more memory accesses, assuming good caching there will be less operations in total. These results are in the second column below. 
       </li>
       <li>
-        From this point on, we apprached the rendering in a completely different method than was done previously. Instead of trying individual pixels to determine whether they were in the triangle, we started at the minimum y value in the triangle, found the pixels at which the triangle's edges intercepted that y value, then used the std::fill function to fill all the values between the two (sub)pixels. This was done until the entire triangle had been scanned. Technically, this was done in two phases, first where the triangle was widening and then when it was thinning, identifying the appropriate right and left edges using information about the orientation of the vertices. The loops were done with a while loop method, as this was simplest to implement intially. These results are in the third column below.
+        From this point on, we approached the rendering in a completely different method than was done previously. Instead of trying individual pixels to determine whether they were in the triangle, we started at the minimum y value in the triangle, found the pixels at which the triangle's edges intercepted that y value, then used the std::fill function to fill all the values between the two (sub)pixels. This was done until the entire triangle had been scanned. Technically, this was done in two phases, first where the triangle was widening and then when it was thinning, identifying the appropriate right and left edges using information about the orientation of the vertices. The loops were done with a while loop method, as this was simplest to implement initially. These results are in the third column below.
       </li>
       <li>
         In preparation for a final optimization using multithreading in order to parallelize the triangle filling loops, we switched the while loops to for loops. While it turned out that the overhead of spawning the threads was too high for the relatively small triangles, the for loops did slightly speed up the overall computation, likely due to assembly and branch prediction compiler optimizations. These results are in the fourth column below.
@@ -263,7 +263,7 @@
       </table>
       
     </div>
-    <p>As can be seen above, simply removing unnecesary computations was enough to speed up overall rasterization by 3-4x. However, the most significant jump came when using the new algorithm, 
+    <p>As can be seen above, simply removing unnecessary computations was enough to speed up overall rasterization by 3-4x. However, the most significant jump came when using the new algorithm, 
       which allowed for a speedup over baseline of two orders of magnitude, up to over 130x. In the future, these algorithms could be further sped up by using effective multiprocessing to simultaneously render triangles. 
     </p>
 
@@ -363,7 +363,7 @@
   
   <h3>Overview</h3>
   <p>
-    For task 3 it was relatively straightforward to find the appropiate matrices for rotation, scaling, and translation. Since we are working in 2D space our matrix in homogenous coordinates will be 3x3 with the top-left 2x2 of the matrix corresponding to the rotation/scaling of the object and the last 2 elements of the first 2 rows corresponding to the translation vector.  
+    For task 3 it was relatively straightforward to find the appropriate matrices for rotation, scaling, and translation. Since we are working in 2D space our matrix in homogenous coordinates will be 3x3 with the top-left 2x2 of the matrix corresponding to the rotation/scaling of the object and the last 2 elements of the first 2 rows corresponding to the translation vector.  
   </p>
   
   <blockquote><b>
@@ -392,7 +392,7 @@
     <ul>Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal to one or else the point will not lie within the triangle. A clear example of this is when we consider a vertex itself. 
     In this scenario the coefficient corresponding to that vertex is 1 and all other coefficients are 0. If this were not the case, say that the coefficient for the vertex was greater than 1 then the point would actually be past the vertex and outside of the triangle. 
     </ul>
-    <ul> With barycentric coordinates, color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points to set the color of the pixel equal to the linear comination of the colors of the vertices. Take the color triangle below as an example. Each vertex is one of red, green, or blue (the colors of the vertices). The color of each point in the triangle is just a linear combination of red, green, and blue.
+    <ul> With barycentric coordinates, color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points to set the color of the pixel equal to the linear combination of the colors of the vertices. Take the color triangle below as an example. Each vertex is one of red, green, or blue (the colors of the vertices). The color of each point in the triangle is just a linear combination of red, green, and blue.
      As the point gets closer to a given vertex we see it taking on more of that vertex's color. 
   </ul>
     </p>
@@ -468,15 +468,15 @@
   <h2 align="middle">Task 6: "Level sampling" with mipmaps for texture mapping</h2>
   <p>
     Level sampling is a method in which we decide the mipmap level to sample from based on how a sample is changing in the x or y direction. Mipmaps store a series of downsampled versions of the original texture that filter out high frequencies, allowing for less aliasing for textures that are compressed (or viewed from a distance). 
-    We select the mipmap level by estimating the texture footprint at that (sub)pixel by using the uv coordinate distances between our point $(x, y)$ and that of the neighboring points $(x, y+1)$ and $(x+1, y)$. From this we determine the mipmap level by taking the log of the max of these distances. When performing our texture mapping, we sample from the mipmap level that corresponds to the calculated level. 
+    We select the mipmap level by estimating the texture footprint at that (sub)pixel by using the $(u,v)$ coordinate distances between our point $(x, y)$ and that of the neighboring points $(x, y+1)$ and $(x+1, y)$. From this we determine the mipmap level by taking the log of the max of these distances. When performing our texture mapping, we sample from the mipmap level that corresponds to the calculated level. 
   </p>
 
   <p>
     Pixel sampling, level sampling, and supersampling all present possible methods for dealing with aliasing when rendering textures. 
-    Pixel sampling allows for the bridging of the gap beween our texture space and screen space by linearly interpolating between texels to get our pixel color. This is relatively low cost, not using any extra memory for storage while using a modest amount of computation in the form of 3 Lerp operations. 
+    Pixel sampling allows for the bridging of the gap between our texture space and screen space by linearly interpolating between texels to get our pixel color. This is relatively low cost, not using any extra memory for storage while using a modest amount of computation in the form of 3 Lerp operations. 
     However, compared to nearest pixel sampling it typically does not provide significant antialiasing benefits. 
-    Level sampling significantly improves antialiasing benefits by using mipmaps in order to sample from a downsampled texture appropriate to the size of the texture footprint at a given pixel. This improves antialiasing in compressed textures far away becuase the high frequencies are filtered out. However, creating a mipmap requires $\frac 43$ of the memory of the original texture. In addition, there is additional computational overhead for determining the mipmap level, since you need to convert two more $(x, y)$ coordinates to $(u, v)$ coordinates and then do additional calculations with those values. However, this gives excellent antialiasing performance that adapts to the position of the texture on the screen, and combined with bilinear pixel sampling gives trilinear filtering which offers excellent antialiasing behavior. 
-    Supersampling averages the values of some number of samples within a given pixel, essentially multiplying the per-pixel computation by however many subsamples that there are, which of course is quite computationally expensive. In addition, you need $n$ times the memory to store the sample buffer, where $n$ is the number of subsamples per pixel. However, this is extremely effective at reducing antialiasing in almost all cases, and is a very reliable method when computation time and memory isnt a concern. Combined with the other methods above, it prevents a critical component to any antialiasing toolkit. 
+    Level sampling significantly improves antialiasing benefits by using mipmaps in order to sample from a downsampled texture appropriate to the size of the texture footprint at a given pixel. This improves antialiasing in compressed textures far away because the high frequencies are filtered out. However, creating a mipmap requires $\frac 43$ of the memory of the original texture. In addition, there is additional computational overhead for determining the mipmap level, since you need to convert two more $(x, y)$ coordinates to $(u, v)$ coordinates and then do additional calculations with those values. However, this gives excellent antialiasing performance that adapts to the position of the texture on the screen, and combined with bilinear pixel sampling gives trilinear filtering which offers excellent antialiasing behavior. 
+    Supersampling averages the values of some number of samples within a given pixel, essentially multiplying the per-pixel computation by however many subsamples that there are, which of course is quite computationally expensive. In addition, you need $n$ times the memory to store the sample buffer, where $n$ is the number of subsamples per pixel. However, this is extremely effective at reducing antialiasing in almost all cases, and is a very reliable method when computation time and memory isn't a concern. Combined with the other methods above, it prevents a critical component to any antialiasing toolkit. 
   </p>
   <div align="middle">
     <table style="width:100%">
@@ -552,7 +552,7 @@
 
    <p align="left">
      From these, we can see that the anisotropic filtering better captures detail by accounting for how quickly the texture changes 
-     in either the x or y direction. We can see this in how anisotropic filtering captures the graunular details of the texture, while others tend to blur them out. 
+     in either the x or y direction. We can see this in how anisotropic filtering captures the granular details of the texture, while others tend to blur them out. 
      Performance-wise, anisotropic filtering takes around 1.3x as long as nearest pixel and bilinear filtering, while it takes around 1.2x as long as trilinear filtering. 
      Depending on the application, this difference may be worth it depending on the visual fidelity required.
    </p>

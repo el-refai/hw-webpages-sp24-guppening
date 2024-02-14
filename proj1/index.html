@@ -68,7 +68,7 @@
     }
   </style>
 
-  <title>CS 184 Mesh Editor</title>
+  <title>CS 184 Homework 1</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <!-- Not using below due to lacking bold fontfaces -->
   <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro|Source+Sans+Pro:400,700" rel="stylesheet"> -->
@@ -134,7 +134,7 @@
     <p>
       <ul>
       Our initial attempt at rasterizing the triangle begins by determining if the vertices given are done in a clockwise or counter-clockwise order. Next we find the tightest bounding box around the triangle. 
-      We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the norm vectors corresponding to the vectors of the triangle's vertices, i.e. given vertex A,B,C we calculate Norm(A->B), Norm(B->C), Norm(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. If all of the vertices are given clockwise then the point is inside the triangle if all the dot products are greater than or equal to 0. If the vertices are given counter-clockwise then the point is inside the triangle if all of the dot products are less than or equal to 0. We simply check to see if either of these conditions are met to determine if the point is in the triangle and fill the pixel if so.
+      We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the norm vectors corresponding to the vectors of the triangle's vertices, i.e. given vertex A,B,C we calculate Norm(A->B), Norm(B->C), Norm(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. If all of the vertices are given clockwise then the point is inside the triangle if all the dot products are less than or equal to 0. If the vertices are given counter-clockwise then the point is inside the triangle if all of the dot products are greater than or equal to 0. We simply check to see if either of these conditions are met to determine if the point is in the triangle and fill the pixel if so.
     </ul>
     <ul>
       This naive implementation is no worse than an implementation that checks each sample within the bounding box of the triangle as it is doing exactly that. Note that in the extra credit section below we make <b>substantial</b> improvements to our rasterization algorithm that severely outperforms the bounding box implementation. 

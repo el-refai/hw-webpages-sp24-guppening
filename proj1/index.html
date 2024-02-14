@@ -97,6 +97,7 @@
   <h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
   <h1 align="left">Homework 1: Rasterizer</h1>
   <h2 align="left">James Deloye, Karim El-Refai, cs-184-guppening</h2>
+  <h2 align="left">https://el-refai.github.io/the_guppening/proj1/index.html</h2>
 
   <hr />
   <br />
@@ -113,7 +114,7 @@
       <p>
       <br />
       However, this was not everything we did as we worked on all pieces of extra credit including increasing the speed of our rasterization by <b>~80x</b> on average, jittered sampling, 
-      more GUI features [James TALK ABOUT THIS] and lastly the implementation of anisotropic filtering according to the Nvidia specification.
+      more GUI features and lastly the implementation of anisotropic filtering according to the Nvidia specification.
       <br />
     </p>
     <p>
@@ -324,7 +325,7 @@
   
   <h3>Overview</h3>
   <p>
-    [Write some stuff here about what we did to get the transforms, ig also maybe latex the matrices and explain them]
+    For task 3 it was relatively straightforward to find the appropiate matrices for rotation, scaling, and translation. Since we are working in 2D space our matrix in homogenous coordinates will be 3x3 with the top-left 2x2 of the matrix corresponding to the rotation/scaling of the object and the last 2 elements of the first 2 rows corresponding to the translation vector.  
   </p>
   
   <blockquote><b>
@@ -350,11 +351,13 @@
   </a>
   <h3>Overview</h3>
   <p>
-    Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal to one or else the point will not within triangle. A clear example of this is when we consider a vertex itself. 
+    <ul>Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal to one or else the point will not lie within the triangle. A clear example of this is when we consider a vertex itself. 
     In this scenario the coefficient corresponding to that vertex is 1 and all other coefficients are 0. If this were not the case, say that the coefficient for the vertex was greater than 1 then the point would actually be past the vertex and outside of the triangle. 
-    With barycentric coordinates color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points as the same coefficients for color sampling. Take the color triangle below as an example. Each vertex is one of red, green, or blue. The color of each point in the triangle is just a linear combination of red, green, and blue.
-     As the point gets closer a given vertex we see it taking on more of that vertex's color. 
-  </p>
+    </ul>
+    <ul> With barycentric coordinates, color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points to set the color of the pixel equal to the linear comination of the colors of the vertices. Take the color triangle below as an example. Each vertex is one of red, green, or blue (the colors of the vertices). The color of each point in the triangle is just a linear combination of red, green, and blue.
+     As the point gets closer to a given vertex we see it taking on more of that vertex's color. 
+  </ul>
+    </p>
 
   <div align="middle">
     <table style="width:100%">
@@ -380,6 +383,11 @@
   <h2 align="middle">Task 5: "Pixel sampling" for texture mapping</h2>
   </a>
 
+  <h3>Overview</h3>
+  <p>
+    Pixel sampling is a method in which we decide which texel in the texture map should be sampled for the value of a given pixel in the image. This is determined by using the barycentric coordinates of the pixel in the image and then scaling these coordinates according to the resolution of the texture map in order to get the proper barycentric coords for the corresponding texel in the texture map. 
+    It is often that the barycentric coords of the texel do not cleanly align to a given texel and this where we must decide which texel to sample. Nearest neighbor sampling will choose the nearest texel to the given coordinates while bilinear interpolation will look at the four closest texels to the point 
+  </p>
     <blockquote><b>
       Check out the svg files in the svg/texmap/ directory. Use the pixel inspector to find a good example of where bilinear sampling clearly defeats nearest sampling. Show and compare four png screenshots using nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear
     </b></blockquote>
@@ -421,7 +429,42 @@
 
   <h2 align="middle">Task 6: "Level sampling" with mipmaps for texture mapping</h2>
 
+  <div align="middle">
+    <table style="width:100%">
+      <tr align="center">
+        <td>
+            <img src="images/l0_pbi.png" align="middle" width="500px" />
+            <figcaption>$\text{Level Zero Billinear Sampling}$</figcaption>
+        </td>
+        <td>
+            <img src="images/l0_pnear.png" align="middle" width="500px" />
+            <figcaption>$\text{Level Zero Nearest Sampling}$</figcaption>
+            
+        </td>
+      </tr>
+      <tr align="center">
+        <td>
+            <img src="images/lnear_pbi.png" align="middle" width="500px" />
+            <figcaption>$\text{Nearest Level Bilinear Sampling}$</figcaption>
+        </td>
+        <td>
+            <img src="images/lnear_pnear.png" align="middle" width="500px" />
+            <figcaption>$\text{Nearest Level Nearest Sampling}$</figcaption>
+        </td>
+      </tr>
+      <tr align="center">
+        <td>
+            <img src="images/lbi_pbi.png" align="middle" width="500px" />
+            <figcaption>$\text{Linear Level Bilinear Sampling}$</figcaption>
+        </td>
+        <td>
+            <img src="images/lbi_pnear.png" align="middle" width="500px" />
+            <figcaption>$\text{Linear Level Nearest Sampling}$</figcaption>
+        </td>
+      </tr>
+    </table>
 
+  </div>
 
 
    

@@ -114,7 +114,7 @@
       <p>
       <br />
       However, this was not everything we did as we worked on all pieces of extra credit including increasing the speed of our rasterization by <b>~80x</b> on average, jittered sampling, 
-      more GUI features and lastly the implementation of anisotropic filtering according to the Nvidia specification.
+      more GUI features allowing for seamless switching between sampling methods and lastly the implementation of anisotropic filtering according to the OpenGL specification.
       <br />
     </p>
     <p>
@@ -277,7 +277,10 @@
  
   <h3>Overview</h3>
   <p>
-
+    In order to implement supersampling, the first thing done was to change the format of our sample buffer. Instead of just one color per pixel, we added an element for every single subpixel, and arranged them in a 1D array, with all of row 1 coming after all of row 0 and so on. 
+    We then created a formula that would allow for translation between the actual coordinates of the SVG and the corresponding element in our sample buffer. Thus when iterating through every subpixel in the triangle's bounding box, we calculated the color of the subpixel and saved the value to the appropriate sample buffer element. 
+    Once the sample buffer had been filled, in the resolve_to_framebuffer function we averaged all the colors in each pixel in order to get that pixel's final value and wrote this value to the framebuffer. 
+    This averaging reduced the aliasing that was present in the edges of the triangles, and to the naked eye virtually eliminated it at 16x. 
   </p>
 
 
@@ -308,15 +311,50 @@
 
   </div>
 
-
-
-
-
     <p>
-      We can see that Supersample rate 
+      We can see that supersample rate has a significant impact on the quality of the rendering. At 1x sampling, or rendering with no supersampling, we can see that particular in thin areas 
+      the triangles are aliased and segmented because the area sampled was not in the thin area of the triangle. However, as the supersample rate gets increased, at least one subpixel is within this thin area, averaging out to a more accurate rendering of the trangle's edges. 
+      As a result, at higher sampling rates, the triangles do not have any major visible aliasing, particularly when zoomed out at 16x. 
     </p>
 
+    <blockquote><b>
+      Extra Credit: Jitter supersampling
+    </b></blockquote>
 
+    <p>
+      In addition to traditional grid supersampling, we also implemented jitter supersampling. This was easy to slot into our current implementation, and instead of taking the center of each subgrid cell, we took a uniform random spot within that grid cell and sampled that. Below are some comparisons between the two, supersampled at 4x for the triangles and 9x for the map.  
+    </p>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+              <img src="images/uniform.png" align="middle" width="400px" />
+              <figcaption>$\text{Grid Sampled Triangles}$</figcaption>
+          </td>
+          <td>
+              <img src="images/jittered.png" align="middle" width="400px" />
+              <figcaption>$\text{Jitter Sampled Triangles}$</figcaption>
+
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+              <img src="images/gridmap.png" align="middle" width="400px" />
+              <figcaption>$\text{Grid Sampled Map}$</figcaption>
+          </td>
+          <td>
+              <img src="images/jittermap.png" align="middle" width="400px" />
+              <figcaption>$\text{Jitter Sampled Map}$</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <p>
+      As can be seen, in areas where there is normally aliasing or discontinuities in the grid sampled rendering, with jitter sampling the edges blend more clearly. 
+      This is due to the fact that the jittered sampling may sample parts of the background or interior of lines, leading to more blended looking pixel. 
+      Though at higher sampling rates they tend to converge in quality, in the case that they are both at a lower rate jittered may outperform grid sampling due to its greater chance of blending around edges. 
+    </p>
   <br />
   <hr />
   <br />
@@ -465,9 +503,45 @@
     </table>
 
   </div>
+  
 
+  <blockquote><b>
+    Extra credit: If you implemented any extra filtering methods, describe them and show comparisons between your results with the other above methods.
+  </b></blockquote>
 
-   
+  <p>
+    In addition to the required methods, we also implemented anisotropic filtering. To do this, we used the description of the anisotropic filter in the <a href="https://registry.khronos.org/OpenGL/extensions/EXT/EXT_texture_filter_anisotropic.txt">OpenGL Anisotropic Filter Specification</a>.
+    This involved selecting the mipmap level based on the minor (smaller) axis of the derivatives of the texture, while sampling along a number of points along the major axis dependent on the magnitude of the derivative. In effect, this better accounts for points which have a very high frequency change in one direction but not in another, allowing for a better averaging of the texture value at that corresponding (sub)pixel.  
+  </p>
+
+  <div align="middle">
+    <table style="width:100%">
+      <tr align="center">
+        <td>
+            <img src="images/nearest.png" align="middle" width="400px" />
+            <figcaption>$\text{Nearest Neighbor Supersample Rate 16 Level 0}$</figcaption>
+        </td>
+        <td>
+            <img src="images/bilinear.png" align="middle" width="400px" />
+            <figcaption>$\text{Bilinear Supersample Rate 16 Level 0}$</figcaption>
+            
+        </td>
+      </tr>
+      <tr align="center">
+        <td>
+            <img src="images/trilinear.png" align="middle" width="400px" />
+            <figcaption>$\text{Trilinear Supersample Rate 16}$</figcaption>
+        </td>
+        <td>
+            <img src="images/aniso.png" align="middle" width="400px" />
+            <figcaption>$\text{Anisotropic Supersample Rate 16}$</figcaption>
+        </td>
+      </tr>
+    </table>
+
+   <p>
+     From these, we can see that the anisotropic filtering better captures detail by accounting for how quickly the texture changes in either the x or y direction. We can see this in how anisotropic filtering captures the graunular details of the texture, while others tend to blur them out. 
+   </p>
 
 </body>
 </html>

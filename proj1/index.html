@@ -133,8 +133,8 @@
   <h3>Overview</h3>
     <p>
       <ul>
-      Our initial attempt at rasterizating the triangle begins by determining if the vertices are given in a clockwise or counter-clockwise order. If they are clockwise then we change them to be counter-clockwise. We then determine the tightest bounding box around the triangle. 
-      We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the vectors corresponding to vectors perpendicular to the lines of the triangle, i.e. given vertex A,B,C we calculate Perp(A->B), Perp(B->C), Perp(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. Since we're evaluating the points counter-clockwise if all of the dot products are greater than or equal to 0, i.e. they lie on the line or are above it we will then add that pixel to the sample buffer.
+      Our initial attempt at rasterizing the triangle begins by determining if the vertices given are done in a clockwise or counter-clockwise order. Next we find the tightest bounding box around the triangle. 
+      We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the norm vectors corresponding to the vectors of the triangle's vertices, i.e. given vertex A,B,C we calculate Norm(A->B), Norm(B->C), Norm(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. If all of the vertices are given clockwise then the point is inside the triangle if all the dot products are greater than or equal to 0. If the vertices are given counter-clockwise then the point is inside the triangle if all of the dot products are less than or equal to 0. We simply check to see if either of these conditions are met to determine if the point is in the triangle and fill the pixel if so.
     </ul>
     <ul>
       This naive implementation is no worse than an implementation that checks each sample within the bounding box of the triangle as it is doing exactly that. Note that in the extra credit section below we make <b>substantial</b> improvements to our rasterization algorithm that severely outperforms the bounding box implementation. 
@@ -282,7 +282,7 @@
   <p>
     In order to implement supersampling, the first thing done was to change the format of our sample buffer. Instead of just one color per pixel, we added an element for every single subpixel, and arranged them in a 1D array, with all of row 1 coming after all of row 0 and so on. 
     We then created a formula that would allow for translation between the actual coordinates of the SVG and the corresponding element in our sample buffer. Thus when iterating through every subpixel in the triangle's bounding box, we calculated the color of the subpixel and saved the value to the appropriate sample buffer element. 
-    Once the sample buffer had been filled, in the resolve_to_framebuffer function we averaged all the colors in each pixel in order to get that pixel's final value and wrote this value to the framebuffer. 
+    Once the sample buffer had been filled, in the <code>resolve_to_framebuffer</code> function we averaged all the colors in each pixel in order to get that pixel's final value and wrote this value to the framebuffer. 
     This averaging reduced the aliasing that was present in the edges of the triangles, and to the naked eye virtually eliminated it at 16x. 
   </p>
 
@@ -530,7 +530,7 @@
 
   </div>
   <p>
-    We implemented trilinear sampling by taking the weighted sum of the texels in the adjacent texture maps. This produces results that were blurrier than both level zero and nearest nearest neighbors texture sampling.   
+    We implemented trilinear sampling by taking the weighted sum of the texels in the adjacent texture maps. This produces results that were blurrier than both level zero and nearest neighbors texture sampling.   
   </p>
 
   <blockquote><b>

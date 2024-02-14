@@ -539,8 +539,11 @@
       </tr>
     </table>
 
-   <p>
-     From these, we can see that the anisotropic filtering better captures detail by accounting for how quickly the texture changes in either the x or y direction. We can see this in how anisotropic filtering captures the graunular details of the texture, while others tend to blur them out. 
+   <p align="left">
+     From these, we can see that the anisotropic filtering better captures detail by accounting for how quickly the texture changes 
+     in either the x or y direction. We can see this in how anisotropic filtering captures the graunular details of the texture, while others tend to blur them out. 
+     Performance-wise, anisotropic filtering takes around 1.3x as long as nearest pixel and bilinear filtering, while it takes around 1.2x as long as trilinear filtering. 
+     Depending on the application, this difference may be worth it depending on the visual fidelity required.
    </p>
 
 </body>

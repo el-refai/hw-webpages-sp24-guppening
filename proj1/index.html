@@ -117,7 +117,7 @@
       </p>
       <p>
       <br />
-      However, this was not everything we did as we worked on all pieces of extra credit including increasing the speed of our rasterization by ~80x, jittered sampling, 
+      However, this was not everything we did as we worked on all pieces of extra credit including increasing the speed of our rasterization by <b>~80x</b> on average, jittered sampling, 
       more GUI features [James TALK ABOUT THIS] and lastly the implementation of anisotropic filtering according to the Nvidia specification.
       <br />
     </p>
@@ -136,37 +136,13 @@
 
   <h3>Overview</h3>
     <p>
-      We rasterize 
+      Our initial attempt at rasterizating the triangle begins by determining if the vertices are given in a clockwise or counter-clockwise order. If they are clockwise then we change them to be counter-clockwise. We then determine the tightest bounding box around the triangle. 
+      We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the vectors corresponding to vectors perpendicular to the lines of the triangle, i.e. given vertex A,B,C we calculate Perp(A->B), Perp(B->C), Perp(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. Since we're evaluating the points counter-clockwise if all of the dot products are greater than or equal to 0, i.e. they lie on the line or are above it we will then add that pixel to the sample buffer.
       <br />
-      We then construct the spring with <i>Structural</i>, <i>Shearing</i>, and <i>Bending</i> constraint types using <code>emplace_back</code>.
+      This naive implementation is no worse than an implementation that checks each sample within the bounding box of the triangle as it is doing exactly that. Note that in the extra credit section below we make <b>substantial</b> improvements to our rasterization algorithm that severely outperforms the bounding box implementation. 
     </p>
 
-    <blockquote><b>
-      Take some screenshots of <i>scene/pinned2.json</i> from a viewing angle where you can clearly see the cloth wireframe 
-      to show the structure of your point masses and springs. 
-    </b></blockquote>
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t1-zoomed-in_p2.png" align="middle" width="300vw" />
-          </td>
-          <td>
-            <img src="images/t1-halfway_p2.png" align="middle" width="300vw" />
-            <figcaption>Default settings ($\text{ks} = 5,000$)</figcaption>
-          </td>
-          <td>
-            <img src="images/t1-zoomed-out_p2.png" align="middle" width="300vw" />
-          </td>
-        </tr>
-      </table>
-    </div>
-    <p>
-      Above we can see the wireframe of the cloth in <i>scene/pinned2.json</i> from a final zoomed-in viewing angle, 
-      tilted but paused halfway during the simulation being played viewing angle, and a flat zoomed-out view from the beginning.
-    </p>
-  
+    
     <blockquote><b>
       Show a png screenshot of basic/test4.svg with the default viewing parameters and with the pixel inspector centered on an interesting part of the scene.
     </b></blockquote>
@@ -184,7 +160,7 @@
 
 
     <blockquote><b>
-      Extra credit: Explain any special optimizations you did beyond simple bounding box triangle rasterization, with a timing comparison table (we suggest using the c++ clock() function around the svg.draw() command in DrawRend::redraw() to compare millisecond timings with your various optimizations off and on).
+      <b>Extra credit:</b> Explain any special optimizations you did beyond simple bounding box triangle rasterization, with a timing comparison table (we suggest using the c++ clock() function around the svg.draw() command in DrawRend::redraw() to compare millisecond timings with your various optimizations off and on).
     </b></blockquote>    
     <head>
       <title>Performance Table</title>
@@ -277,165 +253,44 @@
  
   <h3>Overview</h3>
   <p>
+
   </p>
 
 
+  <div align="middle">
+    <table style="width:100%">
+      <tr align="center">
+        <td>
+            <img src="images/1ss.png" align="middle" width="400px" />
+            <figcaption>$\text{Supersample Rate} = 1$</figcaption>
+        </td>
+        <td>
+            <img src="images/4ss.png" align="middle" width="400px" />
+            <figcaption>$\text{Supersample Rate} = 4$</figcaption>
+            
+        </td>
+      </tr>
+      <tr align="center">
+        <!-- <td>
+            <img src="images/9ss.png" align="middle" width="400px" />
+            <figcaption>$\text{Supersample Rate} = 9$</figcaption>
+        </td> -->
+        <td>
+            <img src="images/16ss.png" align="middle" width="400px" />
+            <figcaption>$\text{Supersample Rate} = 16$</figcaption>
+        </td>
+      </tr>
+    </table>
 
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t2-ks_5.png" align="middle" width="200vw" />
-            <figcaption>$\text{ks} = 5$</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-ks_100.png" align="middle" width="200vw" />
-            <figcaption>$\text{ks} = 100$</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-ks_1000.png" align="middle" width="200vw" />
-            <figcaption>$\text{ks} = 1,000$</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-ks_5000.png" align="middle" width="200vw" />
-            <figcaption>$\text{ks} = 5,000$</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-ks_10000.png" align="middle" width="200vw" />
-            <figcaption>$\text{ks} = 10,000$</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <p>
-      Changing the spring constant <code>ks</code> to a very low value results in the fabric being very loose and not holding its initial shape. 
-      Whether it was in the initial configuration or during the movement caused by the cloth dropping in the simulation, 
-      the fabric was very stretch and loose.
-      When we changed the spring constant <code>ks</code> to a very high value, the fabric was very tight 
-      and while it still did not hold its initial shape perfectly, it was closer to doing so, 
-      it was not as loose as when <code>ks</code> was very low: it was more stiff.
-
-      This makes sense as the spring constant <code>ks</code> is the stiffness of the springs that connect the masses. 
-      When <code>ks</code> is very low, the springs are very loose and the fabric is very stretchy. 
-      When <code>ks</code> is very high, the springs are very tight and the fabric is very stiff 
-      -- which means it will be very hard to stretch the fabric.
-    </p>
+  </div>
 
 
-    <blockquote><b>
-      <small>
-        What about for <code>density</code>?
-      </small>
-    </b></blockquote>
 
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t2-density_5.png" align="middle" width="200vw" />
-            <figcaption>$\text{density} = 5$</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-density_15.png" align="middle" width="200vw" />
-            <figcaption>$\text{density} = 15$</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-density_50.png" align="middle" width="200vw" />
-            <figcaption>$\text{density} = 50$</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-density_1000.png" align="middle" width="200vw" />
-            <figcaption>$\text{density} = 1,000$</figcaption>
-          </td>
-          <td>
-            <img src="images/t2-density_10000.png" align="middle" width="200vw" />
-            <figcaption>$\text{density} = 10,000$</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
+
 
     <p>
-      The effect of density on cloth behavior is somewhat more complex. At first, it appears to be inverse to the effect
-      of spring tension; as density decreases, the cloth descends more slowly from its starting position, and the top
-      edge of the cloth deforms less under the cloth's own weight at rest, in a similar manner to increasing $k_s$. 
-      However, the correlation with density on the level of deformation on the cloth's surface is non-linear; at low
-      and high densities, the surface of the cloth is smooth; at medium densities, the surface shows more ripples. This 
-      can be explained by the difference in how spring tension and density effect the dynamics of the point masses. The 
-      former resists all changes in position, and thus with higher $k_s$ all forms of deformation are decreased. The
-      latter directly corresponds to the mass of each point, which primarly affects deformation from the force of
-      gravity. At low or high densities, either spring force or gravity are the dominant force, causing the surface to
-      flatten out. At medium densities the forces are about equal which causes the point masses to be suspended and not
-      flatten out.
+      We can see that Supersample rate 
     </p>
-
-
-    <blockquote><b>
-      <small>
-        What about for <code>damping</code>?
-      </small>
-    </b></blockquote>
-
-    <div class="alert">
-      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-      <p>
-        Note that the following four are <code>gif</code> files, so if you are viewing this as a <code>pdf</code> file, 
-        you will not be able to see the animations. 
-        <br />
-        You can visit our site to see the animations (linked at the top of this page).
-      </p>
-    </div>
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-              <img src="images/t2-damping_0.gif" align="middle" width="400px" />
-              <figcaption>$\text{damping} = 0$</figcaption>
-          </td>
-          <td>
-              <img src="images/t2-damping_20.gif" align="middle" width="400px" />
-              <figcaption>$\text{damping} = 20$</figcaption>
-              
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-              <img src="images/t2-damping_50.gif" align="middle" width="400px" />
-              <figcaption>$\text{damping} = 50$</figcaption>
-          </td>
-          <td>
-              <img src="images/t2-damping_100.gif" align="middle" width="400px" />
-              <figcaption>$\text{damping} = 100$</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <p>
-      Damping acts as a weight on the velocity term of the Verlet integration, so a cloth that is more damped will move 
-      more slowly, but the total forces at rest are unchanged. This result is demonstrated above. In addition, the two 
-      cloths that were less damped oscillated like a tire swing before coming to rest -- the undamped cloth never came
-      to rest at all, instead demonstrating a perpetual pendulumn motion.
-    </p>
-
-
-    <blockquote><b>
-      <small>
-      For each of the above, observe any noticeable differences in the cloth compared to the default parameters 
-      and show us some screenshots of those interesting differences and describe when they occur.
-      </small>
-    </b></blockquote>
-    
-    <blockquote><b>
-    Show us a screenshot of your shaded cloth from <i>scene/pinned4.json</i> in its final resting state! 
-    If you choose to use different parameters than the default ones, please list them.
-    </b></blockquote>
-
-    <div align="middle">
-      <img src="images/t2-pinned4.png" align="middle" width="100%" />
-    </div>
-
 
 
   <br />
@@ -499,104 +354,27 @@
   </a>
   <h3>Overview</h3>
   <p>
-    This doesn't account for all possible collisions; most critically, it doesn't handle when the cloth collides with
-    itself! You can see this when running <code>./clothsim -f ../scene/selfCollision.json</code> with unfortunate
-    results.
+    Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal to one or else the point will not within triangle. A clear example of this is when we consider a vertex itself. 
+    In this scenario the coefficient corresponding to that vertex is 1 and all other coefficients are 0. If this were not the case, say that the coefficient for the vertex was greater than 1 then the point would actually be past the vertex and outside of the triangle. 
+    With barycentric coordinates color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points as the same coefficients for color sampling. Take the color triangle below as an example. Each vertex is one of red, green, or blue. The color of each point in the triangle is just a linear combination of red, green, and blue.
+     As the point gets closer a given vertex we see it taking on more of that vertex's color. 
   </p>
 
   <div align="middle">
-    <img src="images/t4-self-collapse.png" align="middle" width="100%" />
+    <table style="width:100%">
+      <tr align="center">
+        <td>
+            <img src="images/bary_tri.png" align="middle" width="400px" />
+            <figcaption>Color Triangle</figcaption>
+        </td>
+        <td>
+            <img src="images/test7.png" align="middle" width="400px" />
+            <figcaption>Color Wheel</figcaption>
+        </td>
+      </tr>
+    </table>
   </div>
-  <p>
-    The solution to this problem is an intuitive one; check for pairs of point masses that are too close to each other,
-    and apply a position correction that simulates the repulsive force between the two masses. The final change in
-    position of each point mass is the average of their correction vectors.
-  </p>
-  <br />
-  <p>
-    Checking every pair of points requires $O(n^2)$ time, which is not suitable for our large number of points. Instead,
-    we partition the 3D space into a set of boxes, and hash each point to a table based on which box contains them.
-    Since a point mass can only collide with the masses in the same box, this causes collision checking to speed up
-    considerably.
-  </p>
-  <br />
-
-
-
-    <blockquote><b>
-      Show us at least 3 screenshots that document how your cloth falls and folds on itself, 
-      starting with an early, initial self-collision 
-      and ending with the cloth at a more restful state (even if it is still slightly bouncy on the ground).
-    </b></blockquote>
-    
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t4-collision-1.png" align="middle" width="150vw" />
-            <figcaption>Self collision 1</figcaption>
-          </td>
-          <td>
-            <img src="images/t4-collision-1_5.png" align="middle" width="150vw" />
-            <figcaption>Self collision 2</figcaption>
-          </td>
-          <td>
-            <img src="images/t4-collision-2.png" align="middle" width="150vw" />
-            <figcaption>Self collision 3</figcaption>
-          </td>
-          <td>
-            <img src="images/t4-collision-2_5.png" align="middle" width="150vw" />
-            <figcaption>Self collision 4</figcaption>
-          </td>
-          <td>
-            <img src="images/t4-collision-3.png" align="middle" width="150vw" />
-            <figcaption>Self collision 5</figcaption>
-          </td>
-          <td>
-            <img src="images/t4-collision-3_5.png" align="middle" width="150vw" />
-            <figcaption>Self collision 6</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-    
-    <blockquote><b>
-      Vary the <code>density</code> as well as <code>ks</code> 
-      
-      and describe with words and screenshots how they affect the behavior of the cloth as it falls on itself.
-    </b></blockquote>
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-              <img src="images/t4-density-1.png" align="middle" width="400px" />
-              <figcaption>$\text{density} = 1$</figcaption>
-              
-          </td>
-          <td>
-              <img src="images/t4-density-50.png" align="middle" width="400px" />
-              <figcaption>$\text{density} = 50$</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-              <img src="images/t4-ks-1.png" align="middle" width="400px" />
-              <figcaption>$\text{ks} = 2,500$</figcaption>
-          </td>
-          <td>
-              <img src="images/t4-ks-2.png" align="middle" width="400px" />
-              <figcaption>$\text{ks} = 7,500$</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <p>
-      Above we can see that higher densities and lower spring constants cause the cloth to fold in on itself more 
-      erratically. This is because the cloth is more likely to collide with itself in small folds when it is more 
-      dense, and the cloth is more likely to be pulled apart when the spring constants are lower.
-    </p>
+  
 
 
   <br />
@@ -607,249 +385,46 @@
   </a>
 
     <blockquote><b>
-    Explain in your own words what is a shader program and how vertex and fragment shaders work together to create lighting and material effects.
+      Check out the svg files in the svg/texmap/ directory. Use the pixel inspector to find a good example of where bilinear sampling clearly defeats nearest sampling. Show and compare four png screenshots using nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear
     </b></blockquote>
 
     <p>
-      A shader program is user-defined code that a graphics processor uses during its rendering pipeline. In this
-      pipeline, vertex shaders operate before fragment shaders; they are responsible for the geometry of individual
-      vertices in the model being rendered. For each vertex, the shader transforms the vertex position as necessary
-      (converting to post-projection space or, in the case of displacement mapping, offsetting the position according
-      to some vertex property), as well as generating information on that vertex necessary to per-vertex lighting, such
-      as the vertex normal and texture coordinate <em>uv</em>. The fragment shader operates after the vertex shader has
-      completed, using "fragments" of the rasterized model. Its job is to determine the color of this rastered fragment,
-      using the vertex information produced by the vertex shader as well as the specified shading method (Blinn-Phong, 
-      texture-mapped, etc). Each fragment shader typically corresponds to a unique shading method.
+     
     </p>
 
-
-    <blockquote><b>
-    Explain the Blinn-Phong shading model in your own words. 
-    Show a screenshot of your Blinn-Phong shader outputting only the ambient component, a screen shot only outputting the diffuse component, a screen shot only outputting the specular component, and one using the entire Blinn-Phong model.
-    </b></blockquote>
-
-    <p>
-      Blinn-Phong shading is a per-vertex shading model that takes the surface normal at the vertex $\mathbf{n}$, as
-      as the ray from the vertex to the point light source $\mathbf{l}$, as well as the light intensity $\mathbf{I}$
-      and distance to the light source $r = ||l||$, and computes the intensity of the light arriving at that vertex:
-      $$
-        \mathbf{L} = \underbrace{k_a\mathbf{I}_a}_{\text{Ambient component}} + \underbrace{\mathbf{k}_d (\mathbf{I} / r^2) \max(0, \mathbf{n} \cdot \mathbf{l})}_{\text{Diffuse component}} + \underbrace{k_s (\mathbf{I} / r^2) \max(0, \mathbf{n} \cdot \mathbf{h})^p}_{\text{Specular component}}
-      $$
-      Let us examine the three terms individually. The ambient component approximates ambient light, or the light that
-      that would hypothetically arrive after more than one bounce (since our scene comprises only the sphere and cloth,
-      this is uncommon and can't really be modeled). We use the crude but effective method of setting ambient lighting
-      to a constant:
-      $$
-        k_a = 0.1, \mathbf{I}_a = \mathbb{1}
-      $$ 
-      The diffuse component represents the diffuse (uniform over a hemisphere) reflection of light by the sphere and
-      cloth. It is affected by the distance to the light as well as the angle of the surface relative to the direction
-      of light, as determined by Lambert's cosine law. Since this comprises a vast majority of the total reflectance of
-      the scene in the Blinn-Phong model, we weight this term by 100% of the light emitted (in other words, $\mathbf{k}_d$ equals the RGB intensity of the light source).
-    </p>
-    <p>
-      Finally, there is specular lighting. Like ambient lighting, this represents a small minority of the total lighting
-
-      in the render. It represents the light that is reflected off the scene in a mirror-like fashion. For us to see this specular reflection at a vertex, the outgoing vector $v$ from that vertex to the camera must be the mirror
-      reflection of the incident vector $l$ from the light source to that vertex. In mathematical terms, the bisecting
-      vector
-      $$
-      h = \frac{v + l}{||v + l||}
-      $$
-      must be as close to the normal as possible. Thus the intensity of the specular component is dependent on $n \cdot 
-      h$. Since we want the reflectance to taper off quickly for less than perfect specular reflectance ($n \cdot h < 
-      1$), we will raise this term to a large power, in our case $p = 100$. We set $k_s = 0.5$.
-    </p>
-
-    <p>
-      <b>Note:</b> unless otherwise stated, all renders are performed with the settings <code>-o 128 -a 128</code>.
-    </p>
 
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
           <td>
-              <img src="images/t5-blinn_phong_ambient.png" align="middle" width="400px" />
-              <figcaption>Ambient component only</figcaption>
+              <img src="images/nn_1ss.png" align="middle" width="400px" />
+              <figcaption>$\text{Nearest Neighbor Supersample Rate 1}$</figcaption>
+          </td>
+          <td>
+              <img src="images/bi_1ss.png" align="middle" width="400px" />
+              <figcaption>$\text{Bilinear Supersample Rate 1}$</figcaption>
               
           </td>
-          <td>
-              <img src="images/t5-blinn_phong_diffuse.png" align="middle" width="400px" />
-              <figcaption>Diffuse component only</figcaption>
-          </td>
         </tr>
         <tr align="center">
           <td>
-              <img src="images/t5-blinn_phong_specular.png" align="middle" width="400px" />
-              <figcaption>Specular component only</figcaption>
+              <img src="images/nn_16ss.png" align="middle" width="400px" />
+              <figcaption>$\text{Nearest Neighbor Supersample Rate 16}$</figcaption>
           </td>
           <td>
-              <img src="images/t5-blinn_phong_all.png" align="middle" width="400px" />
-              <figcaption>Complete Blinn-Phong model</figcaption>
+              <img src="images/bi_16ss.png" align="middle" width="400px" />
+              <figcaption>$\text{Bilinear Supersample Rate 16}$</figcaption>
           </td>
         </tr>
       </table>
+
     </div>
-
-      
-    <blockquote><b>
-    Show a screenshot of your texture mapping shader using your own custom texture by modifying the textures in <code>/textures/</code>.
-    </b></blockquote>
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t5-custom_texture.png" align="middle" width="400vw" />
-            <figcaption>The custom texture image</figcaption>
-          </td>
-          <td>
-            <img src="images/t5-custom_cloth.png" align="middle" width="400vw" />
-            <figcaption>The custom texture mapped to the sphere and cloth</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-
-    <blockquote><b>
-    Show a screenshot of bump mapping on the cloth and on the sphere. 
-    Show a screenshot of displacement mapping on the sphere. 
-    Use the same texture for both renders. 
-    You can either provide your own texture or use one of the ones in the textures directory, 
-    BUT choose one that's not the default <code>texture_2.png</code>. 
-    Compare the two approaches and resulting renders in your own words. 
-    Compare how your the two shaders react to the sphere by changing the sphere mesh's coarseness by using <code>-o 16 -a 16</code> and then <code>-o 128 -a 128</code>.
-    </b></blockquote>
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t5-bump_cloth.png" align="middle" width="400vw" />
-            <figcaption>Bump Mapping on the Cloth</figcaption>
-          </td>
-          <td>
-            <img src="images/t5-bump_sphere.png" align="middle" width="400vw" />
-            <figcaption>Bump Mapping on the Sphere</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="images/t5-displacement_sphere_fine.png" align="middle" width="400vw" />
-            <figcaption>Displacement Mapping on the Sphere</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <p>
-      While both bump mapping and displacement mapping display the texture on the cloth's surface, in the case of the
-      former, the geometry of the cloth is unmodified, giving the texture a "flat" look. The latter, by comparison,
-      modifies the vertices of the cloth according to the texture height, introducing a further degree of realism; this
-      can be seen in the rough profile of the render.
-    </p>
-    <p>
-      The above images were rendered with a horizontal and vertical vertex resolution of 128. When we decrease this
-      resolution to 16 x 16, notice the increase in smoothness of displacement mapping due to there being fewer
-      vertices to transform:
-    </p>
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t5-displacement_sphere_fine.png" align="middle" width="400vw" />
-            <figcaption>Displacement Mapping on the Sphere (Smooth mesh)</figcaption>
-          </td>
-          <td>
-            <img src="images/t5-displacement_sphere_coarse.png" align="middle" width="400vw" />
-            <figcaption>Displacement Mapping on the Sphere (Coarse mesh)</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="images/t5-displacement_cloth_fine.png" align="middle" width="400vw" />
-            <figcaption>Displacement Mapping on the Cloth (Smooth mesh)</figcaption>
-          </td>
-          <td>
-            <img src="images/t5-displacement_cloth_coarse.png" align="middle" width="400vw" />
-            <figcaption>Displacement Mapping on the Cloth (Coarse mesh)</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <blockquote><b>
-    Show a screenshot of your mirror shader on the cloth and on the sphere.
-    </b></blockquote>
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/t5-mirror_cloth.png" align="middle" width="400vw" />
-            <figcaption>Mirror Shader on the Cloth</figcaption>
-          </td>
-          <td>
-            <img src="images/t5-mirror_sphere.png" align="middle" width="400vw" />
-            <figcaption>Mirror Shader on the Sphere</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-
-    <blockquote><b>
-    Explain what you did in your custom shader, if you made one.
-    </b></blockquote>
-
-    <p>
-      We synthesized all of the above shading methods into a single custom shader, combining Blinn-Phong shading,
-      displacement mapping, and mirror shading (Bump mapping and diffuse shading are subsets of some of these
-      techniques, and texture mapping was incompatible with mirror reflection). Notice the visble texture and roughness
-      of profile compared to the original mirror render, as well as the brighter colors from Blinn-Phong shading:
-    </p>
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/ec-sphere_mirror.png" align="middle" width="400vw" />
-            <figcaption>Sphere, mirrored</figcaption>
-          </td>
-          <td>
-            <img src="images/ec-sphere_custom.png" align="middle" width="400vw" />
-            <figcaption>Sphere, custom shader</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="images/ec-cloth_mirror.png" align="middle" width="400vw" />
-            <figcaption>Cloth, mirrored</figcaption>
-          </td>
-          <td>
-            <img src="images/ec-cloth_custom.png" align="middle" width="400vw" />
-            <figcaption>Cloth, custom shader</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <p>
-
-      
   <hr />
 
 
 
   <h2 align="middle">Task 6: "Level sampling" with mipmaps for texture mapping</h2>
 
-  <h2 align="middle">Contributions</h2>
-  <p>
-    We both contributed at least some work to each part of this project. Rahul took the lead on parts 3 and 4, as well
-    as exhaustively formatting our writeup webpage. Calvin implemented the majority of parts 2 and 5, in addition to
-    extra credit features. Contributions to task 1, as well as the content of the writeup, were about equal.
-  </p>
 
 
 

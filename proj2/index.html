@@ -219,7 +219,7 @@
 		<h3>Overview</h3>
 		<p>
 		  <ul>
-			Shid
+			To implement edge flips in our mesh, we started by making drawings like the ones suggested in the spec, such that we have a ground truth to debug against. When the function is called, we first check that the edge is not on a boundary adn then started by getting pointers (or rather iters) to each halfedge, edge, face, and vertex that surrounded the edge being flipped. From there, all we had to do was look to our drawings and fill the new corresponding pointers for halfedges, faces, edges, and vertices, while ensuring that the original edge has been flipped to the correct orientation. Outside of our use of the drawing method, we didn't find that we needed any special methods to complete this task.
 		</ul>
 	</p>
 	<blockquote><b>
@@ -229,16 +229,20 @@
 		  <table style="width:100%">
 			<tr align="center">
 			  <td>
-				  <img src="images/bary_tri.png" align="middle" width="400px" />
-				  <figcaption>Color Triangle</figcaption>
+				  <img src="images/before.png" align="middle" width="400px" />
+				  <figcaption>Teapot Mesh Before Flips</figcaption>
 			  </td>
 			  <td>
-				  <img src="images/test7.png" align="middle" width="400px" />
-				  <figcaption>Color Wheel</figcaption>
+				  <img src="images/flipped.png" align="middle" width="400px" />
+				  <figcaption>Teapot Mesh After Flips</figcaption>
 			  </td>
 			</tr>
 		  </table>
 		</div>
+
+		<p>
+			Since our implementation worked on the first try, we luckily didn't end up needing to do any debugging!
+		</p>
 		
 	  
 	  
@@ -252,53 +256,76 @@
 		<h3>Overview</h3>
 		<p>
 		  <ul>
-			Shid
+			Like the edge flips, we again by making drawings like the ones suggested in the spec, this time noting down the new halfedges, edges, faces, and vertices that would need to be made. We then went about implementing the function similarly, by first getting pointers to the appropriate elements and then creating the new elements that would be needed to split the edge. From there we calculated the proper edge midpoint to get the position of the new vertex and finally set all the applicable pointers for halfedges, edges, faces, and vertices. As a debugging trick, we were sure to use the check_for functions which allowed us to check and make sure that each element was pointing to and pointed to by the correct elements. 
 			</ul>
 		</p>
 		  <blockquote><b>
 			Show screenshots of a mesh before and after some edge splits.
 		</b></blockquote>
 	  
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/before.png" align="middle" width="400px" />
+					<figcaption>$\text{Before Splits}$</figcaption>
+				</td>
+				<td>
+					<img src="images/splitmesh.png" align="middle" width="400px" />
+					<figcaption>$\text{After Splits}$</figcaption>
+					
+				</td>
+			  </tr>
+			</table>
+		  </div>
 
 		<blockquote><b>
 			Show screenshots of a mesh before and after a combination of both edge splits and edge flips.
 		</b></blockquote>
 
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/splitmesh.png" align="middle" width="400px" />
+					<figcaption>$\text{Before Flips}$</figcaption>
+				</td>
+				<td>
+					<img src="images/flipsplit.png" align="middle" width="400px" />
+					<figcaption>$\text{After Splits}$</figcaption>
+					
+				</td>
+			  </tr>
+			</table>
+		  </div>
+
+		  <p>
+			Unlike the previous task, we (unfortuantely) had an eventful debugging journey. When we first tried to run the function, we saw that nothing rendered at all, which suggested to us that there was some inconsistency with our updated pointers. We checked all the updates against our drawings again and again, but were still unable to noice any issues. We at last resorted to using the check_for function, and finally noticed that one of our half edges had two twins, and we knew we had found our culprit. For a single half edge, we had accidentally switched around the next and twin half edges, resulting in our mesh being unable to render. After this though, everything went smoothly. 
+		  </p>
 
 		<blockquote><b>
 			If you have implemented support for boundary edges, show screenshots of your implementation properly handling split operations on boundary edges.
 		</b></blockquote>
+
 		  <p>
-		   
+		   To support boundary edges, we again made drawings, this time with just a single triangle on a boundary. The tricky part for this extra credit was figuring out the correct method for splitting the halfedge on the boundary, and we settled on making the new halfedge the next edge of the original boundary edge, making sure to set its next and face pointers to be the same as those of the original existing edge. From there everything worked as expected, and we were able to split boundary edges without any need for debugging. 
 		  </p>
-	  
 	  
 		  <div align="middle">
 			<table style="width:100%">
 			  <tr align="center">
 				<td>
-					<img src="images/nn_1ss.png" align="middle" width="400px" />
-					<figcaption>$\text{Nearest Neighbor Supersample Rate 1}$</figcaption>
+					<img src="images/.png" align="middle" width="400px" />
+					<figcaption>$\text{Boundary Before Split}$</figcaption>
 				</td>
 				<td>
-					<img src="images/bi_1ss.png" align="middle" width="400px" />
-					<figcaption>$\text{Bilinear Supersample Rate 1}$</figcaption>
+					<img src="images/.png" align="middle" width="400px" />
+					<figcaption>$\text{Boundary After Split}$</figcaption>
 					
 				</td>
 			  </tr>
-			  <tr align="center">
-				<td>
-					<img src="images/nn_16ss.png" align="middle" width="400px" />
-					<figcaption>$\text{Nearest Neighbor Supersample Rate 16}$</figcaption>
-				</td>
-				<td>
-					<img src="images/bi_16ss.png" align="middle" width="400px" />
-					<figcaption>$\text{Bilinear Supersample Rate 16}$</figcaption>
-				</td>
-			  </tr>
 			</table>
-	  
-		  </div>
+		</div>
 
 		<hr />
 	  

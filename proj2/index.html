@@ -231,7 +231,7 @@
 		
 		<h3>Overview</h3>
 		<p>
-			Shid
+			To implement vertex normals, we started by doing traversals about the central vertex. We did this by taking the code for traversing all the vertices adjacent to a vertex and for each set of vertices that formed a triangular face with the central vertex, we took the cross product of two of the vertices in order to get the normal vector of the face. Then, using some knowledge from algebra classes, took half the norm of the normal vector to get the area of the triangle. We then normalized the normal vector, and stored that vector and the area in a list. After doing this for all the faces, we then took each vector, multiplied by the area of the face over the total area of all the faces, and added them all together to get the normal vector of the central vertex. As can be seen below, this allows for smooth Phong shading, which gives our teapot a much more realistic lighting look. 
 		</p>
 		
 		<blockquote><b>
@@ -242,8 +242,12 @@
 			<table style="width:100%">
 			  <tr align="center">
 				<td>
-				  <img src="images/robot_meditate.png" align="middle" width="700vw" />
-				  <figcaption> Here we have the cubeman crossing its knees while have its arms outstretched. The idea was to go for a more meditative pose with the cubeman while also incorporating a rainbow-like gradient across each major body part.</figcaption>
+					<img src="images/normal.png" align="middle" width="500px" />
+					<figcaption>Teapot Mesh Before Smooth Shading</figcaption>
+				</td>
+				<td>
+					<img src="images/smooth.png" align="middle" width="500px" />
+					<figcaption>Teapot Mesh After Smooth Shading</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -517,7 +521,9 @@
 
 		<h3>Adding $\sqrt 3$ Subdivision</h3>
 		<p>
-			In addition to Loop subdivision, we also implemented $\sqrt 3$ subdivision. Instead of splitting edges, this method splits faces into three separate faces, adding an edge between a central vertex that is the average of the original vertex positions and each of the original vertices surrounding the face. Then the original edges get flipped to maintain a regular structure. And the vertex positions are updated. To do this, we just had to implement a face split function, and then created a subdivision function very similar to that of Loop subdivision, replacing the vertex recomputation function with the one from the original root 3 subdivision paper and replacing edge splits with face splits. From the images below, one can see that this method is a lot better at smoothing out sharp edges, and by the time level 4 subdivision is reached, the mesh is almost spherical, save for a few extrordinary vertices.
+			<ul>
+			In addition to Loop subdivision, we also implemented $\sqrt 3$ subdivision. Instead of splitting edges, this method splits faces into three separate faces, adding an edge between a central vertex that is the average of the original vertex positions and each of the original vertices surrounding the face. Then the original edges get flipped to maintain a regular structure. Finally, vertex positions are updated. To do this, we just had to implement a face split function, and then created a subdivision function very similar to that of Loop subdivision, replacing the vertex recomputation function with the one from the original root 3 subdivision paper and replacing edge splits with face splits. From the images below, one can see that this method is a lot better at smoothing out sharp edges, and by the time level 4 subdivision is reached, the mesh is almost spherical, save for a few extrordinary vertices.
+			</ul>
 		</p>
 
 		<div align="middle">

@@ -104,7 +104,7 @@
 		  <p>
 			In this project we go an introduction to Bezier curves and triangle meshes. We first implemented Bezier curves and Bezier surfaces with de Casteljau's algorithm 
       then we worked on improving shading using area-weighted vertex normals. We then moved on to how do we go about flipping and splitting edges on triangle meshes. With the final conclusion of this homework being the implementation of loop subdivision for upsampling our meshes to make them smoother.
-      We then implemented all of the extra credit in this homework from support boundary edge splits to supporting loop subdivision on meshes with boundary edges and $sqrt{3}$-subdivision.
+      We then implemented all of the extra credit in this homework from support boundary edge splits to supporting loop subdivision on meshes with boundary edges and $\sqrt{3}$-subdivision.
       We found these extra credit tasks to be the most interesting and the results of them to be really satisfying when visualized on the meshes!
 		  </p>
 		</div>
@@ -117,7 +117,7 @@
     <h3 align="middle">Overview</h3>
 		<p>
 			<ul>
-				Given $n$ control points ($p_0, p_1, ..., p_n$) and a parameter $t$ de Casteljau's algorithm evaluates Bezier curves by at each step: linearly interpolating between control point $p_i$ and $p_{i+1}$ and creates a new control point that is $t$ away from $p_i$ and $p_{i+1}$. This results in $n-1$ new control points. The process is then repeated on these new control points until there is only one control point left. This control point will lie on the Bezier curve. This whole process is repeated for varying values of $t$ where $t \in [0,1]$ to gives us many points which lie on the Bezier curve at different positions, essentially recreating the curve.
+				Given $n$ control points ($p_0, p_1, ..., p_n$) and a parameter $t$ de Casteljau's algorithm evaluates Bezier curves by recursively at each step: linearly interpolating between control point $p_i$ and $p_{i+1}$ and creates a new control point that is $t$ away from $p_i$ and $(1-t)$ away from $p_{i+1}$. This results in $n-1$ new control points. The process is then repeated on these new control points until there is only one control point left. This control point will lie on the Bezier curve. This whole process is repeated for varying values of $t$ where $t \in [0,1]$ to give us many points which lie on the Bezier curve at different positions, essentially recreating the curve.
 		  </ul>
 		  </p>
 	  

@@ -87,9 +87,9 @@
 	<body
 		style="padding-top: 50px;">
 		<div align="middle">
-		  <img src="images/beetlemesh.png" 
+		  <img src="images/volkswagon_epic.webp" 
 			  align="middle" 
-			  width="500vw" />
+			  width="1000vw" />
 		</div>
 		
 		<h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
@@ -100,9 +100,12 @@
 		<br />
 	  
 		<div>
-		  <h2 align="left">Overview</h2>
+		  <h2 align="center">Overview</h2>
 		  <p>
-			Shitter intro
+			In this project we go an introduction to Bezier curves and triangle meshes. We first implemented Bezier curves and Bezier surfaces with de Casteljau's algorithm 
+      then we worked on improving shading using area-weighted vertex normals. We then moved on to how do we go about flipping and splitting edges on triangle meshes. With the final conclusion of this homework being the implementation of loop subdivision for upsampling our meshes to make them smoother.
+      We then implemented all of the extra credit in this homework from support boundary edge splits to supporting loop subdivision on meshes with boundary edges and $sqrt{3}$-subdivision.
+      We found these extra credit tasks to be the most interesting and the results of them to be really satisfying when visualized on the meshes!
 		  </p>
 		</div>
 	  
@@ -111,10 +114,10 @@
 		<br />
 		<h2 align="middle">Part 1: Bezier Curves with 1D de Casteljau Subdivision</h2>
 	  
-		<h3>Overview</h3>
-		  <p>
+    <h3 align="middle">Overview</h3>
+		<p>
 			<ul>
-				Shid
+				Given $n$ control points ($p_0, p_1, ..., p_n$) and a parameter $t$ de Casteljau's algorithm evaluates Bezier curves by at each step: linearly interpolating between control point $p_i$ and $p_{i+1}$ and creates a new control point that is $t$ away from $p_i$ and $p_{i+1}$. This results in $n-1$ new control points. The process is then repeated on these new control points until there is only one control point left. This control point will lie on the Bezier curve. This whole process is repeated for varying values of $t$ where $t \in [0,1]$ to gives us many points which lie on the Bezier curve at different positions, essentially recreating the curve.
 		  </ul>
 		  </p>
 	  
@@ -122,7 +125,40 @@
 		  <blockquote><b>
 			Show screenshots of each step / level of the evaluation from the original control points down to the final evaluated point. Press E to step through. Toggle C to show the completed Bezier curve as well.
 		  </b></blockquote>
-
+      <div align="middle">
+        <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/step0.png" align="middle" width="300px" />
+            <figcaption>$\text{Bezier Curve At Step 0}$</figcaption>
+          </td>
+          <td>
+            <img src="images/step1.png" align="middle" width="300px" />
+            <figcaption>$\text{Bezier Curve At Step 1}$</figcaption>
+          </td>
+          <td>
+          <img src="images/step2.png" align="middle" width="300px" />
+          <figcaption>$\text{Bezier Curve At Step 2}$</figcaption>
+        </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/step3.png" align="middle" width="300px" />
+            <figcaption>$\text{Bezier Curve At Step 3}$</figcaption>
+          </td>
+          <td>
+            <img src="images/step4.png" align="middle" width="300px" />
+            <figcaption>$\text{Bezier Curve At Step 4}$</figcaption>
+          </td>
+          <td>
+            <img src="images/step5.png" align="middle" width="300px" />
+            <figcaption>$\text{Bezier Curve At Step 5}$</figcaption>
+          </td>
+        </tr>
+        </table>
+      
+      </div>
+      
 
 		  <blockquote><b>
 			Show a screenshot of a slightly different Bezier curve by moving the original control points around and modifying the parameter t via mouse scrolling.
@@ -130,15 +166,33 @@
 
 	  
 		  <div align="middle">
-			<table style="width:100%">
-			  <tr align="center">
-				<td>
-				  <img src="images/task1.png" align="middle" width="700vw" />
-				  <figcaption>Here is the rasterizer working on basic/test4.svg. An interesting thing, as evidenced by the pixel inspector, is how on the rightmost end of the red triangle it thins down to just a single pixel in thickness and actually oscillates between rasterizing parts of the triangle and not. </figcaption>
-				</td>
-			  </tr>
-			</table>
-		  </div>
+        <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/0t.png" align="middle" width="300px" />
+            <figcaption>$\text{t == 0}$</figcaption>
+          </td>
+          <td>
+            <img src="images/small_t.png" align="middle" width="300px" />
+            <figcaption>$\text{t Less Than 0.5}$</figcaption>
+          </td>
+          <td>
+          <img src="images/medium_t.png" align="middle" width="300px" />
+          <figcaption>$\text{t Around 0.5}$</figcaption>
+        </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/big_t.png" align="middle" width="300px" />
+            <figcaption>$\text{t Greater Than 0.5}$</figcaption>
+          </td>
+          <td>
+            <img src="images/1t.png" align="middle" width="300px" />
+            <figcaption>$\text{t == 1}$</figcaption>
+          </td>
+        </tr>
+        </table>
+
 	
 		  
 	  
@@ -150,7 +204,7 @@
 	   
 		<h3>Overview</h3>
 		<p>
-			Shid
+		de Casteljau's algorithm directly relates to Bezier surfaces as you can think of Bezier surfaces as a 3D extension of the 2D Bezier curve where now it is collection of control points distributed in 3D space. We can evaluate this surface with de Casteljau's algorithm by first evaluating the control points row-wise along the x-axis and varying our parameter $u \in [0,1]$ to evaluate each Bezier curve oriented in the x-direction. We then repeat this process in the y-direction where for every control point for a given $u$ we then apply de Casteljau's algorithm on this with the parameter $v \in [0,1]$ to give us the control point along that perpendicular Bezier curve. We implemented this by varying $u, v$ to give us the points in 3D space that lie on the Bezier surface. 
 		</p>
 	  
 		<blockquote><b>
@@ -161,23 +215,8 @@
 		  <table style="width:100%">
 			<tr align="center">
 			  <td>
-				  <img src="images/1ss.png" align="middle" width="400px" />
-				  <figcaption>$\text{Supersample Rate} = 1$</figcaption>
-			  </td>
-			  <td>
-				  <img src="images/4ss.png" align="middle" width="400px" />
-				  <figcaption>$\text{Supersample Rate} = 4$</figcaption>
-				  
-			  </td>
-			</tr>
-			<tr align="center">
-			  <!-- <td>
-				  <img src="images/9ss.png" align="middle" width="400px" />
-				  <figcaption>$\text{Supersample Rate} = 9$</figcaption>
-			  </td> -->
-			  <td>
-				  <img src="images/16ss.png" align="middle" width="400px" />
-				  <figcaption>$\text{Supersample Rate} = 16$</figcaption>
+				  <img src="images/teacup.png" align="middle" width="400px" />
+				  <figcaption>$\text{Teapot Bezier Surface}$</figcaption>
 			  </td>
 			</tr>
 		  </table>
@@ -315,14 +354,19 @@
 			<table style="width:100%">
 			  <tr align="center">
 				<td>
-					<img src="images/.png" align="middle" width="400px" />
+					<img src="images/boundary_no_split.png" align="middle" width="400px" />
 					<figcaption>$\text{Boundary Before Split}$</figcaption>
 				</td>
 				<td>
-					<img src="images/.png" align="middle" width="400px" />
-					<figcaption>$\text{Boundary After Split}$</figcaption>
+					<img src="images/boundary_split.png" align="middle" width="400px" />
+					<figcaption>$\text{Boundary After ßSplit}$</figcaption>
 					
 				</td>
+        <!-- <td>
+					<img src="images/boundary_split_flip.png" align="middle" width="400px" />
+					<figcaption>$\text{Boundary After Split Then Flip}$</figcaption>
+					
+				</td> -->
 			  </tr>
 			</table>
 		</div>
@@ -435,7 +479,7 @@
 		  </div>
 
 		<blockquote><b>
-			If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots.
+			If you have implemented any <b>extra credit</b> extensions, explain what you did and document how they work with screenshots.
 		</b></blockquote>
 
 		<h3>Supporting Boundary Edge Subdivision</h3>
@@ -449,22 +493,22 @@
 		  <table style="width:100%">
 			<tr align="center">
 			  <td>
-				  <img src="images/nearest.png" align="middle" width="400px" />
+				  <img src="images/boundary_no_us.png" align="middle" width="400px" />
 				  <figcaption>$\text{Boundary Mesh Level 0}$</figcaption>
 			  </td>
 			  <td>
-				  <img src="images/bilinear.png" align="middle" width="400px" />
+				  <img src="images/boundary_us1.png" align="middle" width="400px" />
 				  <figcaption>$\text{Boundary Mesh With Level 1 Loop Subdivision}$</figcaption>
 				  
 			  </td>
 			</tr>
 			<tr align="center">
 			  <td>
-				  <img src="images/trilinear.png" align="middle" width="400px" />
+				  <img src="images/boundary_us2.png" align="middle" width="400px" />
 				  <figcaption>$\text{Boundary Mesh With Level 2 Loop Subdivision}$</figcaption>
 			  </td>
 			  <td>
-				  <img src="images/aniso.png" align="middle" width="400px" />
+				  <img src="images/boundary_us3.png" align="middle" width="400px" />
 				  <figcaption>$\text{Boundary Mesh With Level 3 Loop Subdivision}$</figcaption>
 			  </td>
 			</tr>

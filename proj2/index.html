@@ -84,493 +84,426 @@
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
   </script>  
 </head>
+	<body
+		style="padding-top: 50px;">
+		<div align="middle">
+		  <img src="images/beetlemesh.png" 
+			  align="middle" 
+			  width="500vw" />
+		</div>
+		
+		<h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
+		<h1 align="left">Homework 2: Bezier Curves and Triangle Meshes</h1>
+		<h2 align="left">James Deloye, Karim El-Refai, cs-184-call-it-the-guppening</h2>
 
-<body
-  style="padding-top: 50px;">
-
-  <div align="middle">
-    <img src="images/triangle_dragon_banner.webp" 
-        align="middle" 
-        width="1000vw" />
-  </div>
-  
-  <h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
-  <h1 align="left">Homework 2: Mesh Editing</h1>
-  <h2 align="left">James Deloye, Karim El-Refai, cs-184-call-it-the-guppening</h2>
-  <h2 align="left">https://el-refai.github.io/the_guppening/proj2/index.html</h2>
-
-  <hr />
-  <br />
-
-  <div>
-    <h2 align="left">Overview</h2>
-    <p>
-      We implemented everything from de Casteljau's algorithm on both Bezier curves and Bezier surfaces to area-weighted vertex normals. 
-      We then worked on flipping and splitting edges on meshes including the support for splitting boundary edges.  
-
-      From there we got to deal with texture maps and rasterizing them in pixel-space with pixel sampling both using near-neighbors and bilinear sampling.
-      Leading us to the last required task which was figuring out which mipmap level to sample from and adding in trilinear interpolation across mipmap levels.
-      </p>
-      <p>
-      <br />
-      However, this was not everything we did as we worked on all pieces of extra credit including increasing the speed of our rasterization by <b>~80x</b> on average, jittered sampling, 
-      more GUI features allowing for seamless switching between sampling methods and lastly the implementation of anisotropic filtering according to the OpenGL specification.
-      <br />
-    </p>
-    <p>
-      We found this h
-    </p>
-  </div>
-
-
-
-  <hr />
-  <br />
-  <h2 align="middle">Task 1: Drawing Single-Color Triangles</h2>
-
-  <h3>Overview</h3>
-    <p>
-      <ul>
-      Our initial attempt at rasterizing the triangle begins by determining if the vertices given are done in a clockwise or counter-clockwise order. Next we find the tightest bounding box around the triangle. 
-      We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the norm vectors corresponding to the vectors of the triangle's vertices, i.e. given vertex A,B,C we calculate Norm(A->B), Norm(B->C), Norm(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. If all of the vertices are given clockwise then the point is inside the triangle if all the dot products are less than or equal to 0. If the vertices are given counter-clockwise then the point is inside the triangle if all of the dot products are greater than or equal to 0. We simply check to see if either of these conditions are met to determine if the point is in the triangle and fill the pixel if so.
-    </ul>
-    <ul>
-      This naive implementation is no worse than an implementation that checks each sample within the bounding box of the triangle as it is doing exactly that. Note that in the extra credit section below we make <b>substantial</b> improvements to our rasterization algorithm that severely outperforms the bounding box implementation. 
-    </ul>
-    </p>
-
-    
-    <blockquote><b>
-      Show a png screenshot of basic/test4.svg with the default viewing parameters and with the pixel inspector centered on an interesting part of the scene.
-    </b></blockquote>
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/task1.png" align="middle" width="700vw" />
-            <figcaption>Here is the rasterizer working on basic/test4.svg. An interesting thing, as evidenced by the pixel inspector, is how on the rightmost end of the red triangle it thins down to just a single pixel in thickness and actually oscillates between rasterizing parts of the triangle and not. </figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
+		<hr />
+		<br />
+	  
+		<div>
+		  <h2 align="left">Overview</h2>
+		  <p>
+			Shitter intro
+		  </p>
+		</div>
+	  
+	  
+		<hr />
+		<br />
+		<h2 align="middle">Part 1: Bezier Curves with 1D de Casteljau Subdivision</h2>
+	  
+		<h3>Overview</h3>
+		  <p>
+			<ul>
+				Shid
+		  </ul>
+		  </p>
+	  
+		  
+		  <blockquote><b>
+			Show screenshots of each step / level of the evaluation from the original control points down to the final evaluated point. Press E to step through. Toggle C to show the completed Bezier curve as well.
+		  </b></blockquote>
 
 
-    <blockquote><b>
-      Extra credit: Explain any special optimizations you did beyond simple bounding box triangle rasterization.
-    </b></blockquote>    
-    <p>
-      Before doing any optimization, we designed a consistent testing methodology in order to compare between rasterization methods. For each method, we rasterized each of the 4 basic SVGs 10 times at 16x supersampling and took the average of all of them. This was done in order to show the greatest possible differences in the rendering methods. We used the <code> std::chrono::steadyclock </code>to measure the time that it took to render all the triangles for maximum consistency and then found the speedup against the naiive baseline bounding box method. We did the optimizations in stages as follows:
-    </p>
-    <ol>
-      <li>
-        We started with just the basic bounding box algorithm implemented in the most naive way possible. We used this as our baseline that we compared other methods to. 
-      </li>
-      <li>
-      We began by removing unnecessary computations, like repeated square roots for supersampling computations and the subtractions (like $y_1-y_0$) that were previously repeated for checking if each pixel was inside the triangle. Though this does result in more memory accesses, assuming good caching, there will be less operations in total. These results are in the second column below. 
-      </li>
-      <li>
-        From this point on, we approached the rendering in a completely different method than was done previously. Instead of trying individual pixels to determine whether they were in the triangle, we started at the minimum $y$ value in the triangle, found the pixels at which the triangle's edges intercepted that $y$ value, then used the <code> std::fill</code> function to fill all the values between the two (sub)pixels. This was done until the entire triangle had been scanned. Technically, this was done in two phases, first where the triangle was widening and then when it was thinning, identifying the appropriate right and left edges using information about the orientation of the vertices. The loops were done with a while loop method, as this was simplest to implement intially. These results are in the third column below.
-      </li>
-      <li>
-        In preparation for a final optimization using multithreading in order to parallelize the triangle filling loops, we switched the while loops to for loops. While it turned out that the overhead of spawning the threads was too high for the relatively small triangles, the for loops did slightly speed up the overall computation, likely due to assembly and branch prediction compiler optimizations. These results are in the fourth column below.
-      </li>
-    </ol>
-    <head>
-      <title>Performance Table</title>
-      <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        table, th, td {
-          border: 1px solid black;
-        }
-        th, td {
-          padding: 8px;
-          text-align: center;
-        }
-        th {
-          background-color: #f2f2f2;
-        }
-      </style>
-      </head>
-      <div align="middle">
-      
-      <table>
-        <tr>
-          <th>SVG File</th>
-          <th>Slow (naive with bounding box)</th>
-          <th>Fast (repetitive computations removed)</th>
-          <th>Faster (new algorithm)</th>
-          <th>Fastest (for loop)</th>
-        </tr>
-        <tr>
-          <th>Dragon Time (ns)</th>
-          <td>6464845470</td>
-          <td>1461548720</td>
-          <td>49709560</td>
-          <td>46949350</td>
-        </tr>
-        <tr>
-          <th>Dragon Speedup </th>
-          <td>1</td>
-          <td>4.423284275</td>
-          <td>130.0523575</td>
-          <td>137.6982955</td>
-        </tr>
-        <tr>
-          <th>Triangles Time (ns)</th>
-          <td>243896120</td>
-          <td>60255410</td>
-          <td>4316990</td>
-          <td>3689590</td>
-        </tr>
-        <tr>
-          <th>Triangles Speedup</th>
-          <td>1</td>
-          <td>4.047704928</td>
-          <td>56.49679985</td>
-          <td>66.10385436</td>
-        </tr>
-        <tr>
-          <th>Cube Time (ns)</th>
-          <td>451933440</td>
-          <td>129664750</td>
-          <td>10191510</td>
-          <td>9694460</td>
-        </tr>
-        <tr>
-          <th>Cube Speedup</th>
-          <td>1</td>
-          <td>3.485399386</td>
-          <td>44.34410995</td>
-          <td>46.61770124</td>
-        </tr>
-        <tr>
-          <th>Stars and Hexagons Time (ns)</th>
-          <td>916919410</td>
-          <td>223390930</td>
-          <td>11490170</td>
-          <td>11520110</td>
-        </tr>
-        <tr>
-          <th>Stars and Hexagons Speedup</th>
-          <td>1</td>
-          <td>4.104550753</td>
-          <td>79.80033455</td>
-          <td>79.59293878</td>
-        </tr>
-      </table>
-      
-    </div>
-    <p>As can be seen above, simply removing unnecesary computations was enough to speed up overall rasterization by 3-4x. However, the most significant jump came when using the new algorithm, 
-      which allowed for a speedup over baseline of two orders of magnitude, up to <b>over 130x</b >. In the future, these algorithms could be further sped up by using effective multiprocessing to simultaneously render triangles. 
-    </p>
+		  <blockquote><b>
+			Show a screenshot of a slightly different Bezier curve by moving the original control points around and modifying the parameter t via mouse scrolling.
+		  </b></blockquote>
 
-    
+	  
+		  <div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/task1.png" align="middle" width="700vw" />
+				  <figcaption>Here is the rasterizer working on basic/test4.svg. An interesting thing, as evidenced by the pixel inspector, is how on the rightmost end of the red triangle it thins down to just a single pixel in thickness and actually oscillates between rasterizing parts of the triangle and not. </figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+	
+		  
+	  
+		<br />
+		<hr />
+		<br />
+		<h2 align="middle">Part 2: Bezier Surfaces with Separable 1D de Casteljau</h2>
+	  
+	   
+		<h3>Overview</h3>
+		<p>
+			Shid
+		</p>
+	  
+		<blockquote><b>
+			Show a screenshot of bez/teapot.bez (not .dae) evaluated by your implementation.
+		  </b></blockquote>
+	  
+		<div align="middle">
+		  <table style="width:100%">
+			<tr align="center">
+			  <td>
+				  <img src="images/1ss.png" align="middle" width="400px" />
+				  <figcaption>$\text{Supersample Rate} = 1$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/4ss.png" align="middle" width="400px" />
+				  <figcaption>$\text{Supersample Rate} = 4$</figcaption>
+				  
+			  </td>
+			</tr>
+			<tr align="center">
+			  <!-- <td>
+				  <img src="images/9ss.png" align="middle" width="400px" />
+				  <figcaption>$\text{Supersample Rate} = 9$</figcaption>
+			  </td> -->
+			  <td>
+				  <img src="images/16ss.png" align="middle" width="400px" />
+				  <figcaption>$\text{Supersample Rate} = 16$</figcaption>
+			  </td>
+			</tr>
+		  </table>
+	  
+		</div>
+	
+		<br />
+		<hr />
+		<br />
+	  
+		<h2 align="middle">Part 3: Area-Weighted Vertex Normals</h2>
+		
+		<h3>Overview</h3>
+		<p>
+			Shid
+		</p>
+		
+		<blockquote><b>
+			Show screenshots of dae/teapot.dae (not .bez) comparing teapot shading with and without vertex normals. Use Q to toggle default flat shading and Phong shading.
+		</b></blockquote>
+	  
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/robot_meditate.png" align="middle" width="700vw" />
+				  <figcaption> Here we have the cubeman crossing its knees while have its arms outstretched. The idea was to go for a more meditative pose with the cubeman while also incorporating a rainbow-like gradient across each major body part.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+	  
+		<br />
+		<hr />
+		<br />
+	  
+		<h2 align="middle">Part 4: Edge Flips</h2>
+		</a>
+		<h3>Overview</h3>
+		<p>
+		  <ul>
+			To implement edge flips in our mesh, we started by making drawings like the ones suggested in the spec, such that we have a ground truth to debug against. When the function is called, we first check that the edge is not on a boundary adn then started by getting pointers (or rather iters) to each halfedge, edge, face, and vertex that surrounded the edge being flipped. From there, all we had to do was look to our drawings and fill the new corresponding pointers for halfedges, faces, edges, and vertices, while ensuring that the original edge has been flipped to the correct orientation. Outside of our use of the drawing method, we didn't find that we needed any special methods to complete this task.
+		</ul>
+	</p>
+	<blockquote><b>
+		Show screenshots of a mesh before and after some edge flips.
+	  </b></blockquote>											
+		<div align="middle">
+		  <table style="width:100%">
+			<tr align="center">
+			  <td>
+				  <img src="images/before.png" align="middle" width="400px" />
+				  <figcaption>Teapot Mesh Before Flips</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/flipped.png" align="middle" width="400px" />
+				  <figcaption>Teapot Mesh After Flips</figcaption>
+			  </td>
+			</tr>
+		  </table>
+		</div>
 
-  <br />
-  <hr />
-  <br />
-  <h2 align="middle">Task 2: Antialiasing by Supersampling</h2>
+		<p>
+			Since our implementation worked on the first try, we luckily didn't end up needing to do any debugging!
+		</p>
+		
+	  
+	  
+		<br />
+		<hr />
+		<br />
+	  
+		<h2 align="middle">Part 5: Edge Splits</h2>
+		</a>
+	  
+		<h3>Overview</h3>
+		<p>
+		  <ul>
+			Like the edge flips, we again by making drawings like the ones suggested in the spec, this time noting down the new halfedges, edges, faces, and vertices that would need to be made. We then went about implementing the function similarly, by first getting pointers to the appropriate elements and then creating the new elements that would be needed to split the edge. From there we calculated the proper edge midpoint to get the position of the new vertex and finally set all the applicable pointers for halfedges, edges, faces, and vertices. As a debugging trick, we were sure to use the check_for functions which allowed us to check and make sure that each element was pointing to and pointed to by the correct elements. 
+			</ul>
+		</p>
+		  <blockquote><b>
+			Show screenshots of a mesh before and after some edge splits.
+		</b></blockquote>
+	  
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/before.png" align="middle" width="400px" />
+					<figcaption>$\text{Before Splits}$</figcaption>
+				</td>
+				<td>
+					<img src="images/splitmesh.png" align="middle" width="400px" />
+					<figcaption>$\text{After Splits}$</figcaption>
+					
+				</td>
+			  </tr>
+			</table>
+		  </div>
 
- 
-  <h3>Overview</h3>
-  <p>
-    In order to implement supersampling, the first thing done was to change the format of our sample buffer. Instead of just one color per pixel, we added an element for every single subpixel, and arranged them in a 1D array, with all of row 1 coming after all of row 0 and so on. 
-    We then created a formula that would allow for translation between the actual coordinates of the SVG and the corresponding element in our sample buffer. Thus when iterating through every subpixel in the triangle's bounding box, we calculated the color of the subpixel and saved the value to the appropriate sample buffer element. 
-    Once the sample buffer had been filled, in the <code>resolve_to_framebuffer</code> function we averaged all the colors in each pixel in order to get that pixel's final value and wrote this value to the framebuffer. 
-    This averaging reduced the aliasing that was present in the edges of the triangles, and to the naked eye virtually eliminated it at 16x. 
-  </p>
+		<blockquote><b>
+			Show screenshots of a mesh before and after a combination of both edge splits and edge flips.
+		</b></blockquote>
 
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/splitmesh.png" align="middle" width="400px" />
+					<figcaption>$\text{After Splits Before Flips}$</figcaption>
+				</td>
+				<td>
+					<img src="images/flipsplit.png" align="middle" width="400px" />
+					<figcaption>$\text{After Flips}$</figcaption>
+					
+				</td>
+			  </tr>
+			</table>
+		  </div>
 
-  <div align="middle">
-    <table style="width:100%">
-      <tr align="center">
-        <td>
-            <img src="images/1ss.png" align="middle" width="400px" />
-            <figcaption>$\text{Supersample Rate} = 1$</figcaption>
-        </td>
-        <td>
-            <img src="images/4ss.png" align="middle" width="400px" />
-            <figcaption>$\text{Supersample Rate} = 4$</figcaption>
-            
-        </td>
-      </tr>
-      <tr align="center">
-        <!-- <td>
-            <img src="images/9ss.png" align="middle" width="400px" />
-            <figcaption>$\text{Supersample Rate} = 9$</figcaption>
-        </td> -->
-        <td>
-            <img src="images/16ss.png" align="middle" width="400px" />
-            <figcaption>$\text{Supersample Rate} = 16$</figcaption>
-        </td>
-      </tr>
-    </table>
+		  <p>
+			Unlike the previous task, we (unfortunately) had an eventful debugging journey. When we first tried to run the function, we saw that nothing rendered at all, which suggested to us that there was some inconsistency with our updated pointers. We checked all the updates against our drawings again and again, but were still unable to noice any issues. We at last resorted to using the check_for function, and finally noticed that one of our half edges had two twins, and we knew we had found our culprit. For a single half edge, we had accidentally switched around the next and twin half edges, resulting in our mesh being unable to render. After this though, everything went smoothly. 
+		  </p>
 
-  </div>
+		<blockquote><b>
+			If you have implemented support for boundary edges, show screenshots of your implementation properly handling split operations on boundary edges.
+		</b></blockquote>
 
-    <p>
-      We can see that supersample rate has a significant impact on the quality of the rendering. At 1x sampling, or rendering with no supersampling, we can see that particular in thin areas 
-      the triangles are aliased and segmented because the area sampled was not in the thin area of the triangle. However, as the supersample rate gets increased, at least one subpixel is within this thin area, averaging out to a more accurate rendering of the trangle's edges. 
-      As a result, at higher sampling rates, the triangles do not have any major visible aliasing, particularly when zoomed out at 16x. 
-    </p>
+		  <p>
+		   To support boundary edges, we again made drawings, this time with just a single triangle on a boundary. The tricky part for this extra credit was figuring out the correct method for splitting the halfedge on the boundary, and we settled on making the new halfedge the next edge of the original boundary edge, making sure to set its next and face pointers to be the same as those of the original existing edge. From there everything worked as expected, and we were able to split boundary edges without any need for debugging. 
+		  </p>
+	  
+		  <div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/.png" align="middle" width="400px" />
+					<figcaption>$\text{Boundary Before Split}$</figcaption>
+				</td>
+				<td>
+					<img src="images/.png" align="middle" width="400px" />
+					<figcaption>$\text{Boundary After Split}$</figcaption>
+					
+				</td>
+			  </tr>
+			</table>
+		</div>
 
-    <blockquote><b>
-      Extra Credit: Jitter Supersampling
-    </b></blockquote>
+		<hr />
+	  
+	  
+	  
+		<h2 align="middle">Part 6: Loop Subdivision for Mesh Upsampling</h2>
+		<h3>Overview</h3>
+		<p>
+			<ul>
+			To perform loop upsampling, we followed the rough outline provided by the spec. We started by iterating through all the vertices in the mesh and for each one set its isNew value to false and then computed the new position for the vertex via the equations provided in lecture. Next we did something similar for all the edges in the mesh, setting their isNew value to false and calculating the position of the new vertex that will be in the middle of the edge. Next we iterated through all the edges again, this time splitting each edge which had isNew = False and setting the newPosition value of the outputted vertex to be the newposition value of the edge that it was split from. We also modified our splitting function and edge class in two ways. First, we set all the new edges made from the splitting to have the isNew attribute be true. Second, we added an isValid attribute, which basically indiciated whether the edge was valid to be flipped afterwards. We only made this true in the splitting function for edges that spanned across the faces (instead of the new edge edge that went along the old edge being split). In the penultimate loop, we iterate through every single edge, and for each that is an isValid attribute set to true and is connected to one new vertex and one old vertex, we flip the edge. Lastly, we iterate through all the vertices, and set their position to their newPosition value, which was computed earlier. The isValid attribute proved to be critical to ensuring that we didn't flip unnecesary edges, as before we did this we had bugs with our meshes having incorrectly flipped edges. 
+		</ul>
+		</p>
+	  
+		<div align="middle">
+		  <table style="width:100%">
+			<tr align="center">
+			  <td>
+				  <img src="images/cubel0.png" align="middle" width="300px" />
+				  <figcaption>$\text{Cube With No Subdivision}$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/cubel1.png" align="middle" width="300px" />
+				  <figcaption>$\text{Cube With Level 1 Loop Subdivision}$</figcaption>
+			  </td>
+			  <td>
+				<img src="images/cubel2.png" align="middle" width="300px" />
+				<figcaption>$\text{Cube With Level 2 Loop Subdivision}$</figcaption>
+			</td>
+			</tr>
+			<tr align="center">
+				<td>
+					<img src="images/cubel3.png" align="middle" width="300px" />
+					<figcaption>$\text{Cube With Level 3 Loop Subdivision}$</figcaption>
+				</td>
+				<td>
+					<img src="images/cubel4.png" align="middle" width="300px" />
+					<figcaption>$\text{Cube With Level 4 Loop Subdivision}$</figcaption>
+				</td>
+			</tr>
+		  </table>
+	  
+		</div>
 
-    <p>
-      In addition to traditional grid supersampling, we also implemented jitter supersampling. This was easy to slot into our current implementation, and instead of taking the center of each subgrid cell, we took a uniform random spot within that grid cell and sampled that. Below are some comparisons between the two, supersampled at 4x for the triangles and 9x for the map.  
-    </p>
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-              <img src="images/uniform.png" align="middle" width="400px" />
-              <figcaption>$\text{Grid Sampled Triangles}$</figcaption>
-          </td>
-          <td>
-              <img src="images/jittered.png" align="middle" width="400px" />
-              <figcaption>$\text{Jitter Sampled Triangles}$</figcaption>
+	  
+		<blockquote><b>
+			Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?
+		</b></blockquote>
 
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-              <img src="images/gridmap.png" align="middle" width="400px" />
-              <figcaption>$\text{Grid Sampled Map}$</figcaption>
-          </td>
-          <td>
-              <img src="images/jittermap.png" align="middle" width="400px" />
-              <figcaption>$\text{Jitter Sampled Map}$</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
+		<p>
+			Looking at the screenshots above, we can see that sharp corners tend to add a bump to the mesh that does not get well smoothed out, even after multiple subdivisions. By pre-splittng some edges, this essentially provides more polygons around these sharp areas, allowing for a greater degree of smoothing when the Loop subdivision is performed. Below, the edges around the upper right corner of the cube have been pre-split. Upon subdivision, you can see that compared to the lower left corner, the cube is a lot more smooth and rounded. Thus we can see that when we are dealing with sharp differences in the behavior of a mesh, by increasing the number of triangles in the area subdivision will be more effective and smoothing sharp regions. 
+		</p>
 
-    <p>
-      As can be seen, in areas where there is normally aliasing or discontinuities in the grid sampled rendering, with jitter sampling the edges blend more clearly. 
-      This is due to the fact that the jittered sampling may sample parts of the background or interior of lines, leading to more blended looking pixel. 
-      Though at higher sampling rates they tend to converge in quality, in the case that they are both at a lower rate jittered may outperform grid sampling due to its greater chance of blending around edges. 
-    </p>
-  <br />
-  <hr />
-  <br />
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/precubel0.png" align="middle" width="500px" />
+					<figcaption>$\text{Preprocessed Cube With No Subdivision}$</figcaption>
+				</td>
+				<td>
+					<img src="images/precubel1.png" align="middle" width="500px" />
+					<figcaption>$\text{Preprocessed Cube With Level 1 Loop Subdivision}$</figcaption>
+				</td>
+			  </tr>
+			  <tr align="center">
+				  <td>
+					  <img src="images/precubel2.png" align="middle" width="500px" />
+					  <figcaption>$\text{Preprocessed Cube With Level 2 Loop Subdivision}$</figcaption>
+				  </td>
+				  <td>
+					  <img src="images/precubel3.png" align="middle" width="500px" />
+					  <figcaption>$\text{Preprocessed Cube With Level 3 Loop Subdivision}$</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		
+		  </div>
 
-  <h2 align="middle">Task 3: Transforms</h2>
-  
-  <h3>Overview</h3>
-  <p>
-    For task 3 it was relatively straightforward to find the appropriate matrices for rotation, scaling, and translation. Since we are working in 2D space our matrix in homogenous coordinates will be 3x3 with the top-left 2x2 of the matrix corresponding to the rotation/scaling of the object and the last 2 elements of the first 2 rows corresponding to the translation vector.  
-  </p>
-  
-  <blockquote><b>
-    Create an updated version of svg/transforms/robot.svg with cubeman doing something more interesting, like waving or running. Feel free to change his colors or proportions to suit your creativity. Save your svg file as my_robot.svg in your docs/ directory and show a png screenshot of your rendered drawing in your write-up. Explain what you were trying to do with cubeman in words.
-  </b></blockquote>
+		<blockquote><b>
+			Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects
+		</b></blockquote>
 
-  <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/robot_meditate.png" align="middle" width="700vw" />
-            <figcaption> Here we have the cubeman crossing its knees while have its arms outstretched. The idea was to go for a more meditative pose with the cubeman while also incorporating a rainbow-like gradient across each major body part.</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
+		<p>
+			In the original cube, the sides of the cubes are asymmetric in terms of the triangle positioning. Two corners are connected by edges and two are not. This leads to the asymmetry and almost pear-shaped (no pun intended) look of the cube after subdivision. By splitting this central edge on each side, now there is an edge going to each corner on each side of the cube, making the cube fully symmetric. Once we've subdivided with this change, the cube remains symmetric afterwards and retains a more uniform smoothed shape. 
+		</p>
 
-  <br />
-  <hr />
-  <br />
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/symmetriccube.png" align="middle" width="500px" />
+					<figcaption>$\text{Symmetric Cube With No Subdivision}$</figcaption>
+				</td>
+				<td>
+					<img src="images/symmetriccubeL2.png" align="middle" width="500px" />
+					<figcaption>$\text{Symmetric Cube With Level 2 Loop Subdivision}$</figcaption>
+				</td>
+			  </tr>
+			  <tr align="center">
+				  <td>
+					  <img src="images/symmetriccubeL4.png" align="middle" width="500px" />
+					  <figcaption>$\text{Symmetric Cube With Level 4 Loop Subdivision}$</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		
+		  </div>
 
-  <h2 align="middle">Task 4: Barycentric Coordinates</h2>
-  </a>
-  <h3>Overview</h3>
-  <p>
-    <ul>Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal one or else the point will not lie within the triangle. A clear example of this is when we consider a vertex itself. 
-    In this scenario the coefficient corresponding to that vertex is 1 and all other coefficients are 0. If this were not the case, say that the coefficient for the vertex was greater than 1 then the point would actually be past the vertex and outside of the triangle. 
-    </ul>
-    <ul> With barycentric coordinates, color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points to set the color of the pixel equal to the linear combination of the colors of the vertices. Take the color triangle below as an example. Each vertex is one of red, green, or blue (the colors of the vertices). The color of each point in the triangle is just a linear combination of red, green, and blue.
-     As the point gets closer to a given vertex we see it taking on more of that vertex's color. 
-  </ul>
-    </p>
+		<blockquote><b>
+			If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots.
+		</b></blockquote>
 
-  <div align="middle">
-    <table style="width:100%">
-      <tr align="center">
-        <td>
-            <img src="images/bary_tri.png" align="middle" width="400px" />
-            <figcaption>Color Triangle</figcaption>
-        </td>
-        <td>
-            <img src="images/test7.png" align="middle" width="400px" />
-            <figcaption>Color Wheel</figcaption>
-        </td>
-      </tr>
-    </table>
-  </div>
-  
+		<h3>Supporting Boundary Edge Subdivision</h3>
+		<p>
+			<ul>
+				To support boundary edge subdivision, we needed to find new equations for calculating the new positions of boundary vertices and the positions of vertices in split boundary edges. Since we want to keep boundaries very close to what they were before, according to the original Loop subdivision algorithm we do a weighted average of only the other vertices along the edge. For existing vertices, this was $\frac 34$ of the original vertex's position along with $\frac 14$ of the two vertices on either side of it. For vertices that came from boundary edge splits, we simply took the average of the two vertices that were on either side of the original edge. Since we had already implemented boundary edge splits, this was all we had to do, and the rest was compatible with our original Loop subdivision implementation.
+			</ul>
+		</p>
 
+		<div align="middle">
+		  <table style="width:100%">
+			<tr align="center">
+			  <td>
+				  <img src="images/nearest.png" align="middle" width="400px" />
+				  <figcaption>$\text{Boundary Mesh Level 0}$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/bilinear.png" align="middle" width="400px" />
+				  <figcaption>$\text{Boundary Mesh With Level 1 Loop Subdivision}$</figcaption>
+				  
+			  </td>
+			</tr>
+			<tr align="center">
+			  <td>
+				  <img src="images/trilinear.png" align="middle" width="400px" />
+				  <figcaption>$\text{Boundary Mesh With Level 2 Loop Subdivision}$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/aniso.png" align="middle" width="400px" />
+				  <figcaption>$\text{Boundary Mesh With Level 3 Loop Subdivision}$</figcaption>
+			  </td>
+			</tr>
+		  </table>
+		</div>
 
-  <br />
-  <hr />
-  <br />
+		<h3>Adding $\sqrt 3$ Subdivision</h3>
+		<p>
+			In addition to Loop subdivision, we also implemented $\sqrt 3$ subdivision. Instead of splitting edges, this method splits faces into three separate faces, adding an edge between a central vertex that is the average of the original vertex positions and each of the original vertices surrounding the face. Then the original edges get flipped to maintain a regular structure. And the vertex positions are updated. To do this, we just had to implement a face split function, and then created a subdivision function very similar to that of Loop subdivision, replacing the vertex recomputation function with the one from the original root 3 subdivision paper and replacing edge splits with face splits. From the images below, one can see that this method is a lot better at smoothing out sharp edges, and by the time level 4 subdivision is reached, the mesh is almost spherical, save for a few extrordinary vertices.
+		</p>
 
-  <h2 align="middle">Task 5: "Pixel Sampling" for Texture Mapping</h2>
-  </a>
-
-  <h3>Overview</h3>
-  <p>
-    <ul>
-    Pixel sampling is a method in which we decide which texel in the texture map should be sampled for the value of a given pixel in the image. This is determined by using the barycentric coordinates of the pixel in the image and then scaling these coordinates according to the resolution of the texture map in order to get the proper barycentric coords for the corresponding texel in the texture map. 
-    It is often that the barycentric coords of the texel do not exactly align to the coordinates of any given texel center and this where we must decide which texel to sample. 
-  </ul>
-    <ul>Nearest neighbor sampling will choose the nearest texel to the given coordinates while bilinear interpolation will look at the four closest texels to the point. These points are then bilinearly interpolated (linearly interpolated horizontally and vertically) to get a linear combination of the texture to sample for the pixel.   
-      </ul>
-  </p>
-    <blockquote><b>
-      Check out the svg files in the svg/texmap/ directory. Use the pixel inspector to find a good example of where bilinear sampling clearly defeats nearest sampling. Show and compare four png screenshots using nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear
-    </b></blockquote>
-
-    <p>
-     
-    </p>
-
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-              <img src="images/nn_1ss.png" align="middle" width="400px" />
-              <figcaption>$\text{Nearest Neighbor Supersample Rate 1}$</figcaption>
-          </td>
-          <td>
-              <img src="images/bi_1ss.png" align="middle" width="400px" />
-              <figcaption>$\text{Bilinear Supersample Rate 1}$</figcaption>
-              
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-              <img src="images/nn_16ss.png" align="middle" width="400px" />
-              <figcaption>$\text{Nearest Neighbor Supersample Rate 16}$</figcaption>
-          </td>
-          <td>
-              <img src="images/bi_16ss.png" align="middle" width="400px" />
-              <figcaption>$\text{Bilinear Supersample Rate 16}$</figcaption>
-          </td>
-        </tr>
-      </table>
-
-    </div>
-    <blockquote>
-    Comment on the relative differences. Discuss when there will be a large difference between the two methods and why.
-  </blockquote>
-    <p>
-      When the supersample rate is low we find that there is a substantial difference in the smoothness of nearest neighbors vs bilinear sampling with bilinear pixel sampling. 
-      This is due to the fact that nearest neighbors will only select one texel to sample from while bilinear sampling is able to average across four texels which include both the grid and the ocean in the cause of the pixel inspector, reducing discontinuities.
-      When supersampling is increased to 16 samples per pixel the difference between nearest neighbor and bilinear is reduced however there are still more noticeable high and low points in nearest neighbor.
-    </p>
-  <hr />
-
-
-
-  <h2 align="middle">Task 6: "Level Sampling" with Mipmaps for Texture Mapping</h2>
-  <p>
-    Level sampling is a method in which we decide the mipmap level to sample from based on how a sample is changing in the x or y direction. Mipmaps store a series of downsampled versions of the original texture that filter out high frequencies, allowing for less aliasing for textures that are compressed (or viewed from a distance). 
-    We select the mipmap level by estimating the texture footprint at that (sub)pixel by using the $(u,v)$ coordinate distances between our point $(x, y)$ and that of the neighboring points $(x, y+1)$ and $(x+1, y)$. From this we determine the mipmap level by taking the log of the max of these distances. When performing our texture mapping, we sample from the mipmap level that corresponds to the calculated level. 
-  </p>
-
-  <p>
-    Pixel sampling, level sampling, and supersampling all present possible methods for dealing with aliasing when rendering textures. 
-    Pixel sampling allows for the bridging of the gap between our texture space and screen space by linearly interpolating between texels to get our pixel color. This is relatively low cost, not using any extra memory for storage while using a modest amount of computation in the form of 3 Lerp operations. 
-    However, compared to nearest pixel sampling it typically does not provide significant antialiasing benefits. 
-    Level sampling significantly improves antialiasing benefits by using mipmaps in order to sample from a downsampled texture appropriate to the size of the texture footprint at a given pixel. This improves antialiasing in compressed textures far away because the high frequencies are filtered out. However, creating a mipmap requires $\frac 43$ of the memory of the original texture. In addition, there is additional computational overhead for determining the mipmap level, since you need to convert two more $(x, y)$ coordinates to $(u, v)$ coordinates and then do additional calculations with those values. However, this gives excellent antialiasing performance that adapts to the position of the texture on the screen, and combined with bilinear pixel sampling gives trilinear filtering which offers excellent antialiasing behavior. 
-    Supersampling averages the values of some number of samples within a given pixel, essentially multiplying the per-pixel computation by however many subsamples that there are, which of course is quite computationally expensive. In addition, you need $n$ times the memory to store the sample buffer, where $n$ is the number of subsamples per pixel. However, this is extremely effective at reducing antialiasing in almost all cases, and is a very reliable method when computation time and memory isn't a concern. Combined with the other methods above, it prevents a critical component to any antialiasing toolkit. 
-  </p>
-  <div align="middle">
-    <table style="width:100%">
-      <tr align="center">
-        <td>
-            <img src="images/l0_pbi.png" align="middle" width="500px" />
-            <figcaption>$\text{Level Zero Billinear Sampling}$</figcaption>
-        </td>
-        <td>
-            <img src="images/l0_pnear.png" align="middle" width="500px" />
-            <figcaption>$\text{Level Zero Nearest Sampling}$</figcaption>
-            
-        </td>
-      </tr>
-      <tr align="center">
-        <td>
-            <img src="images/lnear_pbi.png" align="middle" width="500px" />
-            <figcaption>$\text{Nearest Level Bilinear Sampling}$</figcaption>
-        </td>
-        <td>
-            <img src="images/lnear_pnear.png" align="middle" width="500px" />
-            <figcaption>$\text{Nearest Level Nearest Sampling}$</figcaption>
-        </td>
-      </tr>
-      <tr align="center">
-        <td>
-            <img src="images/lbi_pbi.png" align="middle" width="500px" />
-            <figcaption>$\text{Trilinear Level Bilinear Sampling}$</figcaption>
-        </td>
-        <td>
-            <img src="images/lbi_pnear.png" align="middle" width="500px" />
-            <figcaption>$\text{Linear Level Nearest Sampling}$</figcaption>
-        </td>
-      </tr>
-    </table>
-
-  </div>
-  <p>
-    We implemented trilinear sampling by taking the weighted sum of the texels in the adjacent texture maps. This produces results that were blurrier than both level zero and nearest neighbors texture sampling.   
-  </p>
-
-  <blockquote><b>
-    Extra credit: If you implemented any extra filtering methods, describe them and show comparisons between your results with the other above methods.
-  </b></blockquote>
-
-  <p>
-    In addition to the required methods, we also implemented anisotropic filtering. To do this, we used the description of the anisotropic filter in the <a href="https://registry.khronos.org/OpenGL/extensions/EXT/EXT_texture_filter_anisotropic.txt">OpenGL Anisotropic Filter Specification</a>.
-    This involved selecting the mipmap level based on the minor (smaller) axis of the derivatives of the texture, while sampling along a number of points along the major axis dependent on the magnitude of the derivative. In effect, this better accounts for points which have a very high frequency change in one direction but not in another, allowing for a better averaging of the texture value at that corresponding (sub)pixel.  
-  </p>
-
-  <div align="middle">
-    <table style="width:100%">
-      <tr align="center">
-        <td>
-            <img src="images/nearest.png" align="middle" width="400px" />
-            <figcaption>$\text{Nearest Neighbor Supersample Rate 16 Level 0}$</figcaption>
-        </td>
-        <td>
-            <img src="images/bilinear.png" align="middle" width="400px" />
-            <figcaption>$\text{Bilinear Supersample Rate 16 Level 0}$</figcaption>
-            
-        </td>
-      </tr>
-      <tr align="center">
-        <td>
-            <img src="images/trilinear.png" align="middle" width="400px" />
-            <figcaption>$\text{Trilinear Supersample Rate 16}$</figcaption>
-        </td>
-        <td>
-            <img src="images/aniso.png" align="middle" width="400px" />
-            <figcaption>$\text{Anisotropic Supersample Rate 16}$</figcaption>
-        </td>
-      </tr>
-    </table>
-
-   <p align="left">
-     From these, we can see that the anisotropic filtering better captures detail by accounting for how quickly the texture changes 
-     in either the $x$ or $y$ direction. We can see this in how anisotropic filtering captures the graunular details of the texture, while others tend to blur them out. 
-     Performance-wise, anisotropic filtering takes around 1.3x as long as nearest pixel and bilinear filtering, while it takes around 1.2x as long as trilinear filtering. 
-     Depending on the application, this difference may be worth it depending on the visual fidelity required.
-   </p>
-
-</body>
-</html>
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/cubel0.png" align="middle" width="300px" />
+					<figcaption>$\text{Cube With No Subdivision}$</figcaption>
+				</td>
+				<td>
+					<img src="images/rootl1.png" align="middle" width="300px" />
+					<figcaption>$\text{Cube With Level 1 $\sqrt 3$ Subdivision}$</figcaption>
+				</td>
+				<td>
+				  <img src="images/rootl2.png" align="middle" width="300px" />
+				  <figcaption>$\text{Cube With Level 2 $\sqrt 3$ Subdivision}$</figcaption>
+			  </td>
+			  </tr>
+			  <tr align="center">
+				  <td>
+					  <img src="images/rootl3.png" align="middle" width="300px" />
+					  <figcaption>$\text{Cube With Level 3 $\sqrt 3$ Subdivision}$</figcaption>
+				  </td>
+				  <td>
+					  <img src="images/rootl4.png" align="middle" width="300px" />
+					  <figcaption>$\text{Cube With Level 4 $\sqrt 3$ Subdivision}$</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		  </div>
+	  </body>
+	  </html>
+	  

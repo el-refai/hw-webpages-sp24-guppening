@@ -95,5 +95,293 @@
 		<h1 align="left">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
 		<h1 align="left">Homework 2: Bezier Curves and Triangle Meshes</h1>
 		<h2 align="left">James Deloye, Karim El-Refai, cs-184-call-it-the-guppening</h2>
-	</body>
-</html>
+
+		<hr />
+		<br />
+	  
+		<div>
+		  <h2 align="left">Overview</h2>
+		  <p>
+			Shitter intro
+		  </p>
+		</div>
+	  
+	  
+		<hr />
+		<br />
+		<h2 align="middle">Part 1: Bezier Curves with 1D de Casteljau Subdivision</h2>
+	  
+		<h3>Overview</h3>
+		  <p>
+			<ul>
+				Shid
+		  </ul>
+		  </p>
+	  
+		  
+		  <blockquote><b>
+			Show screenshots of each step / level of the evaluation from the original control points down to the final evaluated point. Press E to step through. Toggle C to show the completed Bezier curve as well.
+		  </b></blockquote>
+
+
+		  <blockquote><b>
+			Show a screenshot of a slightly different Bezier curve by moving the original control points around and modifying the parameter t via mouse scrolling.
+		  </b></blockquote>
+
+	  
+		  <div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/task1.png" align="middle" width="700vw" />
+				  <figcaption>Here is the rasterizer working on basic/test4.svg. An interesting thing, as evidenced by the pixel inspector, is how on the rightmost end of the red triangle it thins down to just a single pixel in thickness and actually oscillates between rasterizing parts of the triangle and not. </figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+	
+		  
+	  
+		<br />
+		<hr />
+		<br />
+		<h2 align="middle">Part 2: Bezier Surfaces with Separable 1D de Casteljau</h2>
+	  
+	   
+		<h3>Overview</h3>
+		<p>
+			Shid
+		</p>
+	  
+		<blockquote><b>
+			Show a screenshot of bez/teapot.bez (not .dae) evaluated by your implementation.
+		  </b></blockquote>
+	  
+		<div align="middle">
+		  <table style="width:100%">
+			<tr align="center">
+			  <td>
+				  <img src="images/1ss.png" align="middle" width="400px" />
+				  <figcaption>$\text{Supersample Rate} = 1$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/4ss.png" align="middle" width="400px" />
+				  <figcaption>$\text{Supersample Rate} = 4$</figcaption>
+				  
+			  </td>
+			</tr>
+			<tr align="center">
+			  <!-- <td>
+				  <img src="images/9ss.png" align="middle" width="400px" />
+				  <figcaption>$\text{Supersample Rate} = 9$</figcaption>
+			  </td> -->
+			  <td>
+				  <img src="images/16ss.png" align="middle" width="400px" />
+				  <figcaption>$\text{Supersample Rate} = 16$</figcaption>
+			  </td>
+			</tr>
+		  </table>
+	  
+		</div>
+	
+		<br />
+		<hr />
+		<br />
+	  
+		<h2 align="middle">Part 3: Area-Weighted Vertex Normals</h2>
+		
+		<h3>Overview</h3>
+		<p>
+			Shid
+		</p>
+		
+		<blockquote><b>
+			Show screenshots of dae/teapot.dae (not .bez) comparing teapot shading with and without vertex normals. Use Q to toggle default flat shading and Phong shading.
+		</b></blockquote>
+	  
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/robot_meditate.png" align="middle" width="700vw" />
+				  <figcaption> Here we have the cubeman crossing its knees while have its arms outstretched. The idea was to go for a more meditative pose with the cubeman while also incorporating a rainbow-like gradient across each major body part.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+	  
+		<br />
+		<hr />
+		<br />
+	  
+		<h2 align="middle">Part 4: Edge Flips</h2>
+		</a>
+		<h3>Overview</h3>
+		<p>
+		  <ul>
+			Shid
+		</ul>
+	</p>
+	<blockquote><b>
+		Show screenshots of a mesh before and after some edge flips.
+	  </b></blockquote>											
+		<div align="middle">
+		  <table style="width:100%">
+			<tr align="center">
+			  <td>
+				  <img src="images/bary_tri.png" align="middle" width="400px" />
+				  <figcaption>Color Triangle</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/test7.png" align="middle" width="400px" />
+				  <figcaption>Color Wheel</figcaption>
+			  </td>
+			</tr>
+		  </table>
+		</div>
+		
+	  
+	  
+		<br />
+		<hr />
+		<br />
+	  
+		<h2 align="middle">Part 5: Edge Splits</h2>
+		</a>
+	  
+		<h3>Overview</h3>
+		<p>
+		  <ul>
+			Shid
+			</ul>
+		</p>
+		  <blockquote><b>
+			Show screenshots of a mesh before and after some edge splits.
+		</b></blockquote>
+	  
+
+		<blockquote><b>
+			Show screenshots of a mesh before and after a combination of both edge splits and edge flips.
+		</b></blockquote>
+
+
+		<blockquote><b>
+			If you have implemented support for boundary edges, show screenshots of your implementation properly handling split operations on boundary edges.
+		</b></blockquote>
+		  <p>
+		   
+		  </p>
+	  
+	  
+		  <div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/nn_1ss.png" align="middle" width="400px" />
+					<figcaption>$\text{Nearest Neighbor Supersample Rate 1}$</figcaption>
+				</td>
+				<td>
+					<img src="images/bi_1ss.png" align="middle" width="400px" />
+					<figcaption>$\text{Bilinear Supersample Rate 1}$</figcaption>
+					
+				</td>
+			  </tr>
+			  <tr align="center">
+				<td>
+					<img src="images/nn_16ss.png" align="middle" width="400px" />
+					<figcaption>$\text{Nearest Neighbor Supersample Rate 16}$</figcaption>
+				</td>
+				<td>
+					<img src="images/bi_16ss.png" align="middle" width="400px" />
+					<figcaption>$\text{Bilinear Supersample Rate 16}$</figcaption>
+				</td>
+			  </tr>
+			</table>
+	  
+		  </div>
+
+		<hr />
+	  
+	  
+	  
+		<h2 align="middle">Part 6: Loop Subdivision for Mesh Upsampling</h2>
+		<p>
+			Shid
+		</p>
+	  
+		<div align="middle">
+		  <table style="width:100%">
+			<tr align="center">
+			  <td>
+				  <img src="images/l0_pbi.png" align="middle" width="500px" />
+				  <figcaption>$\text{Level Zero Billinear Sampling}$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/l0_pnear.png" align="middle" width="500px" />
+				  <figcaption>$\text{Level Zero Nearest Sampling}$</figcaption>
+				  
+			  </td>
+			</tr>
+			<tr align="center">
+			  <td>
+				  <img src="images/lnear_pbi.png" align="middle" width="500px" />
+				  <figcaption>$\text{Nearest Level Bilinear Sampling}$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/lnear_pnear.png" align="middle" width="500px" />
+				  <figcaption>$\text{Nearest Level Nearest Sampling}$</figcaption>
+			  </td>
+			</tr>
+			<tr align="center">
+			  <td>
+				  <img src="images/lbi_pbi.png" align="middle" width="500px" />
+				  <figcaption>$\text{Trilinear Level Bilinear Sampling}$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/lbi_pnear.png" align="middle" width="500px" />
+				  <figcaption>$\text{Linear Level Nearest Sampling}$</figcaption>
+			  </td>
+			</tr>
+		  </table>
+	  
+		</div>
+		<p>
+		  We implemented trilinear sampling by taking the weighted sum of the texels in the adjacent texture maps. This produces results that were blurrier than both level zero and nearest neighbors texture sampling.   
+		</p>
+	  
+		<blockquote><b>
+			Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?
+		</b></blockquote>
+	  
+		<blockquote><b>
+			If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots.
+		</b></blockquote>
+	  
+		<div align="middle">
+		  <table style="width:100%">
+			<tr align="center">
+			  <td>
+				  <img src="images/nearest.png" align="middle" width="400px" />
+				  <figcaption>$\text{Nearest Neighbor Supersample Rate 16 Level 0}$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/bilinear.png" align="middle" width="400px" />
+				  <figcaption>$\text{Bilinear Supersample Rate 16 Level 0}$</figcaption>
+				  
+			  </td>
+			</tr>
+			<tr align="center">
+			  <td>
+				  <img src="images/trilinear.png" align="middle" width="400px" />
+				  <figcaption>$\text{Trilinear Supersample Rate 16}$</figcaption>
+			  </td>
+			  <td>
+				  <img src="images/aniso.png" align="middle" width="400px" />
+				  <figcaption>$\text{Anisotropic Supersample Rate 16}$</figcaption>
+			  </td>
+			</tr>
+		  </table>
+	  
+	  </body>
+	  </html>
+	  

@@ -355,7 +355,7 @@
 				<figcaption>$\text{Cube With Level 2 Loop Subdivision}$</figcaption>
 			</td>
 			</tr>
-			<tr>
+			<tr align="center">
 				<td>
 					<img src="images/cubel3.png" align="middle" width="300px" />
 					<figcaption>$\text{Cube With Level 3 Loop Subdivision}$</figcaption>
@@ -373,7 +373,10 @@
 		<blockquote><b>
 			Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?
 		</b></blockquote>
-	  
+
+		<p>
+			Looking at the screenshots above, we can see that sharp corners tend to add a bump to the mesh that does not get well smoothed out, even after multiple subdivisions. By pre-splittng some edges, this essentially provides more polygons around these sharp areas, allowing for a greater degree of smoothing when the Loop subdivision is performed. Below, the edges around the upper right corner of the cube have been pre-split. Upon subdivision, you can see that compared to the lower left corner, the cube is a lot more smooth and rounded. Thus we can see that when we are dealing with sharp differences in the behavior of a mesh, by increasing the number of triangles in the area subdivision will be more effective and smoothing sharp regions. 
+		</p>
 
 		<div align="middle">
 			<table style="width:100%">
@@ -387,7 +390,7 @@
 					<figcaption>$\text{Preprocessed Cube With Level 1 Loop Subdivision}$</figcaption>
 				</td>
 			  </tr>
-			  <tr>
+			  <tr align="center">
 				  <td>
 					  <img src="images/precubel2.png" align="middle" width="500px" />
 					  <figcaption>$\text{Preprocessed Cube With Level 2 Loop Subdivision}$</figcaption>
@@ -405,35 +408,102 @@
 			Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects
 		</b></blockquote>
 
+		<p>
+			In the original cube, the sides of the cubes are asymmetric in terms of the triangle positioning. Two corners are connected by edges and two are not. This leads to the asymmetry and almost pear-shaped (no pun intended) look of the cube after subdivision. By splitting this central edge on each side, now there is an edge going to each corner on each side of the cube, making the cube fully symmetric. Once we've subdivided with this change, the cube remains symmetric afterwards and retains a more uniform smoothed shape. 
+		</p>
+
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/symmetriccube.png" align="middle" width="500px" />
+					<figcaption>$\text{Symmetric Cube With No Subdivision}$</figcaption>
+				</td>
+				<td>
+					<img src="images/symmetriccubeL2.png" align="middle" width="500px" />
+					<figcaption>$\text{Symmetric Cube With Level 2 Loop Subdivision}$</figcaption>
+				</td>
+			  </tr>
+			  <tr align="center">
+				  <td>
+					  <img src="images/symmetriccubeL4.png" align="middle" width="500px" />
+					  <figcaption>$\text{Symmetric Cube With Level 4 Loop Subdivision}$</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		
+		  </div>
+
 		<blockquote><b>
 			If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots.
 		</b></blockquote>
-	  
+
+		<h3>Supporting Boundary Edge Subdivision</h3>
+		<p>
+			<ul>
+				To support boundary edge subdivision, we needed to find new equations for calculating the new positions of boundary vertices and the positions of vertices in split boundary edges. Since we want to keep boundaries very close to what they were before, according to the original Loop subdivision algorithm we do a weighted average of only the other vertices along the edge. For existing vertices, this was $\frac 34$ of the original vertex's position along with $\frac 14$ of the two vertices on either side of it. For vertices that came from boundary edge splits, we simply took the average of the two vertices that were on either side of the original edge. Since we had already implemented boundary edge splits, this was all we had to do, and the rest was compatible with our original Loop subdivision implementation.
+			</ul>
+		</p>
+
 		<div align="middle">
 		  <table style="width:100%">
 			<tr align="center">
 			  <td>
 				  <img src="images/nearest.png" align="middle" width="400px" />
-				  <figcaption>$\text{Nearest Neighbor Supersample Rate 16 Level 0}$</figcaption>
+				  <figcaption>$\text{Boundary Mesh Level 0}$</figcaption>
 			  </td>
 			  <td>
 				  <img src="images/bilinear.png" align="middle" width="400px" />
-				  <figcaption>$\text{Bilinear Supersample Rate 16 Level 0}$</figcaption>
+				  <figcaption>$\text{Boundary Mesh With Level 1 Loop Subdivision}$</figcaption>
 				  
 			  </td>
 			</tr>
 			<tr align="center">
 			  <td>
 				  <img src="images/trilinear.png" align="middle" width="400px" />
-				  <figcaption>$\text{Trilinear Supersample Rate 16}$</figcaption>
+				  <figcaption>$\text{Boundary Mesh With Level 2 Loop Subdivision}$</figcaption>
 			  </td>
 			  <td>
 				  <img src="images/aniso.png" align="middle" width="400px" />
-				  <figcaption>$\text{Anisotropic Supersample Rate 16}$</figcaption>
+				  <figcaption>$\text{Boundary Mesh With Level 3 Loop Subdivision}$</figcaption>
 			  </td>
 			</tr>
 		  </table>
-	  
+		</div>
+
+		<h3>Adding $\sqrt 3$ Subdivision</h3>
+		<p>
+			In addition to Loop subdivision, we also implemented $\sqrt 3$ subdivision. Instead of splitting edges, this method splits faces into three separate faces, adding an edge between a central vertex that is the average of the original vertex positions and each of the original vertices surrounding the face. Then the original edges get flipped to maintain a regular structure. And the vertex positions are updated. To do this, we just had to implement a face split function, and then created a subdivision function very similar to that of Loop subdivision, replacing the vertex recomputation function with the one from the original root 3 subdivision paper and replacing edge splits with face splits. From the images below, one can see that this method is a lot better at smoothing out sharp edges, and by the time level 4 subdivision is reached, the mesh is almost spherical, save for a few extrordinary vertices.
+		</p>
+
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+					<img src="images/cubel0.png" align="middle" width="300px" />
+					<figcaption>$\text{Cube With No Subdivision}$</figcaption>
+				</td>
+				<td>
+					<img src="images/rootl1.png" align="middle" width="300px" />
+					<figcaption>$\text{Cube With Level 1 $\sqrt 3$ Subdivision}$</figcaption>
+				</td>
+				<td>
+				  <img src="images/rootl2.png" align="middle" width="300px" />
+				  <figcaption>$\text{Cube With Level 2 $\sqrt 3$ Subdivision}$</figcaption>
+			  </td>
+			  </tr>
+			  <tr align="center">
+				  <td>
+					  <img src="images/rootl3.png" align="middle" width="300px" />
+					  <figcaption>$\text{Cube With Level 3 $\sqrt 3$ Subdivision}$</figcaption>
+				  </td>
+				  <td>
+					  <img src="images/rootl4.png" align="middle" width="300px" />
+					  <figcaption>$\text{Cube With Level 4 $\sqrt 3$ Subdivision}$</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		  </div>
 	  </body>
 	  </html>
 	  

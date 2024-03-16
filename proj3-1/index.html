@@ -616,10 +616,111 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 
 <h2 align="middle">Extra Credit 1: Memory Efficient BVH Generation</h2>
 
+<table align="center">
+	<tr>
+	  <th>DAE File</th>
+	  <th>Teapot</th>
+	  <th>Cow</th>
+	  <th>Building</th>
+	  <th>Maxplanck</th>
+	  <th>CBlucy</th>
+	</tr>
+	<tr>
+	  <th>Inefficient BVH Generation Time (s)</th>
+	  <td>0.0026</td>
+	  <td>0.0068</td>
+	  <td>0.0703</td>
+	  <td>0.0968</td>
+	  <td>0.3246</td>
+	</tr>
+	<tr>
+		<th>Memory Efficient BVH Generation Time (s)</th>
+		<td>0.0008</td>
+		<td>0.0018</td>
+		<td>0.0185</td>
+		<td>0.0223</td>
+		<td>0.0736</td>
+	  </tr>
+  </table>
+<br>
+
 <h2 align="middle">Extra Credit 2: Iterative BVH Traversal</h2>
 
-<h2 align="middle">Extra Credit 3: GUI Addition</h2>
+<table align="center">
+	<tr>
+		<th>DAE File</th>
+		<th>Teapot</th>
+		<th>Cow</th>
+		<th>Building</th>
+		<th>Maxplanck</th>
+		<th>CBlucy</th>
+	  </tr>
+	  <tr>
+		<th>Recursive BVH Generation Time (s)</th>
+		<td>0.0008</td>
+		<td>0.0017</td>
+		<td>0.0195</td>
+		<td>0.0234</td>
+		<td>0.0736</td>
+	  </tr>
+	  <tr>
+		  <th>Iterative BVH Generation Time (s)</th>
+		  <td>0.0007</td>
+		  <td>0.0017</td>
+		  <td>0.0191</td>
+		  <td>0.0222</td>
+		  <td>0.0733</td>
+		</tr>
+	<tr>
+	  <th>Recursive Intersection (million rays/s)</th>
+	  <td>3.5476</td>
+	  <td>3.6802</td>
+	  <td>7.1397</td>
+	  <td>2.6546</td>
+	  <td>2.6346</td>
+	</tr>
+	<tr>
+		<th>Iterative Intersection (million rays/s)</th>
+		<td>3.5565</td>
+		<td>3.6759</td>
+		<td>6.8987</td>
+		<td>2.6558</td>
+		<td>2.6566</td>
+	  </tr>
+	<tr>
+		<th>Recursive Intersection (render time (s))</th>
+		<td>1.4037</td>
+		<td>1.3817</td>
+		<td>0.5527</td>
+		<td>1.9453</td>
+		<td>1.9651</td>
+	  </tr>
+	  <tr>
+		<th>Iterative Intersection (render time (s))</th>
+		<td>1.4018</td>
+		<td>1.3843</td>
+		<td>0.5803</td>
+		<td>1.9456</td>
+		<td>1.9562</td>
+	  </tr>
+  </table>
+<br>
 
+<h2 align="middle">Extra Credit 3: GUI Addition</h2>
+<div align="middle">
+	<table style="width:100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/CBspheres_lambertian_screenshot_3-16_12-43-36.png" align="middle" width="400px"/>
+		  <figcaption>Adding direct illumination to certain areas of the scene (CBspheres_lambertian.dae)</figcaption>
+		</td>
+		<td>
+		  <img src="images/CBspheres_lambertian_screenshot_3-16_12-47-25.png" align="middle" width="400px"/>
+		  <figcaption>Adding indirect illumination to shadows (CBspheres_lambertian.dae)</figcaption>
+		</td>
+	  </tr>
+	</table>
+  </div>
 <h2 align="middle">Extra Credit 4: Jittered Ray Sampler</h2>
 
 <h2 align="middle">Extra Credit 5: Surface Area Heuristic</h2>
@@ -627,6 +728,51 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 <h2 align="middle">Extra Credit 6: Bilateral Denoising</h2>
 
 <h2 align="middle">Extra Credit 7: Non-Axis-Aligned Bounding Boxes</h2>
+
+<div align="middle">
+  <table>
+	<tr align="center">
+		<tr align="center">
+			<th>
+			  Aligned Bounding Box
+			</th>
+			<th>
+			  Non-Aligned Bounding Box
+			</th>
+		  </tr>
+		<td>
+		  <img src="images/alignedspheres.png" align="middle" width="400px"/>
+		</td>
+		<td>
+		  <img src="images/nonalignedspheres.png" align="middle" width="400px"/>
+		</td>
+	  </tr>
+	  <tr align="center">
+		<td>
+		  <img src="images/alignedteapot.png" align="middle" width="400px"/>
+		</td>
+		<td>
+		  <img src="images/nonalignedteapot.png" align="middle" width="400px"/>
+		</td>
+	  </tr>
+	  <tr align="center">
+		<td>
+		  <img src="images/alignedspout.png" align="middle" width="400px"/>
+		</td>
+		<td>
+		  <img src="images/nonalignedspout.png" align="middle" width="400px"/>
+		</td>
+	  </tr>
+	<tr align="center">
+	  <td>
+		<img src="images/alignedcow.png" align="middle" width="400px"/>
+	  </td>
+	  <td>
+		<img src="images/nonalignedcow.png" align="middle" width="400px"/>
+	  </td>
+	</tr>
+  </table>
+
 
 </body>
 </html>

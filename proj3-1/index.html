@@ -96,6 +96,12 @@
 	border:1px solid #000000;
 	}
 	</style>
+
+<style>
+	.centered-table {
+		margin-left: -15%; /* Adjust the percentage to move the table more or less to the left */
+	}
+</style>
 </head>
 
 
@@ -308,18 +314,18 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
     <tr align="center">
       <td>
         <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <figcaption>Hemisphere Sampled CBspheres_lambertian</figcaption>
       </td>
       <td>
         <img src="images/CBspheres_64_32.png" align="middle" width="400px"/>
-        <figcaption>Light Sampled CBspheres</figcaption>
+        <figcaption>Light Sampled CBspheres_lambertian</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
         <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <figcaption>Hemisphere Sampled CBbunny</figcaption>
       </td>
       <td>
         <img src="images/CBbunny_64_32.png" align="middle" width="400px"/>
@@ -339,28 +345,28 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>1 Light Ray (example1.dae)</figcaption>
+        <img src="images/bunny_1_1_m1.png" align="middle" width="400px"/>
+        <figcaption>1 Light Ray (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>4 Light Rays (example1.dae)</figcaption>
+        <img src="images/bunny_1_4_m1.png" align="middle" width="400px"/>
+        <figcaption>4 Light Rays (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>16 Light Rays (example1.dae)</figcaption>
+        <img src="images/bunny_1_16_m1.png" align="middle" width="400px"/>
+        <figcaption>16 Light Rays (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>64 Light Rays (example1.dae)</figcaption>
+        <img src="images/bunny_1_64_m1.png" align="middle" width="400px"/>
+        <figcaption>64 Light Rays (CBbunny.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <p>
-    YOUR EXPLANATION GOES HERE
+    As the number of samples per light ray increases, the noise in the image decreases. This is because that for each pixel the samples from each point get averaged out. So if a point is partially shrouded in shadow by a light source, then the shadow samples and light samples get averaged out to get the actual lighting value of that pixel. This is why the image gets smoother and the shadows get less noisy as the number of samples per area light increases. 
 </p>
 <br>
 
@@ -368,7 +374,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
 </h3>
 <p>
-    Light importance sampling results in a much less noisy image as we are more specifically checking if there is an obstruction between the given point and light sources.
+    Light importance sampling results in a much less noisy image as we are more specifically checking if there is an obstruction between the given point and light sources. TODO: finish this
 </p>
 <br>
 
@@ -397,11 +403,11 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/spheres_1024_32_full.png" align="middle" width="400px"/>
         <figcaption>example1.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_1024_32_full.png" align="middle" width="400px"/>
         <figcaption>example2.dae</figcaption>
       </td>
     </tr>
@@ -417,12 +423,12 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Only direct illumination (example1.dae)</figcaption>
+        <img src="images/spheres_1024_32_1.png" align="middle" width="400px"/>
+        <figcaption>Only direct illumination (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Only indirect illumination (example1.dae)</figcaption>
+        <img src="images/spheres_1024_32.png" align="middle" width="400px"/>
+        <figcaption>Only indirect illumination (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
   </table>
@@ -434,34 +440,72 @@ You will probably want to use the instructional machines for the above renders i
 <br>
 
 <h3>
-  For CBbunny.dae, compare rendered views with max_ray_depth set to 0, 1, 2, 3, and 100 (the -m flag). Use 1024 samples per pixel.
+	For CBbunny.dae, render the mth bounce of light with max_ray_depth set to 0, 1, 2, 3, 4, and 5 (the -m flag), and isAccumBounces=false. Explain in your writeup what you see for the 2nd and 3rd bounce of light, and how it contributes to the quality of the rendered image compared to rasterization. Use 1024 samples per pixel.
+  </h3>
+
+  <h3>
+	For CBbunny.dae, compare rendered views with max_ray_depth set to 0, 1, 2, 3, 4, and 5(the -m flag). Use 1024 samples per pixel.
+  </h3>
+
+  <table class="centered-table">
+	<tr>
+		<th>isAccumBounces = false</th>
+		<td><img src="images/bunny_1024_8_m0_na.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m1_na.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m2_na.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m3_na.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m4_na.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m5_na.png" align="middle" width="200px"/></td>
+	  </tr>
+	<tr>
+		<th>isAccumBounces = true</th>
+		<td><img src="images/bunny_1024_8_m0_a.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m1_a.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m2_a.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m3_a.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m4_a.png" align="middle" width="200px"/></td>
+		<td><img src="images/bunny_1024_8_m5_a.png" align="middle" width="200px"/></td>
+	  </tr>
+	</table>
+	  </table>
+
+
+  <br>
+  <p>
+	YOUR EXPLANATION GOES HERE
+  </p>
+  <br>
+
+
+<h3>
+	For CBbunny.dae, output the Russian Roulette rendering with max_ray_depth set to 0, 1, 2, 3, 4, and 100(the -m flag). Use 1024 samples per pixel.	
 </h3>
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_1024_32_m0.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 0 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_1024_32_m1.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 1 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_1024_32_m2.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 2 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_1024_32_m3.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 3 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_1024_32_m100.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 100 (CBbunny.dae)</figcaption>
       </td>
     </tr>
@@ -481,37 +525,37 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_1_4_.png" align="middle" width="400px"/>
         <figcaption>1 sample per pixel (example1.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_2_4_.png" align="middle" width="400px"/>
         <figcaption>2 samples per pixel (example1.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_4_4_.png" align="middle" width="400px"/>
         <figcaption>4 samples per pixel (example1.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_8_4_.png" align="middle" width="400px"/>
         <figcaption>8 samples per pixel (example1.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_16_4_.png" align="middle" width="400px"/>
         <figcaption>16 samples per pixel (example1.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_64_4_.png" align="middle" width="400px"/>
         <figcaption>64 samples per pixel (example1.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_1024_4_.png" align="middle" width="400px"/>
         <figcaption>1024 samples per pixel (example1.dae)</figcaption>
       </td>
     </tr>
@@ -544,22 +588,22 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Rendered image (example1.dae)</figcaption>
+        <img src="images/spheres_2048_1_m5.png" align="middle" width="400px"/>
+        <figcaption>Rendered image (CBspheres.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Sample rate image (example1.dae)</figcaption>
+        <img src="images/spheres_2048_1_m5_rate.png" align="middle" width="400px"/>
+        <figcaption>Sample rate image (CBspheres.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Rendered image (example2.dae)</figcaption>
+        <img src="images/bunny_2048_1_m5.png" align="middle" width="400px"/>
+        <figcaption>Rendered image (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Sample rate image (example2.dae)</figcaption>
+        <img src="images/bunny_2048_1_m5_rate.png" align="middle" width="400px"/>
+        <figcaption>Sample rate image (CBbunny.dae)</figcaption>
       </td>
     </tr>
   </table>

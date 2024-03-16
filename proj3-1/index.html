@@ -70,7 +70,7 @@
 <title>CS 184 Path Tracer</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
-
+<link rel="icon" href="./images/tream.png" type="image/x-icon">
 <script>
   MathJax = {
     tex: {
@@ -81,7 +81,21 @@
 <script id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
+<style type="text/css" media="screen">
 
+	table{
+	border-collapse:collapse;
+	border:1px solid #000000;
+	}
+	
+	table td{
+	border:1px solid #000000;
+	}
+
+	table th{
+	border:1px solid #000000;
+	}
+	</style>
 </head>
 
 
@@ -89,10 +103,10 @@
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
 <h1 align="middle">Project 3-1: Path Tracer</h1>
-<h2 align="middle">YOUR NAME(S)</h2>
+<h2 align="middle">James DeLoye and Karim El-Refai</h2>
 
 <!-- Add Website URL -->
-<h2 align="middle">Website URL: <a href="TODO">TODO</a></h2>
+<h2 align="middle">Website URL <a href="https://el-refai.github.io/the_guppening/proj3-1/index.html">https://el-refai.github.io/the_guppening/proj3-1/index.html</a></h2>
 
 <br><br>
 
@@ -107,32 +121,11 @@
   </table>
 </div>
 
-<p>All of the text in your write-up should be <em>in your own words</em>. If you need to add additional HTML features to this document, you can search the <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> website for instructions. To edit the HTML, you can just copy and paste existing chunks and fill in the text and image file names appropriately.</p>
-<o>The website writeup is intended to be a self-contained walkthrough of the assignment: we want this to be a piece of work which showcases your understanding of relevant concepts through both mesh images as well as written explanations about what you did to complete each part of the assignment. Try to be as clear and organized as possible when writing about your own output files or extensions to the assignment. We want to understand what you've achieved and how you've done it!</p> 
-<p>If you are well-versed in web development, feel free to ditch this template and make a better looking page.</p>
-
-
-<p>Here are a few problems students have encountered in the past. Test your website on the instructional machines early!</p>
-<ul>
-<li>Your main report page should be called index.html.</li>
-<li>Be sure to include and turn in all of the other files (such as images) that are linked in your report!</li>
-<li>Use only <em>relative</em> paths to files, such as <pre>"./images/image.jpg"</pre>
-Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.jpg"</pre></li>
-<li>Pay close attention to your filename extensions. Remember that on UNIX systems (such as the instructional machines), capitalization matters. <pre>.png != .jpeg != .jpg != .JPG</pre></li>
-<li>Be sure to adjust the permissions on your files so that they are world readable. For more information on this please see this tutorial: <a href="http://www.grymoire.com/Unix/Permissions.html">http://www.grymoire.com/Unix/Permissions.html</a></li>
-<li>And again, test your website on the instructional machines early!</li>
-</ul>
-
-
-<p>Here is an example of how to include a simple formula:</p>
-<p align="middle"><pre align="middle">a^2 + b^2 = c^2</pre></p>
-<p>or, alternatively, you can include an SVG image of a LaTex formula.</p>
-
-<div>
-
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE
+	In this project we implemented a ray tracer from the ground up. We started by implementing ray generation and sampling algorithms and moved onto intersections with primitive shapes like triangles and spheres. From there we significantly sped up intersection by building a bounding volume hierachy (BVH), which is essentially a tree hierachy of bounding boxes that allow for quick checks of whether a ray intersects any primitives in the box. Next, we implemented proper ray traced illumination with zero bounce illumination and then one bounce, first with hemisphere sampling and then with light sampling. Then we implemented global illumination, with support for up to $n$ bounces. We also used russian roulette to sample an unbounded number of bouces. Finally we added adaptive sampling to focus rendering on the areas that took longest to converge, while saving computation in low variance area.
+
+	In addition to all this, we implemented 7 extra credit components from the list, including GUI changes, jittered sampling, bilateral filtering, and even non-axis-aligned bounding boxes! Enjoy!
 </p>
 <br>
 
@@ -145,15 +138,18 @@ Show images with normal shading for a few small .dae files. -->
   Walk through the ray generation and primitive intersection parts of the rendering pipeline.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    To implement ray generation, we first had to think from the perspective of the camera looking at the world. Rays would come through the center of the camera and go out through its sensor, and out through the world. We had to convert these camera rays into rays in world coordinates so that they could easily be intersected with objects in the world. We did this using the camera to world transformation matrix to multiply the camera space coordinate that we computed. From here we added sampling, which for each pixel in our camera sensor sent a number rays through random points in the pixel, and then the final pixel value was determined through an average of these values. Then we had to implement the logic that would actually allow these rays to intersect with triangles and spheres in our scenes, which determines what is actually rendered. This is detailed below:
 </p>
 <br>
 
 <h3>
-  Explain the triangle intersection algorithm you implemented in your own words.
+  Explain the triangle and sphere intersection algorithm you implemented in your own words.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+	For triangles, we adapted the Moller Trumbore algorithm from lecture to find the intersection of a ray within the triangle. The great part of this algorithm is that instead of generating the plane equation and calculating whether a ray intersects a triangle within the plane independently, the $\alpha$, $\beta$, and $\gamma$ values of the barycentric coordinates are cacluated along with the intersection distance paramater of the ray, $t$. If the ray intersects within the triangle according to the barycentric coordinates (all $<1$) then the intersection is valid and we can perform the necessarily checks on the value of $t$ to see if the intersection is valid. In addition, with the barycentric coordinates found we can trivially find the normal at the intersection point by interpolating with the coordinates. 
+</p>
+<p>
+	Spheres were even easier to implement. The intersection equation can be solved using the quatratic equation with $a$ value $a=d\cdot d$, b value $2(o-c)\cdot d$, and c value $(o-c)\cdot (o-c) - r^2$. We checked if the discriminant was positive and if so, we could find where there was an intersection, first checking the closer value and then the farther value. 
 </p>
 <br>
 
@@ -165,22 +161,22 @@ Show images with normal shading for a few small .dae files. -->
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/CBempty.png" align="middle" width="400px"/>
+        <figcaption>CBempty</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/spheres.png" align="middle" width="400px"/>
+        <figcaption>CBspheres</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example3.dae</figcaption>
+        <img src="images/banana.png" align="middle" width="400px"/>
+        <figcaption>Banana</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example4.dae</figcaption>
+        <img src="images/CBcoil.png" align="middle" width="400px"/>
+        <figcaption>CBcoil</figcaption>
       </td>
     </tr>
   </table>
@@ -197,7 +193,7 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    To construct the BVH, we started by getting the bounding box of all the primitives between the start and end iterators of the array. Our first hueristic for splitting was as follows: replicate the array of primitives and sort it along the X, Y, or Z axis. Then we take the median value, and then recursively call the build function on the first half and second half of the split array. At each level of recursion we would alternate between the X, Y, and Z axis. This was easy to implement and worked reasonably well, but was slow ($O(n \log n)$ at each level and $\log n$ levels in total giving a total runtime of $O(n \log^2{n})$). As a result we actually improved this to all be in place and done in $O(n \log n)$ time total, which is described below in the first extra credit item. However, we used this improved implementation for all of the following sections.
 </p>
 
 <h3>
@@ -208,22 +204,22 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/cow.png" align="middle" width="400px"/>
+        <figcaption>cow: 5856 primitives</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/building.png" align="middle" width="400px"/>
+        <figcaption>building: 39506 primitives</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example3.dae</figcaption>
+        <img src="images/maxplanck.png" align="middle" width="400px"/>
+        <figcaption>maxplanck: 50801 primitives</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example4.dae</figcaption>
+        <img src="images/CBlucy.png" align="middle" width="400px"/>
+        <figcaption>CBlucy: 133796 primitives</figcaption>
       </td>
     </tr>
   </table>
@@ -234,8 +230,50 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration. Present your results in a one-paragraph analysis.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+	Below are our benchmarked results for rendering with and without the help of BVH acceleration. For super small files, like CBspheres, we can see that the overhead of traversing the BVH slows down the rendering speed. However, once the number of primitives gets up to thousands of polygons, like in teapot, banana, cow, and bunny, the naive primitive is hundreds to thousands of times slower. As the meshes get bigger, the bvh performs even better, showing the importance of the BVH in rendering complex meshes. 
 </p>
+<table align="center">
+	<tr>
+	  <th>DAE File</th>
+	  <th>CBspheres_lambertian</th>
+	  <th>Teapot</th>
+	  <th>Banana</th>
+	  <th>Cow</th>
+	  <th>CBbunny</th>
+	</tr>
+	<tr>
+	  <th>No BVH (million rays/s)</th>
+	  <td>6.1921</td>
+	  <td>0.0703</td>
+	  <td>0.0688</td>
+	  <td>0.0291</td>
+	  <td>0.0044</td>
+	</tr>
+	<tr>
+		<th>With BVH (million rays/s)</th>
+		<td>4.9119</td>
+		<td>3.5493</td>
+		<td>4.6608</td>
+		<td>3.6842</td>
+		<td>3.3830</td>
+	  </tr>
+	<tr>
+		<th>No BVH (render time (s))</th>
+		<td>0.6154</td>
+		<td>74.0937</td>
+		<td>73.9594</td>
+		<td>177.4888</td>
+		<td>942.2607</td>
+	  </tr>
+	  <tr>
+		<th>With BVH (render time (s))</th>
+		<td>0.8182</td>
+		<td>1.4048</td>
+		<td>0.9076</td>
+		<td>1.3801</td>
+		<td>1.5110</td>
+	  </tr>
+  </table>
 <br>
 
 <h2 align="middle">Part 3: Direct Illumination (20 Points)</h2>
@@ -248,7 +286,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Walk through both implementations of the direct lighting function.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    To implement direct lighting, we went through two methods: hemisphere sampling, and light importance sampling. Heisphere sampling works by sampling light from a uniform incoming direction on the hemisphere. We used Monte-Carlo sampling to average these values out while taking the probability of choosing a specific direction into account. We check if the random ray intersects a light source, and then use the reflection equation to calculate how much light is reflected back towards the camera. Light importance sampling instead samples from the directions of lights and checks if the ray intersects something before hitting the light source. If it doesn't then we use the reflectance equation to calculate the light reflected back just like in the hemisphere sampling. 
 </p>
 
 <h3>
@@ -273,8 +311,8 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
         <figcaption>example1.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/CBspheres_64_32.png" align="middle" width="400px"/>
+        <figcaption>Light Sampled CBspheres</figcaption>
       </td>
     </tr>
     <br>
@@ -284,8 +322,8 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
         <figcaption>example2.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/CBbunny_64_32.png" align="middle" width="400px"/>
+        <figcaption>Light Sampled CBbunny</figcaption>
       </td>
     </tr>
     <br>
@@ -330,7 +368,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    Light importance sampling results in a much less noisy image as we are more specifically checking if there is an obstruction between the given point and light sources.
 </p>
 <br>
 

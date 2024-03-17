@@ -155,7 +155,7 @@ Show images with normal shading for a few small .dae files. -->
 	For triangles, we adapted the Moller Trumbore algorithm from lecture to find the intersection of a ray within the triangle. The great part of this algorithm is that instead of generating the plane equation and calculating whether a ray intersects a triangle within the plane independently, the $\alpha$, $\beta$, and $\gamma$ values of the barycentric coordinates are calculated along with the intersection distance parameter of the ray, $t$. If the ray intersects within the triangle according to the barycentric coordinates (all $<1$) then the intersection is valid and we can perform the necessarily checks on the value of $t$ to see if the intersection is valid. In addition, with the barycentric coordinates found we can trivially find the normal at the intersection point by interpolating with the coordinates. 
 </p>
 <p>
-	Spheres were even easier to implement. The intersection equation can be solved using the quadratic equation with $a$ value $a=d\cdot d$, b value $2(o-c)\cdot d$, and c value $(o-c)\cdot (o-c) - r^2$. We checked if the discriminant was positive and if so, we could find where there was an intersection, first checking the closer value and then the farther value. 
+	Spheres were even easier to implement. The intersection equation can be solved using the quadratic equation with $a$ value $a=d\cdot d$, $b$ value $2(o-c)\cdot d$, and $c$ value $(o-c)\cdot (o-c) - r^2$. We checked if the discriminant was positive and if so, we could find where there was an intersection, first checking the closer value and then the farther value to see if they were within our min_t and max_t bounds. 
 </p>
 <br>
 

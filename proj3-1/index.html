@@ -759,13 +759,140 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 	To create the jittered sampler, we began by making a new sampler class. When initialized, this sampler takes in the lowest number of samples that a pixel could be sampled for (samples per batch in the case of adaptive sampling) and then sets the number of subpixels per pixel grid to the smallest perfect square less than that. It also stores a state that tells which subpixel its currently jitter sampling for. Each time this jitter sampler is called, it figures out which subpixel its on and then returns a random point within that subpixel, thus implementing the jittered behavior. Below are some examples of the jittered sampler in action, compared to the regular fully random sampler.
 </p>
 
+<div align="middle">
+  <table>
+	<tr align="center">
+		<tr align="center">
+			<th>
+			  Aligned Bounding Box
+			</th>
+			<th>
+			  Non-Aligned Bounding Box
+			</th>
+		  </tr>
+		<td>
+		  <img src="images/alignedspheres.png" align="middle" width="400px"/>
+		</td>
+		<td>
+		  <img src="images/nonalignedspheres.png" align="middle" width="400px"/>
+		</td>
+	  </tr>
+	  <tr align="center">
+		<td>
+		  <img src="images/alignedteapot.png" align="middle" width="400px"/>
+		</td>
+		<td>
+		  <img src="images/nonalignedteapot.png" align="middle" width="400px"/>
+		</td>
+	  </tr>
+	  <tr align="center">
+		<td>
+		  <img src="images/alignedspout.png" align="middle" width="400px"/>
+		</td>
+		<td>
+		  <img src="images/nonalignedspout.png" align="middle" width="400px"/>
+		</td>
+	  </tr>
+	<tr align="center">
+	  <td>
+		<img src="images/alignedcow.png" align="middle" width="400px"/>
+	  </td>
+	  <td>
+		<img src="images/nonalignedcow.png" align="middle" width="400px"/>
+	  </td>
+	</tr>
+  </table>
+
 <h2 align="middle">Extra Credit 5: Surface Area Heuristic</h2>
 <p>
 	Our implementation of the surface area hueristic was guided by the slides and the description in the textbook <a href="https://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic">here</a>. To this end, we make a 2d array that is size 3x(num_buckets) so that we can partition the objects in to buckets in each of the three dimensions. We then put the objects into buckets based on their relative offset within the overall bounding box. Finally, we go through all possible splits of the buckets, and use the surface area hueristic of the resulting sub-bounding-boxes to find the minimum cost split according to the equation $C = \frac 18 + (\#l*\text{left_sa}) +  (\#r*\text{right_sa})$. However, if this split is still more costly than just making the node a leaf, then we instead make a it a leaf with all the primitives. Below are some benchmarks comparing the surface area hueristic to the original splitting hueristic. 
 </p>
+[PathTracer] Collecting primitives... Done! (0.0081 sec)
+[PathTracer] Building BVH from 105120 primitives... Done! (0.9942 sec)
+[PathTracer] Rendering... 100%! (3.3439s)
+[PathTracer] BVH traced 11697129 rays.
+[PathTracer] Average speed 3.4980 million rays per second.
+[PathTracer] Averaged 11.567262 intersection tests per ray.
+<table align="center">
+	<tr>
+	  <th></th>
+	  <th>Original</th>
+	  <th> SAH 16 Buckets</th>
+    <th> SAH 64 Buckets</th>
+    <th> SAH 256 Buckets</th>
+	</tr>
+	<tr>
+	  <th>BVH Generation Time (s)</th>
+	  <td>0.0795</td>
+    <td>0.3319</td>
+    <td>0.9942</td>
+    <td>15.7861</td>
+	</tr>
+	<tr>
+		<th>Render Time (s)</th>
+		<td>6.3114</td>
+    <td>6.0666s</td>
+    <td>3.3439</td>
+    <td>4.9251</td>
+	  </tr>
+    <tr>
+      <th> Average Speed (million rays/s)</th>
+      <td>2.4067 </td>
+      <td>2.3925 </td>
+      <td>3.4980</td>
+      <td>2.3981</td>
+      </tr>
+	  <tr>
+		<th> Avg. Intersection Tests per Ray</th>
+		<td>10.754120 </td>
+    <td>11.970653 </td>
+    <td>11.567262</td>
+    <td>11.559629</td>
+	  </tr>
+  </table>
+
 
 <h2 align="middle">Extra Credit 6: Bilateral Denoising</h2>
 <p> To implement bilateral denoising, we had to do significantly more research and reading into the codebase than for the previous extra credits. We started by reading through the code and found where we could post-process the image. After all threads were done processing (were in the DONE state), we called the bilateral_filter() function which was a property of the image class, which would apply the bilateral filter accordingly. The bilateral filter itself was implemented according to the original paper on bilateral filtering, which can be found <a href="https://users.soe.ucsc.edu/~manduchi/Papers/ICCV98.pdf">here</a>. Essentially, it runs a special 2D convolution on the image, where the kernel is a function of the distance between the pixels and the intensity of the pixels. For example, the weight for pixel $(i, j)$ from pixel $(k, l)$ is $w(i, j, k, l) = exp(-\frac{(i-k)^2 + (j-l)^2}{2\sigma_d^2} -\frac{(I(i, j) - I(k, l))^2}{2\sigma_r^2})$. Where I is the intensity value of the pixel. We then use this weight to compute the new intensity value of each pixel. This can be used to create a filter that smooths the image, while preserving edges. Below are some examples of the bilateral filter in action.
+
+  <div align="middle">
+    <table>
+    <tr align="center">
+      <tr align="center">
+        <td>
+          <img src="images/dwagon5.png" align="middle" width="400px"/>
+          <figcaption>Original</figcaption>
+        </td>
+      <td>
+        <img src="images/dwagon_1_300.png" align="middle" width="400px"/>
+        <figcaption>$\sigma_d = 1, \sigma_r = 300$</figcaption>
+      </td>
+      <td>
+        <img src="images/dwagon_3_300.png" align="middle" width="400px"/>
+        <figcaption>$\sigma_d = 3, \sigma_r = 300$</figcaption>
+      </td>
+      </tr>
+    </table>
+    </div>
+
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/dwagon_3_10.png" align="middle" width="400px"/>
+            <figcaption>$\sigma_d = 3, \sigma_r = 10$</figcaption>
+          </td>
+          <td>
+            <img src="images/dwagon_3_30.png" align="middle" width="400px"/>
+            <figcaption>$\sigma_d = 3, \sigma_r = 30$</figcaption>
+          </td>
+          <td>
+            <img src="images/dwagon_10_300.png" align="middle" width="400px"/>
+            <figcaption>$\sigma_d = 10, \sigma_r = 300$</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
 
 <h2 align="middle">Extra Credit 7: Non-Axis-Aligned Bounding Boxes</h2>
 <p>
@@ -816,6 +943,43 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 	</tr>
   </table>
 
+  <table align="center">
+    <tr>
+      <th></th>
+      <th>Cow.dae (Axis-Aligned)</th>
+      <th>Cow.dae (Non-Axis-Aligned)</th>
+      <th> Teapot.dae (Axis-Aligned)</th>
+      <th> Teapot.dae (Non-Axis-Aligned)</th>
+    </tr>
+    <tr>
+      <th>BVH Generation Time (s)</th>
+      <td>0.0009</td>
+      <td>12.2327</td>
+      <td>0.0004</td>
+      <td>5.1117</td>
+    </tr>
+    <tr>
+      <th>Render Time (s)</th>
+      <td>1.6160</td>
+      <td>1.8934</td>
+      <td>0.9376</td>
+      <td>1.1780</td>
+      </tr>
+      <tr>
+        <th>Avg. Speed (million rays/s)</th>
+        <td>3.1496</td>
+        <td>4.2539</td>
+        <td>5.6229</td>
+        <td>4.8027 </td>
+        </tr>
+      <tr>
+      <th>Avg. Intersection Tests per Ray</th>
+      <td>8.431184</td>
+      <td>4.616134 </td>
+      <td>6.421805</td>
+      <td>4.645373 </td>
+      </tr>
+    </table>
 
 </body>
 </html>

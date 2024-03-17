@@ -121,7 +121,7 @@
   <table style="width=100%">
       <tr>
           <td align="middle">
-          <img src="images/example_image.png" width="480px" />
+          <img src="images/bunny_background.webp" width="480px" />
           <figcaption align="middle">Results Caption: my bunny is the bounciest bunny</figcaption>
       </tr>
   </table>
@@ -313,7 +313,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/CBspheres1.png" align="middle" width="400px"/>
         <figcaption>Hemisphere Sampled CBspheres_lambertian</figcaption>
       </td>
       <td>
@@ -324,7 +324,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/CBbunny_H_64_32.png" align="middle" width="400px"/>
         <figcaption>Hemisphere Sampled CBbunny</figcaption>
       </td>
       <td>
@@ -374,7 +374,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
 </h3>
 <p>
-    Light importance sampling results in a much less noisy image as we are more specifically checking if there is an obstruction between the given point and light sources. TODO: finish this
+  Light importance sampling results in a much less noisy image as we are more specifically checking if there is an obstruction between the given point and light sources. Meanwhile, uniform hemisphere sampling is far noisier as a significant amount of the samples from uniform hemisphere sampling contribute little to no irradiance to the final pixel’s value. Importance sampling as a far lower sample rate is equivalent to uniform sampling at a higher sampling rate since they’ll both sample around the same number of meaningful directions.
 </p>
 <br>
 

@@ -762,50 +762,24 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 <div align="middle">
   <table>
 	<tr align="center">
-		<tr align="center">
-			<th>
-			  Aligned Bounding Box
-			</th>
-			<th>
-			  Non-Aligned Bounding Box
-			</th>
-		  </tr>
-		<td>
-		  <img src="images/alignedspheres.png" align="middle" width="400px"/>
-		</td>
-		<td>
-		  <img src="images/nonalignedspheres.png" align="middle" width="400px"/>
-		</td>
-	  </tr>
-	  <tr align="center">
-		<td>
-		  <img src="images/alignedteapot.png" align="middle" width="400px"/>
-		</td>
-		<td>
-		  <img src="images/nonalignedteapot.png" align="middle" width="400px"/>
-		</td>
-	  </tr>
-	  <tr align="center">
-		<td>
-		  <img src="images/alignedspout.png" align="middle" width="400px"/>
-		</td>
-		<td>
-		  <img src="images/nonalignedspout.png" align="middle" width="400px"/>
-		</td>
-	  </tr>
-	<tr align="center">
 	  <td>
-		<img src="images/alignedcow.png" align="middle" width="400px"/>
+		<img src="images/dwagon1.png" align="middle" width="400px"/>
+    <figcaption>Original Random Sampler</figcaption>
 	  </td>
 	  <td>
-		<img src="images/nonalignedcow.png" align="middle" width="400px"/>
+		<img src="images/dwagon2.png" align="middle" width="400px"/>
+    <figcaption>Jittered Sampler</figcaption>
 	  </td>
 	</tr>
   </table>
+  <p>We notice that difference between the random sampler and the jittered sampler in terms of produced images is quite minor. One noticeable thing though is the difference in sharpness between the shadows on the scales of the dragon. In the jittered sampler the shadows are softer while it is more pronounced on the random sampler.</p>
 </div>
 
 <h2 align="middle">Extra Credit 5: Surface Area Heuristic</h2>
 <p>
+	Our implementation of the surface area heuristic was guided by the slides and the description in the textbook <a href="https://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic">here</a>. To this end, we make a 2d array that is size 3x(num_buckets) so that we can partition the objects in to buckets in each of the three dimensions. We then put the objects into buckets based on their relative offset within the overall bounding box. Finally, we go through all possible splits of the buckets, and use the surface area heuristic of the resulting sub-bounding-boxes to find the minimum cost split according to the equation $C = \frac 18 + (\#l*\text{left_sa}) +  (\#r*\text{right_sa})$. However, if this split is still more costly than just making the node a leaf, then we instead make a it a leaf with all the primitives. Below are some benchmarks comparing the surface area heuristic to the original splitting heuristic. 
+</p>
+
 	Our implementation of the surface area heuristic was guided by the slides and the description in the textbook <a href="https://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic">here</a>. To this end, we make a 2d array that is size 3x(num_buckets) so that we can partition the objects in to buckets in each of the three dimensions. We then put the objects into buckets based on their relative offset within the overall bounding box. Finally, we go through all possible splits of the buckets, and use the surface area heuristic of the resulting sub-bounding-boxes to find the minimum cost split according to the equation $C = \frac 18 + (\#l*\text{left_sa}) +  (\#r*\text{right_sa})$. However, if this split is still more costly than just making the node a leaf, then we instead make a it a leaf with all the primitives. Below are some benchmarks comparing the surface area heuristic to the original splitting heuristic on dragon.dae and cow.dae.
 </p>
 
@@ -846,7 +820,46 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
     <td>11.559629</td>
 	  </tr>
   </table>
-
+  <figcaption>Results on dragon.dae</figcaption>
+  <table align="center">
+    <tr>
+      <th></th>
+      <th>Original</th>
+      <th> SAH 16 Buckets</th>
+      <th> SAH 64 Buckets</th>
+      <th> SAH 256 Buckets</th>
+    </tr>
+    <tr>
+      <th>BVH Generation Time (s)</th>
+      <td>0.0011</td>
+      <td>0.0070</td>
+      <td>0.0629</td>
+      <td>1.0230</td>
+    </tr>
+    <tr>
+      <th>Render Time (s)</th>
+      <td>1.6559</td>
+      <td>2.6614</td>
+      <td>2.8052</td>
+      <td>2.4061</td>
+      </tr>
+      <tr>
+        <th> Average Speed (million rays/s)</th>
+        <td>2.6482</td>
+        <td>2.6872</td>
+        <td>2.4799</td>
+        <td>2.5077</td>
+        </tr>
+      <tr>
+      <th> Avg. Intersection Tests per Ray</th>
+      <td>11.408705</td>
+      <td>10.790879</td>
+      <td>10.277064</td>
+      <td>10.596324</td>
+      </tr>
+    </table>
+    <figcaption>Results on cow.dae</figcaption>
+  
   <p>
 	Above, we compare the SAH performance against the improved heuristic that was detailed in EC part 1. As can be seen, the SAH already incurs significant overhead in terms of BVH generation time, and this increases as the number of buckets does. However, the render time is significantly faster for the SAH, due to its more intelligent splitting model. The smaller number of intersections per ray as compared to the centroid heuristic is likely due to the better binning of the primitives. However, its is notable that by increasing the number of buckets past a certain point, there are diminishing returns, as can be seen when the number of buckets is increases from 64 to 256, where the values are within run-to-run variance. Overall though, the SAH is a solid improvement over simpler heuristics and presents a good tradeoff between BVH generation time and render time.
   </p>
@@ -983,6 +996,6 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
       <td>4.645373 </td>
       </tr>
     </table>
-
+    <p>We find that BVH generation with non-axis-aligned bounding boxes is significantly slower than with axis-aligned bounding boxes. However the number of intersection tests per ray is noticeably lower for both scenes. With the decrease in intersection tests growing proportional to the number of primitives in the scene as evidenced by it being nearly half between non-axis-aligned vs. axis-aligned. Initially, with small primitive scenes like the teapot, non-axis-aligned renders slower but we find non-axis-aligned actually taking over when moving to the more complex scene using cow.dae. This shows that non-axis-aligned bounding boxes are very promising for very large scale scenes where this reduction in intersection tests per ray becomes more pivotal.</p>
 </body>
 </html>

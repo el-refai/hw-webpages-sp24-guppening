@@ -415,11 +415,11 @@ You will probably want to use the instructional machines for the above renders i
     <tr align="center">
       <td>
         <img src="images/spheres_1024_32_full.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <figcaption>CBspheres_lambertian.dae</figcaption>
       </td>
       <td>
         <img src="images/bunny_1024_32_full.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
     </tr>
   </table>
@@ -629,6 +629,9 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 <h3 align="middle">Because of all the possible extra credit opportunities, we took it as a challenge: how many can we implement?</h3>
 
 <h2 align="middle">Extra Credit 1: Memory Efficient BVH Generation</h2>
+<p>
+	As opposed to our original BVH generation strategy which employed sorts and copies of the primitive array, we instead looked to build the BVH without any memory copying at all. To do this, we started by changing our splitting hueristic, and after some reading settled on taking the centroid of the bounding box of primitive's centroids. We then split along the largest axis. To do this, we took inspiration from the quickselect median finding algorithm to partition the primitives array in place, which can be done in $O(n)$ time. Just like before, we then recursively called the function. This resulted in a much faster BVH generation time, with an average time of $O(n \log n)$, and a worst case time of $O(n^2)$, in the case that the partitions are very unbalanced. Below are some benchmarks of the inplace vs the original BVH generation strategy.
+</p>
 
 <table align="center">
 	<tr>
@@ -658,7 +661,14 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
   </table>
 <br>
 
+<p>
+	As can be seen from the above, the memory efficient strategy is consistently 2.5-4 times faster than the original strategy. It also has the added benefit of saving signficant memory, compared to the $O(n \log n)$ memory usage of the original strategy.
+</p>
+
 <h2 align="middle">Extra Credit 2: Iterative BVH Traversal</h2>
+<p> 
+	To implement the iterative BVH traversal, we essentially did a depth-first search with the std::stack class. This was simple to implement, and we did it in the BVH construction, and BVH intersection functions. From there we benchmarked these iterative traversals against the recursive ones. Below are the results of these benchmarks.
+</p>
 
 <table align="center">
 	<tr>
@@ -720,7 +730,16 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
   </table>
 <br>
 
+<p>
+	As can be seen from the above, surprisingly, the iterative BVH traversal is not faster (within margin of error) than the recursive one in terms of construction or overall render time. This is likely due to two reasons: the first is that recursive traversals is already highly optimized by the C++ compiler, and as a result there is not significant overhead. Second, the iterative traversal has its own overhead with respect to the stack operations, which may counter any speedup from the iterative algorithm itself. That said, the iterative traversal is still a useful tool, as it can save stack memory versus deep recursion. 
+</p>
+
 <h2 align="middle">Extra Credit 3: GUI Addition</h2>
+
+<p>
+	When coming up with ideas of what to add to the GUI, we were inspired by the potential of being able to see higher ray depth renders superimposed upon lower ray depth renders. To this end, we bound the 'u' key to be like the 'c' key, and activate cell rendering on a subset of the pixels, except that for this subset, they render the pixels at one max ray depth higher than the rest of the pixels. As a result, you can see what the effects of the additional ray depth is on the lighting of certain areas, particularly in the shadows. Below are some examples of this in action (albeit at a relatively low sampling rate to save rendering time).
+</p>
+
 <div align="middle">
 	<table style="width:100%">
 	  <tr align="center">
@@ -736,12 +755,22 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 	</table>
   </div>
 <h2 align="middle">Extra Credit 4: Jittered Ray Sampler</h2>
+<p>
+	To create the jittered sampler, we began by making a new sampler class. When initialized, this sampler takes in the lowest number of samples that a pixel could be sampled for (samples per batch in the case of adaptive sampling) and then sets the number of subpixels per pixel grid to the smallest perfect square less than that. It also stores a state that tells which subpixel its currently jitter sampling for. Each time this jitter sampler is called, it figures out which subpixel its on and then returns a random point within that subpixel, thus implementing the jittered behavior. Below are some examples of the jittered sampler in action, compared to the regular fully random sampler.
+</p>
 
 <h2 align="middle">Extra Credit 5: Surface Area Heuristic</h2>
+<p>
+	Our implementation of the surface area hueristic was guided by the slides and the description in the textbook <a href="https://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic">here</a>. To this end, we make a 2d array that is size 3x(num_buckets) so that we can partition the objects in to buckets in each of the three dimensions. We then put the objects into buckets based on their relative offset within the overall bounding box. Finally, we go through all possible splits of the buckets, and use the surface area hueristic of the resulting sub-bounding-boxes to find the minimum cost split according to the equation $C = \frac 18 + (\#l*\text{left_sa}) +  (\#r*\text{right_sa})$. However, if this split is still more costly than just making the node a leaf, then we instead make a it a leaf with all the primitives. Below are some benchmarks comparing the surface area hueristic to the original splitting hueristic. 
+</p>
 
 <h2 align="middle">Extra Credit 6: Bilateral Denoising</h2>
+<p> To implement bilateral denoising, we had to do significantly more research and reading into the codebase than for the previous extra credits. We started by reading through the code and found where we could post-process the image. After all threads were done processing (were in the DONE state), we called the bilateral_filter() function which was a property of the image class, which would apply the bilateral filter accordingly. The bilateral filter itself was implemented according to the original paper on bilateral filtering, which can be found <a href="https://users.soe.ucsc.edu/~manduchi/Papers/ICCV98.pdf">here</a>. Essentially, it runs a special 2D convolution on the image, where the kernel is a function of the distance between the pixels and the intensity of the pixels. For example, the weight for pixel $(i, j)$ from pixel $(k, l)$ is $w(i, j, k, l) = exp(-\frac{(i-k)^2 + (j-l)^2}{2\sigma_d^2} -\frac{(I(i, j) - I(k, l))^2}{2\sigma_r^2})$. Where I is the intensity value of the pixel. We then use this weight to compute the new intensity value of each pixel. This can be used to create a filter that smooths the image, while preserving edges. Below are some examples of the bilateral filter in action.
 
 <h2 align="middle">Extra Credit 7: Non-Axis-Aligned Bounding Boxes</h2>
+<p>
+	And now, the crown jewel of our extra credits: non-axis-aligned bounding boxes. To implement this, we had to change a number of things in our project, from how the BVH was made to making a new BBox class, all while understanding semi-complex computational geometry algorithms. To begin, we read up on what non-axis-aligned bounding boxes even were and why they were useful. Their primary advantage is that by being non-axis-aligned, they can more tightly fit the geometry, and as a result we can get the minimum-volume bounding box. When investigating minimum-volume bounding box algorithms, we learned about O'Rourke's algorithm, which is a variation of the rotating calipers algorithm. All minimum-volume bounding box algorithms start with finding the convex hull of the points, so we found an off the shelf convex hull algorithm to use, and settled on the quickhull algorithm, which is a $O(n \log n)$ time algorithm. We used the code from<a href="https://github.com/akuukka/quickhull"> this repository</a> due to its portability and compatibility with our codebase. However, there was one issue: to get a convex hull we needed a pointcloud, so we had to create a new function for primitives called get_pointcloud, which would return a vector of points that were on the surface of the primitive. For triangles this was simple, but for spheres not so much. We settled on using an icosahedron to approximate the sphere, since it only had twelve points and was easy to calculate the icosahedron which has a sphere inscribed. After we had the convex hull, we then used O'Rourke's algorithm to find the minimum-volume bounding box. We primarily used the resources from the <a href="https://link.springer.com/content/pdf/10.1007/bf00991005.pdf">original paper</a> and <a href="https://www.cs.swarthmore.edu/~adanner/cs97/s08/pdf/calipers.pdf">this paper</a> on rotating calipers in order to implement the remainder of the algorithm. Most simply, the algorithm operates by rotating the convex hull about the x and z axes and finding the max of all values and min of all values as we would with an axis-aligned box. This is equivalent to finding all possible rotations of the points, and among these we take the orientation that results in the minimum axis-aligned box. We then rotate the points and the box back to their original position, but store the vertices of the box and the rotation matrix. In theory this second part is $O(n)$ since the number of rotations tried is a discrete and constant amount. Ulitmately though the constant factors on this $O(n)$ are very high, to the point where it often takes longer than the $O(n \log n)$ convex hull operation which has lower constant factors. Ultimately though, bounding box generation is now an $O(n log n)$ operation whereas it was $O(1)$ before, which is a significant slowdown during BVH generation. To intersect this new box, we implemented an intersection function that would rotate the ray and the box back to the axis-aligned frame, and then intersect the box normally. Since this was an orthonormal rotation, the distances would be preserved and we could use the same t values for the intersection. In addition, we implemented a new draw function for the non-axis-aligned bounding box class that would allow for these new boxes to be visualized. The non-axis-aligned boxes and their performance as compared to axis-aligned boxes can be seen below. Note that the same splitting hueristic was used for both the axis-aligned and non-axis-aligned boxes, and that the only difference is that here we use the minimum volume non-axis-aligned bounding boxes. 
+</p>
 
 <div align="middle">
   <table>

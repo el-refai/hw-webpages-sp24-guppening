@@ -540,37 +540,37 @@ When we set the max ray depth to 0 we get the same result as zero-bounce lightin
     <tr align="center">
       <td>
         <img src="images/bunny_1_4_.png" align="middle" width="400px"/>
-        <figcaption>1 sample per pixel (example1.dae)</figcaption>
+        <figcaption>1 sample per pixel (CBbunny.dae)</figcaption>
       </td>
       <td>
         <img src="images/bunny_2_4_.png" align="middle" width="400px"/>
-        <figcaption>2 samples per pixel (example1.dae)</figcaption>
+        <figcaption>2 samples per pixel (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
         <img src="images/bunny_4_4_.png" align="middle" width="400px"/>
-        <figcaption>4 samples per pixel (example1.dae)</figcaption>
+        <figcaption>4 samples per pixel (CBbunny.dae)</figcaption>
       </td>
       <td>
         <img src="images/bunny_8_4_.png" align="middle" width="400px"/>
-        <figcaption>8 samples per pixel (example1.dae)</figcaption>
+        <figcaption>8 samples per pixel (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
         <img src="images/bunny_16_4_.png" align="middle" width="400px"/>
-        <figcaption>16 samples per pixel (example1.dae)</figcaption>
+        <figcaption>16 samples per pixel (CBbunny.dae)</figcaption>
       </td>
       <td>
         <img src="images/bunny_64_4_.png" align="middle" width="400px"/>
-        <figcaption>64 samples per pixel (example1.dae)</figcaption>
+        <figcaption>64 samples per pixel (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
         <img src="images/bunny_1024_4_.png" align="middle" width="400px"/>
-        <figcaption>1024 samples per pixel (example1.dae)</figcaption>
+        <figcaption>1024 samples per pixel (CBbunny.dae)</figcaption>
       </td>
     </tr>
   </table>
@@ -769,7 +769,7 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 
 <h2 align="middle">Extra Credit 7: Non-Axis-Aligned Bounding Boxes</h2>
 <p>
-	And now, the crown jewel of our extra credits: non-axis-aligned bounding boxes. To implement this, we had to change a number of things in our project, from how the BVH was made to making a new BBox class, all while understanding semi-complex computational geometry algorithms. To begin, we read up on what non-axis-aligned bounding boxes even were and why they were useful. Their primary advantage is that by being non-axis-aligned, they can more tightly fit the geometry, and as a result we can get the minimum-volume bounding box. When investigating minimum-volume bounding box algorithms, we learned about O'Rourke's algorithm, which is a variation of the rotating calipers algorithm. All minimum-volume bounding box algorithms start with finding the convex hull of the points, so we found an off the shelf convex hull algorithm to use, and settled on the quickhull algorithm, which is a $O(n \log n)$ time algorithm. We used the code from<a href="https://github.com/akuukka/quickhull"> this repository</a> due to its portability and compatibility with our codebase. However, there was one issue: to get a convex hull we needed a pointcloud, so we had to create a new function for primitives called get_pointcloud, which would return a vector of points that were on the surface of the primitive. For triangles this was simple, but for spheres not so much. We settled on using an icosahedron to approximate the sphere, since it only had twelve points and was easy to calculate the icosahedron which has a sphere inscribed. After we had the convex hull, we then used O'Rourke's algorithm to find the minimum-volume bounding box. We primarily used the resources from the <a href="https://link.springer.com/content/pdf/10.1007/bf00991005.pdf">original paper</a> and <a href="https://www.cs.swarthmore.edu/~adanner/cs97/s08/pdf/calipers.pdf">this paper</a> on rotating calipers in order to implement the remainder of the algorithm. Most simply, the algorithm operates by rotating the convex hull about the x and z axes and finding the max of all values and min of all values as we would with an axis-aligned box. This is equivalent to finding all possible rotations of the points, and among these we take the orientation that results in the minimum axis-aligned box. We then rotate the points and the box back to their original position, but store the vertices of the box and the rotation matrix. In theory this second part is $O(n)$ since the number of rotations tried is a discrete and constant amount. Ulitmately though the constant factors on this $O(n)$ are very high, to the point where it often takes longer than the $O(n \log n)$ convex hull operation which has lower constant factors. Ultimately though, bounding box generation is now an $O(n log n)$ operation whereas it was $O(1)$ before, which is a significant slowdown during BVH generation. To intersect this new box, we implemented an intersection function that would rotate the ray and the box back to the axis-aligned frame, and then intersect the box normally. Since this was an orthonormal rotation, the distances would be preserved and we could use the same t values for the intersection. In addition, we implemented a new draw function for the non-axis-aligned bounding box class that would allow for these new boxes to be visualized. The non-axis-aligned boxes and their performance as compared to axis-aligned boxes can be seen below. Note that the same splitting hueristic was used for both the axis-aligned and non-axis-aligned boxes, and that the only difference is that here we use the minimum volume non-axis-aligned bounding boxes. 
+	And now, the crown jewel of our extra credits: non-axis-aligned bounding boxes. To implement this, we had to change a number of things in our project, from how the BVH was made to making a new BBox class, all while understanding semi-complex computational geometry algorithms. To begin, we read up on what non-axis-aligned bounding boxes even were and why they were useful. Their primary advantage is that by being non-axis-aligned, they can more tightly fit the geometry, and as a result we can get the minimum-volume bounding box. When investigating minimum-volume bounding box algorithms, we learned about O'Rourke's algorithm, which is a variation of the rotating calipers algorithm. All minimum-volume bounding box algorithms start with finding the convex hull of the points, so we found an off the shelf convex hull algorithm to use, and settled on the quickhull algorithm, which is a $O(n \log n)$ time algorithm. We used the code from<a href="https://github.com/akuukka/quickhull"> this repository</a> due to its portability and compatibility with our codebase. However, there was one issue: to get a convex hull we needed a pointcloud, so we had to create a new function for primitives called get_pointcloud, which would return a vector of points that were on the surface of the primitive. For triangles this was simple, but for spheres not so much. We settled on using an icosahedron to approximate the sphere, since it only had twelve points and was easy to calculate the icosahedron which has a sphere inscribed. After we had the convex hull, we then used O'Rourke's algorithm to find the minimum-volume bounding box. We primarily used the resources from the <a href="https://link.springer.com/content/pdf/10.1007/bf00991005.pdf">original paper</a> and <a href="https://www.cs.swarthmore.edu/~adanner/cs97/s08/pdf/calipers.pdf">this paper</a> on rotating calipers in order to implement the remainder of the algorithm. Most simply, the algorithm operates by rotating the convex hull about the x and z axes and finding the max of all values and min of all values as we would with an axis-aligned box. This is equivalent to finding all possible rotations of the points, and among these we take the orientation that results in the minimum axis-aligned box. We then rotate the points and the box back to their original position, but store the vertices of the box and the rotation matrix. In theory this second part is $O(n)$ since the number of rotations tried is a discrete and constant amount. Ulitmately though the constant factors on this $O(n)$ are very high, to the point where it often takes longer than the $O(n \log n)$ convex hull operation which has lower constant factors. Ultimately though, bounding box generation is now an $O(n \log n)$ operation whereas it was $O(1)$ before, which is a significant slowdown during BVH generation. To intersect this new box, we implemented an intersection function that would rotate the ray and the box back to the axis-aligned frame, and then intersect the box normally. Since this was an orthonormal rotation, the distances would be preserved and we could use the same t values for the intersection. In addition, we implemented a new draw function for the non-axis-aligned bounding box class that would allow for these new boxes to be visualized. The non-axis-aligned boxes and their performance as compared to axis-aligned boxes can be seen below. Note that the same splitting hueristic was used for both the axis-aligned and non-axis-aligned boxes, and that the only difference is that here we use the minimum volume non-axis-aligned bounding boxes. 
 </p>
 
 <div align="middle">

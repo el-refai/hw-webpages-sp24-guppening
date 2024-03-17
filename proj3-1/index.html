@@ -762,57 +762,23 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 <div align="middle">
   <table>
 	<tr align="center">
-		<tr align="center">
-			<th>
-			  Aligned Bounding Box
-			</th>
-			<th>
-			  Non-Aligned Bounding Box
-			</th>
-		  </tr>
-		<td>
-		  <img src="images/alignedspheres.png" align="middle" width="400px"/>
-		</td>
-		<td>
-		  <img src="images/nonalignedspheres.png" align="middle" width="400px"/>
-		</td>
-	  </tr>
-	  <tr align="center">
-		<td>
-		  <img src="images/alignedteapot.png" align="middle" width="400px"/>
-		</td>
-		<td>
-		  <img src="images/nonalignedteapot.png" align="middle" width="400px"/>
-		</td>
-	  </tr>
-	  <tr align="center">
-		<td>
-		  <img src="images/alignedspout.png" align="middle" width="400px"/>
-		</td>
-		<td>
-		  <img src="images/nonalignedspout.png" align="middle" width="400px"/>
-		</td>
-	  </tr>
-	<tr align="center">
 	  <td>
-		<img src="images/alignedcow.png" align="middle" width="400px"/>
+		<img src="images/dwagon1.png" align="middle" width="400px"/>
+    <figcaption>Original Random Sampler</figcaption>
 	  </td>
 	  <td>
-		<img src="images/nonalignedcow.png" align="middle" width="400px"/>
+		<img src="images/dwagon2.png" align="middle" width="400px"/>
+    <figcaption>Jittered Sampler</figcaption>
 	  </td>
 	</tr>
   </table>
+  <p>We notice that difference between the random sampler and the jittered sampler in terms of produced images is quite minor. One noticeable thing though is the difference in sharpness between the shadows on the scales of the dragon. In the jittered sampler the shadows are softer while it is more pronounced on the random sampler.</p>
 
 <h2 align="middle">Extra Credit 5: Surface Area Heuristic</h2>
 <p>
 	Our implementation of the surface area heuristic was guided by the slides and the description in the textbook <a href="https://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic">here</a>. To this end, we make a 2d array that is size 3x(num_buckets) so that we can partition the objects in to buckets in each of the three dimensions. We then put the objects into buckets based on their relative offset within the overall bounding box. Finally, we go through all possible splits of the buckets, and use the surface area heuristic of the resulting sub-bounding-boxes to find the minimum cost split according to the equation $C = \frac 18 + (\#l*\text{left_sa}) +  (\#r*\text{right_sa})$. However, if this split is still more costly than just making the node a leaf, then we instead make a it a leaf with all the primitives. Below are some benchmarks comparing the surface area heuristic to the original splitting heuristic. 
 </p>
-[PathTracer] Collecting primitives... Done! (0.0081 sec)
-[PathTracer] Building BVH from 105120 primitives... Done! (0.9942 sec)
-[PathTracer] Rendering... 100%! (3.3439s)
-[PathTracer] BVH traced 11697129 rays.
-[PathTracer] Average speed 3.4980 million rays per second.
-[PathTracer] Averaged 11.567262 intersection tests per ray.
+
 <table align="center">
 	<tr>
 	  <th></th>
@@ -850,7 +816,46 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
     <td>11.559629</td>
 	  </tr>
   </table>
-
+  <figcaption>Results on dragon.dae</figcaption>
+  <table align="center">
+    <tr>
+      <th></th>
+      <th>Original</th>
+      <th> SAH 16 Buckets</th>
+      <th> SAH 64 Buckets</th>
+      <th> SAH 256 Buckets</th>
+    </tr>
+    <tr>
+      <th>BVH Generation Time (s)</th>
+      <td>0.0011</td>
+      <td>0.0070</td>
+      <td>0.0629</td>
+      <td>1.0230</td>
+    </tr>
+    <tr>
+      <th>Render Time (s)</th>
+      <td>1.6559</td>
+      <td>2.6614</td>
+      <td>2.8052</td>
+      <td>2.4061</td>
+      </tr>
+      <tr>
+        <th> Average Speed (million rays/s)</th>
+        <td>2.6482</td>
+        <td>2.6872</td>
+        <td>2.4799</td>
+        <td>2.5077</td>
+        </tr>
+      <tr>
+      <th> Avg. Intersection Tests per Ray</th>
+      <td>11.408705</td>
+      <td>10.790879</td>
+      <td>10.277064</td>
+      <td>10.596324</td>
+      </tr>
+    </table>
+    <figcaption>Results on cow.dae</figcaption>
+  
 
 <h2 align="middle">Extra Credit 6: Bilateral Denoising</h2>
 <p> To implement bilateral denoising, we had to do significantly more research and reading into the codebase than for the previous extra credits. We started by reading through the code and found where we could post-process the image. After all threads were done processing (were in the DONE state), we called the bilateral_filter() function which was a property of the image class, which would apply the bilateral filter accordingly. The bilateral filter itself was implemented according to the original paper on bilateral filtering, which can be found <a href="https://users.soe.ucsc.edu/~manduchi/Papers/ICCV98.pdf">here</a>. Essentially, it runs a special 2D convolution on the image, where the kernel is a function of the distance between the pixels and the intensity of the pixels. For example, the weight for pixel $(i, j)$ from pixel $(k, l)$ is $w(i, j, k, l) = exp(-\frac{(i-k)^2 + (j-l)^2}{2\sigma_d^2} -\frac{(I(i, j) - I(k, l))^2}{2\sigma_r^2})$, where $I$ is the intensity value of the pixel. We then use this weight to compute the new intensity value of each pixel. This can be used to create a filter that smooths the image, while preserving edges. Below are some examples of the bilateral filter in action.
@@ -980,6 +985,6 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
       <td>4.645373 </td>
       </tr>
     </table>
-
+    <p>We find that BVH generation with non-axis-aligned bounding boxes is significantly slower than with axis-aligned bounding boxes. However the number of intersection tests per ray is noticeably lower for both scenes. With the decrease in intersection tests growing proportional to the number of primitives in the scene as evidenced by it being nearly half between non-axis-aligned vs. axis-aligned. Initially, with small primitive scenes like the teapot, non-axis-aligned renders slower but we find non-axis-aligned actually taking over when moving to the more complex scene using cow.dae. This shows that non-axis-aligned bounding boxes are very promising for very large scale scenes where this reduction in intersection tests per ray becomes more pivotal.</p>
 </body>
 </html>

@@ -12,8 +12,8 @@
       font-weight: 300;
       font-family: 'Open Sans', sans-serif;
       color: #121212;
-      cursor: url(https://rsha256.github.io/dragon-clear32.png), default!important;
-      cursor: url(https://rsha256.github.io/dragon-clear32.png), pointer!important;
+      cursor: url(images/icosahedron_nobg.png), default!important;
+      cursor: url(images/icosahedron_nobg.png), pointer!important;
     }
     h1, h2, h3, h4 {
       font-family: 'Source Sans Pro', sans-serif;
@@ -48,7 +48,7 @@
   <!-- Not using below due to lacking bold fontfaces -->
   <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro|Source+Sans+Pro:400,700" rel="stylesheet"> -->
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel="stylesheet" />
-
+  <link rel="icon" href="../proj3-1/images/tream.png" type="image/x-icon">
   <script>
     MathJax = {
       tex: {
@@ -64,7 +64,7 @@
 
   <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
   <h1 align="middle">Project 4: Cloth Simulator</h1>
-  <h2 align="middle">TODO: student names, CS184-???</h2>
+  <h2 align="middle">James DeLoye and Karim El-Refai, CS184-we-lost</h2>
 
   <br><br>
 
@@ -411,22 +411,22 @@
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/t5-bump-mapping-cloth.png" align="middle" width="400vw" />
+            <img src="images/clothwall.png" align="middle" width="400vw" />
             <figcaption>Bump Mapping on the Cloth</figcaption>
           </td>
           <td>
-            <img src="images/t5-bump-mapping-sphere.png" align="middle" width="400vw" />
+            <img src="images/clothsphere.png" align="middle" width="400vw" />
             <figcaption>Bump Mapping on the Sphere</figcaption>
           </td>
           <td>
         </tr>
         <tr align="center">
           <td>
-            <img src="images/t5-displacement-mapping-sphere.png" align="middle" width="400vw" />
+            <img src="images/displacementsphere.png" align="middle" width="400vw" />
             <figcaption>Displacement Mapping on the Sphere</figcaption>
           </td>
           <td>
-            <img src="images/t5-displacement-mapping-sphere-2.png" align="middle" width="400vw" />
+            <img src="images/displacementsphere_coarse.png" align="middle" width="400vw" />
             <figcaption>Displacement Mapping on the Sphere (coarser mesh)</figcaption>
           </td>
           <td>
@@ -447,11 +447,11 @@
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/t5-mirror-shader-cloth.png" align="middle" width="400vw" />
+            <img src="images/mirrorcloth.png" align="middle" width="400vw" />
             <figcaption>Mirror Shader on the Cloth</figcaption>
           </td>
           <td>
-            <img src="images/t5-mirror-shader-sphere.png" align="middle" width="400vw" />
+            <img src="images/mirrorsphere.png" align="middle" width="400vw" />
             <figcaption>Mirror Shader on the Sphere</figcaption>
           </td>
           <td>
@@ -468,7 +468,21 @@
       TODO
     </p>
 
-
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/customcloth.png" align="middle" width="400vw" />
+            <figcaption>Custom Shader on the Cloth</figcaption>
+          </td>
+          <td>
+            <img src="images/customsphere.png" align="middle" width="400vw" />
+            <figcaption>Custom Shader on the Sphere</figcaption>
+          </td>
+          <td>
+        </tr>
+      </table>
+    </div>
 
 
   <h2 align="middle">Extra Credit (optional)</h2>
@@ -483,5 +497,98 @@
       N/A
     </p>
 
+    <h3 align="middle">Adding Wind</h3>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/baseline.gif" align="middle" width="400vw" />
+            <figcaption>Baseline</figcaption>
+          </td>
+          <td>
+            <img src="images/higherdrag.gif" align="middle" width="400vw" />
+            <figcaption>Higher drag coefficient</figcaption>
+          </td>
+          <td>
+            <img src="images/highlift.gif" align="middle" width="400vw" />
+            <figcaption>Higher lift coefficient</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+
+    <h3 align="middle">AABB Based BVH Self-Collisions</h3>
+
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/AABBcollision.png" align="middle" width="400vw" />
+            <figcaption>AABB Self Collision</figcaption>
+          </td>
+          <td>
+            <img src="images/AABBfloor.png" align="middle" width="400vw" />
+            <figcaption>More AABB Self Collision</figcaption>
+          </td>
+          <td>
+        </tr>
+      </table>
+    </div>
+
+    <h3 align="middle">Axis-Aligned Box Collisions</h3>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/cube.png" align="middle" width="400vw" />
+            <figcaption>Cube Collision</figcaption>
+          </td>
+          <td>
+            <img src="images/rec_prism.png" align="middle" width="400vw" />
+            <figcaption>Rectangular Prism Collision</figcaption>
+          </td>
+          <td>
+        </tr>
+      </table>
+    </div>
+
+    <h3 align="middle">Regular Polyhedron Collisions</h3>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/tetrahedron.png" align="middle" width="400vw" />
+            <figcaption>Tetrahedron Collision</figcaption>
+          </td>
+          <td>
+            <img src="images/icosahedron.png" align="middle" width="400vw" />
+            <figcaption>Icosahedron Collision</figcaption>
+          </td>
+          <td>
+        </tr>
+      </table>
+    </div>
+
+    <h3 align="middle">General Polyhedron Collisions</h3>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/pyramid.png" align="middle" width="400vw" />
+            <figcaption>Flat-Topped Pyramid Collision</figcaption>
+          </td>
+          <td>
+            <img src="images/parallelogram.png" align="middle" width="400vw" />
+            <figcaption>Parallelepiped Collision</figcaption>
+          </td>
+          <td>
+            <img src="images/hexprism.png" align="middle" width="400vw" />
+            <figcaption>Hexagonal Prism Collision</figcaption>
+          </td>
+          <td>
+        </tr>
+      </table>
+    </div>
 </body>
 </html>

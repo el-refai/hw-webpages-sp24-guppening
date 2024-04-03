@@ -493,11 +493,16 @@
     compare and contrast them both in words and in images.
     </b></blockquote>
 
-    <p>
-      N/A
-    </p>
-
     <h3 align="middle">Adding Wind</h3>
+
+    <p>
+      To add wind, we first had to figure out a way to quantify the impact of a wind force on the cloth. 
+      After doing some research, we found that for the movie Frozen, Disney created new methods for simulating the effects of wind on cloth and <a href="https://media.disneyanimation.com/uploads/production/publication_asset/115/asset/cloth_hair_wind.pdf">published them.</a>  
+      To summarize, we represent wind as a uniform vector field where every point in our scene is effected by a wind with a given velocity and direction. From this we can calculate the force vector on an area of the cloth as $F = \frac 12 \rho A ((C_D - C_L)(\textbf{v} \cdot \textbf{n})\textbf{v} + C_L |v|^2\textbf{n})$.
+      In this $\rho$ is the density of air, $A$ is the area of the fragment we are calculating the force for, $C_D$ is the drag coefficient, $C_L$ is the lift coefficient, $\textbf{v}$ is the velocity vector of the wind, and $\textbf{n}$ is the normal vector of the cloth for the given area.
+      To implement this for the project, we went through the cloth and calculated the force on each square section. Then we distributed the force on the square to each of the points that make the square. In addition, we added components to the GUI that let the user configure the wind speed, direction, and lift and drag coefficients live. 
+      This resulted in a number of really cool effects, which are detailed in the gifs below (ignore the blue artifacting, this is a product of the gif production process). We can see that increasing the drag coefficient produces more flapping, while increasing the lift coefficient essentially increases how much the cloth is pushed up by the wind. </p>
+
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
@@ -519,7 +524,12 @@
 
 
     <h3 align="middle">AABB Based BVH Self-Collisions</h3>
-
+    <p>
+      We also implemented axis-aligned bounding box based self collisions for the cloth, allowing for errorless self collision, as opposed to spatial hashing which is prone to errors particularly if a point is close to a spatial boundary. 
+      We implemented these bounding boxes very similarly to how they were done in homework 3, in which we split along the largest axis each time and recursively split until there is less than a certain number of masses left. Then intersection querying is done exactly as was done with raytracing and we used the same repulsion code as previously.
+      While this guarantees intersection with all possible masses and is fairly quick in most cases ($O(n\log{n}$) in the best case), in the case where the cloth is very bunched up in the same place it can be very slow (and result in $O(n^2)$ time for all the collisions) however, spatial hashing can also suffer from this issue. 
+      Below are some images of this working as intended!
+    </p>
     <div align="middle">
       <table style="width:100%">
         <tr align="center">

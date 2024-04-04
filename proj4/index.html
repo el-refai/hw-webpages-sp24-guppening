@@ -106,7 +106,7 @@
     </b></blockquote>
 
     <div align="middle">
-      <table style="width:100%">
+      <table style="width:100%;margin-left:-10%;margin-right:auto;">
         <tr align="center">
           <td>
             <img src="images/no_shearing.png" align="middle" width="400px" />
@@ -115,15 +115,10 @@
               <img src="images/shearing_only.png" align="middle" width="400px" />
               <figcaption>Only shearing constraints</figcaption>
             </td>
-          </td>
-        </tr>
-        <tr align="center">
-
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="images/full_constraint.png" align="middle" width="400px" />
-            <figcaption>All constraints</figcaption>
+            <td>
+              <img src="images/full_constraint.png" align="middle" width="400px" />
+              <figcaption>All constraints</figcaption>
+            </td>
           </td>
         </tr>
       </table>
@@ -504,7 +499,7 @@
       This resulted in a number of really cool effects, which are detailed in the gifs below (ignore the blue artifacting, this is a product of the gif production process). We can see that increasing the drag coefficient produces more flapping, while increasing the lift coefficient essentially increases how much the cloth is pushed up by the wind. </p>
 
     <div align="middle">
-      <table style="width:100%">
+      <table style="width:100%;margin-left:-10%;margin-right:auto;">
         <tr align="center">
           <td>
             <img src="images/baseline.gif" align="middle" width="400vw" />
@@ -547,6 +542,12 @@
     </div>
 
     <h3 align="middle">Axis-Aligned Box Collisions</h3>
+    <p>To start, we wanted to do collisions with objects we were familiar with, so given our experience in Project 3, we decided to work with axis-aligned boxes. To render them, we just had to define a list of vertices and then calculate the normals of the faces and vertices.
+    The vertex normals were used to shade the objects, mainly because the color gradients looked cool (though we couldve done face normal shading as well). 
+    To do the collisions, we first checked if the new point location was inside the box, and then used the previous location and current location to make a ray from the points. 
+    From there we used the same methodology as intersecting bounding boxes in Project 3 to find the closest intersection, and then used the normal of the face to calculate the appropriate adjustment.
+    Below are two examples of the cloth colliding with axis-aligned boxes.
+    </p>
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
@@ -564,6 +565,14 @@
     </div>
 
     <h3 align="middle">Regular Polyhedron Collisions</h3>
+    <p>
+      We wanted to expand our collisions to more complex polyhedra, so the next logical choice was regular polyhedra. 
+      To set up the objects, we needed to change our object representation to include the faces, which we did by listing the vertices around each face in counterclockwise order. 
+      We then calculated the normals for each face by taking the cross product of the vectors between the vertices, and used the face normals to calculate the vertex normals as the average of the incident face normals.
+      With this, we could render the polyhedra, but now we needed to set up the collisions. After doing some research, we reasoned that a parametric line clipping algorithm would work perfectly for this use case, and found a great explanation at <a href="https://web.archive.org/web/20111004134432/http://softsurfer.com/Archive/algorithm_0111/algorithm_0111.htm">this website.</a>
+      Interestingly, the algorithm was very similar to the one we used for axis-aligned boxes. 
+      Given the vector from the previous point location to the current point location, $\textbf{d}$, we represented the line going through the previous point as $P(t)=p _0 + t\textbf{d}$, where $\textbf{p}_0$ is the previous point location. We then computed $t$ for each face $i$ by using the equation $t_i = \frac{(V_i-P_0)\cdot \textbf{n}_i}{\textbf{d}\cdot \textbf{n}_i}$ were $V_i$ is a vertex on the face and $\textbf{n}_i$ is the normal of the face.
+      We can use the sign of $\textbf{d}\cdot \textbf{n}_i$ to determine if at this intersection point the parameterized line is entering or leaving the polyhedron. Then, much like with the axis-aligned boxes, we calculate the closest intersection point by taking the max of the entering $t$ values. We then move the cloth to the appropriate location on the surface of the object the same way that it was done with the plane and axis-aligned boxes. This resulted in the images below, which show our cloth intersecting both a tetrahedron and an icosahedron.
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
@@ -581,8 +590,14 @@
     </div>
 
     <h3 align="middle">General Polyhedron Collisions</h3>
+    <p>
+      With the regular polyhedra figured out, we reasoned that we could generalize our intersection algorithm and polyhedra object representation to any convex polyhedra. 
+      The hardest part here was actually defining the polyhedra, as we needed to be sure to correctly order the vertices around each face such that the face normals were calculated correctly. 
+      Without this, the intersection algorithm would not work (and this was the main source of bugs). Below we show the algorithm working with a few different polyhedra, both symmetric and asymmetric. 
+    </p>
+
     <div align="middle">
-      <table style="width:100%">
+      <table style="width:100%;margin-left:-10%;margin-right:auto;">
         <tr align="center">
           <td>
             <img src="images/pyramid.png" align="middle" width="400vw" />

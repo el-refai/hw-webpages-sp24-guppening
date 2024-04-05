@@ -288,7 +288,7 @@
   </b></blockquote>
 
   <h3 align="middle"> Overview</h3>
-  <p>We add the ability for our cloth to collide with planes and spheres by checking if at any a point mass on the cloth has intersected with plane or sphere. If so, we correct it by "bumping" the point back up. This is done by first calculating where the point mass should have intersected the object and computing that tangent point. We then create a correction vector which representions the difference between this tangent point and the last position of the point mass that was not in intersection with the object. We then set the point's position to be the last position it was before it intersected the object plus a correction vector scaled by $(1-f)$ to account for friction. This places the point right on top of the surface of the object. </p>
+  <p>We add the ability for our cloth to collide with planes and spheres by checking if at any a point mass on the cloth has intersected with plane or sphere. If so, we correct it by "bumping" the point back up. This is done by first calculating where the point mass should have intersected the object by projecting this point's position onto the surface of the object, we call this point the tangent point. We then create a correction vector which representions the difference between this tangent point and the last position of the point mass that was not in intersection with the object. We then set the point's position to be the last position it was before it intersected the object plus a correction vector scaled by $(1-f)$ to account for friction. This places the point right on top of the surface of the object. </p>
 
     <blockquote><b>
       Show us screenshots of your shaded cloth from <i>scene/sphere.json</i> in its final resting state 

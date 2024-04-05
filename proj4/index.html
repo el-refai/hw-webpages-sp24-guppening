@@ -288,7 +288,11 @@
   </b></blockquote>
 
   <h3 align="middle"> Overview</h3>
-  <p>We add the ability for our cloth to collide with planes and spheres by checking if at any a point mass on the cloth has intersected with plane or sphere. If so, we correct it by "bumping" the point back up. This is done by setting the point's position to be the last position it was before it intersected the object plus a correction vector scaled by $(1-f)$ to account for friction. This places the point right on top of the surface of the object. </p>
+  <p>We add the ability for our cloth to collide with spheres by first checking if the newly calculated point is within the sphere. This can be easily done by seeing if the distance from the sphere center to the new point is less than the radius of the sphere. We then calculate the point on the sphere where the mass wouldve have first contacted the sphere and apply a vector from its previous position to the new position where it would've collided. This is then adjusted by a friction constant to simulate the actual friction of the sphere surface. 
+  </p>
+
+  <p> We also add collisions for the cloth with planes. We can check if the point's next position crosses the plane by seeing if the sign of the dot product of the normal with a vector of the mass to any point on the plane has changed between the current and last timestep. If it has, then we perform the same intersection calculations that we did with the sphere and adjust the vector to be on top of the plane, while multiplying by the $1-f$ constant to account for friction.  
+  </p>
 
     <blockquote><b>
       Show us screenshots of your shaded cloth from <i>scene/sphere.json</i> in its final resting state 

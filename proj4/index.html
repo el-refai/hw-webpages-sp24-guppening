@@ -531,7 +531,8 @@
     </b></blockquote>
 
     <p>
-      TODO
+      This custom shader uses a Kuwahara filter to to produce the cool painted effect of this custom texture. To implement this, within some square radius of each pixel, in this case 5, we take the average and standard deviation of the values in each quadrant within the radius.
+      Then the value of the pixel is changed to be the average value of the quadrant with the lowest standard deviation. As a result, the edges of the picture are preserved but the texture is given an interesting effect. Below are two examples of this shader in action.
     </p>
 
     <div align="middle">

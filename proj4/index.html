@@ -61,16 +61,22 @@
 </head>
 
 <body>
-
-  <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
-  <h1 align="middle">Project 4: Cloth Simulator</h1>
+  <div align="middle">
+    <img src="images/ico_cloth_background.webp" 
+      align="middle" 
+      width="1000vw" />
+  </div>
+  <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
+  <h1 align="middle">Homework 4: Cloth Simulator</h1>
   <h2 align="middle">James DeLoye and Karim El-Refai, CS184-we-lost</h2>
 
   <br><br>
 
   <div>
     <h2 align="middle">Overview</h2>
-    <p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+    <p> We implemented a real-time simulation of cloth using masses and springs which was done by imposing physical constraints on the masses and springs then using numerical integration to simulate the way cloth moves over time.
+      We then handled collisions between the cloth and other objects and the cloth with itself, ensuring that the cloth acts realistically. Finally, we added in various forms of shading from diffuse and blinn-phong to texture, displacement, and bump mapping with environment-mapped reflections as well.
+      But that isn't all! We also worked on a ton of extra credit from adding wind, axis-aligned bounding boxes for collisions, to collisions on regular and general polyhedrons.</p>
   </div>
 
   <a href="https://cs184.eecs.berkeley.edu/sp24/docs/hw4-part-1">
@@ -123,7 +129,7 @@
         </tr>
       </table>
     </div>
-
+    
 
 
   <a href="https://cs184.eecs.berkeley.edu/sp24/docs/hw4-part-2">
@@ -135,61 +141,27 @@
       You can also restart the simulation at any time from the cloth's starting position by pressing <kbd>R</kbd>.
       <br />
       <small>
-      Describe the effects of changing the spring constant <code>ks</code>; how does the cloth behave from start to rest with a very low <code>ks</code>? 
-      A high <code>ks</code>?
-      </small>
+        For each of the above, observe any noticeable differences in the cloth compared to the default parameters 
+        and show us some screenshots of those interesting differences and describe when they occur.
+        </small>
     </b></blockquote>
 
-    <p>
-      TODO
-    </p>
-
-
-    <blockquote><b>
-      <small>
-        What about for <code>density</code>?
-      </small>
-    </b></blockquote>
-
-    <p>
-      TODO
-    </p>
-    
-    
-    <blockquote><b>
-      <small>
-        What about for <code>damping</code>?
-      </small>
-    </b></blockquote>
-
-    <p>
-      TODO
-    </p>
-
-
-    <blockquote><b>
-      <small>
-      For each of the above, observe any noticeable differences in the cloth compared to the default parameters 
-      and show us some screenshots of those interesting differences and describe when they occur.
-      </small>
-    </b></blockquote>
-  
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/5gcm.png" align="middle" width="400vw" />
-            <figcaption>Density $=5 \frac{g}{{cm}^2}$</figcaption>
+            <img src="images/ks_5.png" align="middle" width="325vw" />
+            <figcaption>$k_s=5$ </figcaption>
           </td>
           <td>
-            <img src="images/45gcm.png" align="middle" width="400vw" />
-            <figcaption>Density $=45 \frac{g}{{cm}^2}$</figcaption>
+            <img src="images/ks_500.png" align="middle" width="400vw" />
+            <figcaption>$k_s=500$ </figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="images/ks_500.png" align="middle" width="400vw" />
-            <figcaption>$k_s=500$ </figcaption>
+            <img src="images/default_15gm_5000ks.png" align="middle" width="300vw" />
+            <figcaption>$k_s=5000$ (Default)</figcaption>
           </td>
           <td>
             <img src="images/ks_50k.png" align="middle" width="400vw" />
@@ -198,9 +170,93 @@
         </tr>
       </table>
     </div>
-  
+    <blockquote><b>
+      <small>
+        Describe the effects of changing the spring constant <code>ks</code>; how does the cloth behave from start to rest with a very low <code>ks</code>? 
+      A high <code>ks</code>?
+      </small>
+    </b></blockquote>
     <p>
-      TODO
+      Since <code>ks</code> refers to the spring constant which is how strong the internal forces that hold the cloth together are, we find that increasing the spring constant results in a much stiffer cloth, making it more resistant to deforming. This can be seen when we increase the spring constant to $500,000$ and the resulting cloth sags far less in the middle compared to the cloths with a lower spring constant.  
+    </p>
+  
+    
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/5gcm.png" align="middle" width="400vw" />
+            <figcaption>Density $=5 \frac{g}{{cm}^2}$</figcaption>
+          </td>
+          <td>
+            <img src="images/default_15gm_5000ks.png" align="middle" width="300vw" />
+            <figcaption>Density $=15 \frac{g}{{cm}^2}$ (Default)</figcaption>
+          </td>
+          <td>
+            <img src="images/45gcm.png" align="middle" width="400vw" />
+            <figcaption>Density $=45 \frac{g}{{cm}^2}$</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+  
+    <blockquote><b>
+      <small>
+        What about for <code>density</code>?
+      </small>
+    </b></blockquote>
+
+    <p>
+      Density in this case is the density of each point mass in the mass spring system that 
+      makes up our cloth this means that altering changes the gravitational force exerted on 
+      the cloth since the weight of the cloth changes with the density. When we increase the 
+      density we find that visually it seems to have the opposite effect compared to 
+      increasing the spring constant when viewing the cloth at rest. An increased 
+      density seems to sag more when at rest compared to the default density. This is due to the 
+      increased density making the force of gravity far more pronounced 
+      giving us a cloth that deforms more readily. When we decrease the density when compared 
+      to the default we find that the cloth is more upright however this is due moreso to the 
+      fact that the reduced force of gravity means that the springs are more capable of 
+      resisting it, giving us a cloth that maintains its original shape better.
+    </p>
+    
+    <div align="middle">
+      <img src="images/damping_0.png" align="middle" width="400vw" />
+      <figcaption>Damping $=0$</figcaption>
+    </div>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/damping_0_fall.png" align="middle" width="400vw" />
+            <figcaption>Damping $= 0$</figcaption>
+          </td>
+          <td>
+            <img src="images/damping_20.png" align="middle" width="400vw" />
+            <figcaption>Damping $= 20$ (Default)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/damping_50.png" align="middle" width="400vw" />
+            <figcaption>Damping $= 50$</figcaption>
+          </td>
+          <td>
+            <img src="images/damping_100.png" align="middle" width="400vw" />
+            <figcaption>Damping $= 100$</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <blockquote><b>
+      <small>
+        What about for <code>damping</code>?
+      </small>
+    </b></blockquote>
+
+    <p>
+      Damping is what we use to simulate the loss of energy in the system due to friction, heat loss, etc... The first photo shows how with no damping the cloth is capable of swinging all the way forward and backward. When the damping is higher this backward and forward motion is far less pronounced and the rate at which the cloth falls slows down proportionally. Another interesting thing we noticed is that when you compare all four images with different damping levels we find that lower levels of damping seem to crease more when falling while with higher levels of damping the creases are less pronounced and instead the cloth is smoother. A very high damping value has the cloth fall noticeably slower versus a very low damping value.
     </p>
 
 
@@ -249,7 +305,7 @@
     </b></blockquote>
 
     <p>
-      TODO
+      We find that increasing the spring constant compared to the default has the cloth noticeably more upright. The creases are also larger but fewerr in number. Meanwhile we notice the opposite effect when we decrease the spring constant compared to the original as the cloth sags even more downwards and the creases have increased in number but are smaller in size.
     </p>
 
 
@@ -311,6 +367,10 @@
               
           </td>
           <td>
+            <img src="images/default_self_collision.png" align="middle" width="300px" />
+            <figcaption>Density $=45 \frac{g}{{cm}^2}$ (Default)</figcaption>
+        </td>
+          <td>
               <img src="images/self45gcm.png" align="middle" width="400px" />
               <figcaption>Density $=45 \frac{g}{{cm}^2}$</figcaption>
           </td>
@@ -321,6 +381,10 @@
               <figcaption>$k_s=2,000$</figcaption>
           </td>
           <td>
+            <img src="images/default_self_collision.png" align="middle" width="300px" />
+            <figcaption>$k_s=5,000$ (Default)</figcaption>
+        </td>
+          <td>
               <img src="images/self50k.png" align="middle" width="400px" />
               <figcaption>$k_s=50,000$</figcaption>
           </td>
@@ -329,7 +393,8 @@
     </div>
 
     <p>
-      TODO
+      We find that as we increase the density the cloth spreads out less and has more smaller folds onto itself. Meanwile decreasing the density has the opposite effect as the lighter cloth is able to spread out more and as a result the folds are less frequent but are larger.
+      When we increase the spring constant we also find that the stretchier cloth is able to spread out more and that there are fewer folds that are larger. When we decrease the spring constant the stiffer cloth has more folds but these folders are smaller as the cloth does not spread out as much during its descent. 
     </p>
 
 
@@ -343,7 +408,7 @@
     </b></blockquote>
 
     <p>
-      TODO
+      A shader program is a program that compiles and links vertex and fragment shaders and runs the vertex shader first then passes the result from the vertex shader to the fragment shader. These shader programs can be ran in parallel on a GPU where sections of the graphics pipeline are executed, ex: vertex processing and fragment processing. The vertex shaders apply transforms to the a given vertex which modifies its position and normal vector it also generates the vertex's texture coordinates <code>uv</code>. The fragment shader uses the fragments generated by the rasterization process and the geometric properties of each vertex given by the vertex shader and the shading method to compute the correct color for each fragment.
     </p>
 
 
@@ -353,7 +418,9 @@
     </b></blockquote>
 
     <p>
-      TODO
+      The Blinn-Phong shading model works by computing the color per-vertex. It works by summing together the ambient light, diffuse shading, and reflected light at a given pixel and setting that as the light value for that pixel.  
+      It computes these three components using the surface normal at the vertex $n$ and treats it as a ray from the vertex to our light source $l$, the distance from the vertex to the light source is $r$ and $I_a$ is the ambient intensity of light while $I$ is the light intensity coming from the light source.
+      The ambient light $L_a = k_a I_a$ while the diffuse component $L_d = k_d (I/r^2) \max(0, n \cdot l)$ and the specularity component is $L_s = k_s(I/r^2)\max(0, n \cdot h)^p$ with the final light for the vertex being $L = L_a + L_d + L_s$.
     </p>
 
     <div align="middle">
@@ -414,6 +481,10 @@
             <figcaption>Bump Mapping on the Sphere</figcaption>
           </td>
           <td>
+            <img src="images/bump_16.png" align="middle" width="380vw" />
+            <figcaption>Bump Mapping on the Sphere (coarser mesh)</figcaption>
+          </td>
+          <td>
         </tr>
         <tr align="center">
           <td>
@@ -430,7 +501,7 @@
     </div>
 
     <p>
-      TODO
+      With bump mapping we find that when we used a finer sphere that the results are a smoother and less jagged spehere with the texture being applied more smoothly meanwhile the coarser sphere has noticeable corners. As for displacement mapping we notice a similar thing where the coarser mesh results in a very jagged surface while the smoother mesh is much more rounded. The difference between bump mapping and displacement mapping though is that bump mapping doesn't change the geometry of the object which does make it smoother but also loses some realism while displacement mapping does actually modify the positions of the vertices according to texture height. 
     </p>
 
 

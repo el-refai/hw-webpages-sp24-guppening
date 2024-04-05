@@ -82,6 +82,14 @@
   <a href="https://cs184.eecs.berkeley.edu/sp24/docs/hw4-part-1">
   <h2 align="middle">Part 1: Masses and springs</h2>
   </a>
+
+  <blockquote><b>
+    Overview of implementation
+  </b></blockquote>
+
+  <h3 align="middle"> Overview</h3>
+  <p>We implemented our cloth by constructing an evenly space grid of masses that are connected to one another by springs. These springs impose bending, shearing, and structural constraints on the cloth to make the mass spring system behave like a realistic piece of cloth. We also ensured that the cloth could be constructed horizontally or vertically by setting the y coordinate of the point masses to 1 if the <code>orientation</code> is <code>HORIZONTAL</code> and varied positions of the point masses in the xz plane. If the <code>orientation</code> is <code>VERTICAL</code> then we added small perturbations in the z direction for each point mass and varied positions in the xy plane.</p>
+
     <blockquote><b>
       Take some screenshots of <i>scene/pinned2.json</i> from a viewing angle where you can clearly see the cloth wireframe 
       to show the structure of your point masses and springs. 
@@ -274,6 +282,14 @@
   <a href="https://cs184.eecs.berkeley.edu/sp24/docs/hw4-part-3">
   <h2 align="middle">Part 3: Handling collisions with other objects</h2>
   </a>
+
+  <blockquote><b>
+    Overview of implementation
+  </b></blockquote>
+
+  <h3 align="middle"> Overview</h3>
+  <p>We add the ability for our cloth to collide with planes and spheres by checking if at any a point mass on the cloth has intersected with plane or sphere. If so, we correct it by "bumping" the point back up. This is done by setting the point's position to be the last position it was before it intersected the object plus a correction vector scaled by $(1-f)$ to account for friction. This places the point right on top of the surface of the object. </p>
+
     <blockquote><b>
       Show us screenshots of your shaded cloth from <i>scene/sphere.json</i> in its final resting state 
       on the sphere using the default <code>ks = 5000</code> as well as with <code>ks = 500</code> and <code>ks = 50000</code>. 

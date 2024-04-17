@@ -154,6 +154,13 @@
         some example renders matching the quality described in the papers.
       </p>
       <p>
+        However, getting these repos set up and working was much harder than expected.
+        For both repositories, the provided instructions did not work. As a result, 
+        we spent several days working out dependencies and interactions between the packages and CUDA. 
+        The recommended CUDA version was not compatibile with their subpackages, and required a reconstruction of the proper CUDA and PyTorch versions to use to ensure compatibility.
+        Eventually though, we got the dependencies worked out and were able to start using both repos to generate Gaussian Splats. 
+      </p>
+      <p>
         To demonstrate 4D Gaussian splatting, our group used a dynamic scene
         containing bouncing balls from the DeNeRF dataset. To demonstrate 3D
         Language Gaussian Splatting, a video with changing camera positions in a
@@ -224,7 +231,7 @@
           </td>
           <td>
             <img
-              src="videos/langsplat_l1_gt.gif"
+              src="videos/langsplat_l1_render.gif"
               align="middle"
               style="width: 20vw"
             />
@@ -245,7 +252,7 @@
           </td>
           <td>
             <img
-              src="videos/langsplat_l2_gt.gif"
+              src="videos/langsplat_l2_render.gif"
               align="middle"
               style="width: 20vw"
             />
@@ -266,7 +273,7 @@
           </td>
           <td>
             <img
-              src="videos/langsplat_l3_gt.gif"
+              src="videos/langsplat_l3_render.gif"
               align="middle"
               style="width: 20vw"
             />

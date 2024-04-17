@@ -125,11 +125,48 @@
   </div>
 
 
+<<<<<<< Updated upstream
+=======
+    <h3>Current Progress</h3>
+    <div>
+      <p>
+        Our group spent the first week reading important papers describing the
+        technologies used in the project, primarily those concerning 3D and 4D
+        Gaussian splatting as well as Language-Embedded Gaussian Splatting.
+      </p>
+      <p>
+        After familiarizing ourselves with the techniques and technologies used,
+        the second week was spent familiarizing ourselves with the code in each
+        of the two papers' repositories we aim to combine and setup to produce
+        some example renders matching the quality described in the papers.
+      </p>
+      <p>
+        To demonstrate 4D Gaussian splatting, our group used a dynamic scene
+        containing bouncing balls from the DeNeRF dataset. To demonstrate 3D
+        Language Gaussian Splatting, a video with changing camera positions in a
+        static scene containing various objects on a sofa with color
+        highlighting for objects in different classes was produced.
+      </p>
+      <p>
+        We are currently on track to meet the project deadline based on the
+        schedule we set out during the proposal. The coming weeks will involve
+        adding dependencies (such as SAM, CLIP, DINO, and other models needed
+        for natural language embedding), refactoring the model architecture to
+        support features from both projects, and work on producing final
+        renders.
+      </p>
+      <p>
+        If we have time, we will also try to add an interactive visualization
+        where you can "explore" the scene or query objects.
+      </p>
+    </div>
+>>>>>>> Stashed changes
 
   <hr />
   <br />
   <h2 align="middle">Task 1: Drawing Single-Color Triangles</h2>
 
+<<<<<<< Updated upstream
   <h3>Overview</h3>
     <p>
       <ul>
@@ -145,6 +182,43 @@
     <blockquote><b>
       Show a png screenshot of basic/test4.svg with the default viewing parameters and with the pixel inspector centered on an interesting part of the scene.
     </b></blockquote>
+=======
+    <h3>Milestone Video and Slide Deck</h3>
+    <div align="center">
+      <iframe
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/sGMagqGOsik?si=3fRaOLCZn4S2GCtc"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <p>
+      Slides are located at
+      <a
+        href="https://docs.google.com/presentation/d/1tmUaLd1mooysNSISG8XoHOHJFIXcWEhl7bE-J95Dbkw/edit?usp=sharing"
+        >this link</a
+      >
+      or in the embed below.
+    </p>
+    <iframe
+      src="https://docs.google.com/presentation/d/e/2PACX-1vQc1KiS2GJyPMVLVsoNZb2efOuHRFm66Qinf2F_4dkk8VQvmBesJr-uo3nrfea4CDLoRytdrQ_GtEWo/embed?start=true&loop=true&delayms=5000"
+      frameborder="0"
+      width="960"
+      height="569"
+      allowfullscreen="true"
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+    ></iframe>
+
+    <br />
+
+    <h3>Figures</h3>
+>>>>>>> Stashed changes
 
     <div align="middle">
       <table style="width:100%">
@@ -346,8 +420,58 @@
               <figcaption>$\text{Grid Sampled Map}$</figcaption>
           </td>
           <td>
+<<<<<<< Updated upstream
               <img src="images/jittermap.png" align="middle" width="400px" />
               <figcaption>$\text{Jitter Sampled Map}$</figcaption>
+=======
+            <img
+              src="videos/langsplat_l1_render.gif"
+              align="middle"
+              style="width: 20vw"
+            />
+          </td>
+        </tr>
+        <tr align="left">
+          <td>
+            <h5>L2 Features (Medium Grain, Parts)</h5>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img
+              src="videos/langsplat_l2_gt.gif"
+              align="middle"
+              style="width: 20vw"
+            />
+          </td>
+          <td>
+            <img
+              src="videos/langsplat_l2_render.gif"
+              align="middle"
+              style="width: 20vw"
+            />
+          </td>
+        </tr>
+        <tr align="left">
+          <td>
+            <h5>L3 Features (Coarsest Grain, Whole Objects)</h5>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img
+              src="videos/langsplat_l3_gt.gif"
+              align="middle"
+              style="width: 20vw"
+            />
+          </td>
+          <td>
+            <img
+              src="videos/langsplat_l3_render.gif"
+              align="middle"
+              style="width: 20vw"
+            />
+>>>>>>> Stashed changes
           </td>
         </tr>
       </table>

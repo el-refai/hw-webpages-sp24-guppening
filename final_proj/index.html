@@ -39,7 +39,7 @@
               Language Embedded 4D Gaussian Splatting
             </h1>
             <h2>
-              James DeLoye, Karim El-Refai, Andrew Wang, Jenny Nyugen
+              James DeLoye, Karim El-Refai, Andrew Wang, Jenny Nguyen
             </h2>
 					</div>
 				</section>
@@ -76,11 +76,18 @@
 
 				<!-- One -->
 					<section id="technical-approach" class="wrapper style2 fade-up">
-								<div class="inner">
-									<h2>Technical Approach - Background</h2>
+					<div class="inner">
+					<h2>Technical Approach - Background</h2>
                   <h3>Gaussian Splatting</h3>
+				  <p>
+					Gaussian splatting is a rendering technique that approximates the appearance of a scene by distributing small Gaussian blobs across the image plane, representing a sample from the scene.
+					Each splat has properties such as position, color, and size which determine the geometry and material properties of the object. By adjusting these said parameters, we can render a highly detailed and realistic
+					3D scene.
+				  </p>
                   <h3>Dynamic and Language Embedded Splatting</h3>
-									<p></p>
+					<p>Dynamic splatting extends Gaussian splatting to handle scenes that change over time, as it takes into account of how a scene can evolve while gaussians assume that they are static. Language embedded splatting furthers this 
+						and provides more enriching scenes by incorporating semantics during the rendering. This rendering technique enables semantic segemtnation, object tracking, and scene understanding.
+					</p>
 								</div>
 					</section>
 
@@ -90,12 +97,13 @@
                 <h3>Real-Time Dynamic and Language-Embedded Gaussian Visualization</h3>
                 <p>
                 We continuously update the scene represntation based on incoming data streams and track it using timestamps for real-time visualizations of dynamic scenes. The models learns the dynamic scene using 4DGS and LEGS, which allow
-				it to adapt to changes in the environment over time. The initializastion phase establishes a communication channel between the model and the SIBR viewer. The socket listens for updates from the viewer and takes the camera parameters to
-				render in real time.
+				it to adapt to changes in the environment over time. The initialization phase establishes a communication channel between the model and the SIBR viewer. The socket listens for updates from the viewer and takes the camera parameters to
+				render in real time. We modified the SIBR file so that it also takes a timestamp parameter in the camera constructor, so then the user can interact the scene at different points of time.
 				</p>
                 <h3>Language Embedded 4D Gaussian Splatting</h3>
                 <p>
-				LEGS extend the capabilities of traditional Gaussian splatting techniques by incorporating temoral dynamics and semantic encoding that capture spatial and temporal variations.
+				LEGS extend the capabilities of traditional 4D Gaussian splatting techniques by incorporating temporal dynamics and semantic encoding. We explored techniques to enable advanced visualization and analysis tasks, such as heatmap generation and
+				object tracking.
                 </p>
               </div>
           </section>

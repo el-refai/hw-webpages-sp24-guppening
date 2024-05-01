@@ -226,7 +226,7 @@
           <source src="videos/legs_feat3.mp4" type="video/mp4">
           Your browser does not support the video tag.
         </video>
-        <p>Toggling the timestamp in the GUI shows the balls bouncing, and the gaussian splats capture the nice shadows and squish of the balls.</p>
+        <p>At our finest level all the subparts of the objects are segmented from each individual wing and part of the Gundamn to the buttons and joysticks on the controller and even the Uno marker on the stack of cards. </p>
       </div>
       <div style="text-align: center;">
         <h4>Feature Level 2 (Medium Grain, Parts)</h4>
@@ -234,7 +234,7 @@
           <source src="videos/legs_feat2.mp4" type="video/mp4">
           Your browser does not support the video tag.
         </video>
-        <p>Toggling the timestamp in the GUI shows the balls bouncing, and the gaussian splats capture the nice shadows and squish of the balls.</p>
+        <p>At the second feature level we are able to segment out parts of large objects such as the hat or tie on Pikachu or the various components of the Gundam figure.</p>
       </div>
       <div style="text-align: center;">
         <h4>Feature Level 1 (Coarsest Grain, Whole Objects)</h4>
@@ -242,7 +242,7 @@
           <source src="videos/legs_feat1.mp4" type="video/mp4">
           Your browser does not support the video tag.
         </video>
-        <p>Toggling the timestamp in the GUI shows the balls bouncing, and the gaussian splats capture the nice shadows and squish of the balls.</p>
+        <p>Here we demonstrate the trained Language-Embedded Gaussian at its coarsest grain giving us only each object with no further delineations. We also zoom very far in partway through the video to show how immersive our visualization is.</p>
       </div>
       <h3>LE4GS Interactive Viewer Visualization</h3>
       <div style="text-align: center;">
@@ -251,7 +251,7 @@
           <source src="videos/le4gs.mp4" type="video/mp4">
           Your browser does not support the video tag.
         </video>
-        <p>Toggling the timestamp in the GUI shows the balls bouncing, and the gaussian splats capture the nice shadows and squish of the balls.</p>
+        <p>In this video we demonstrate the visualiztion of our trained LE4GS model. It is perfectly capable of supporting the 4D scene of the bouncing balls however when we swap to show the language features by pressing "Show LEGS Image" we notice that the viewer turns black. This is cause for every viewpoint the rendered image with language features is actuall null. We believe this is an issue with our training and are working on a fix.</p>
       </div>
 
     </section>
@@ -262,12 +262,11 @@
         </h2>
         <p>We have a lot of ideas that we're really interested in working on so we've listed them down below in no particular order!</p>
         <h3>Semantic Object Querying on the Interactive Viewer</h3>
-        <p>Since we do have </p>
+        <p>Since we have an autoencoder that is trained off of all the language features in the scene is it possible for us to semantically query this semantic latent space and we can threshold our segmenation to only be the features of highest relevancy. We can then render the mask associated with this feature to get a segmentation of the object that we're querying! </p>
         <h3>Multi-Level Language Querying</h3>
-        <p>dddd</p>
+        <p>The current implemenation of LangSplat handles semantic object segmentation by training three models at three different levels. We believe it should be possible to instead train one model using the language features of all three different models allowing for us to use one model for querying whole objects, its parts, or even its subparts.</p>
         <h3>Getting Language-Embedded 4D Gaussian Splats to Work</h3>
-        <p>Our current issues with presently trained model are that the language features at any given point are zero. This results in the blank rendering that was shown in video above in the  We believe this due to  
-          this is </p>
+        <p>Our current issues with presently trained model are that the language features at any given point are zero. This results in the blank rendering that was shown in video above in the  We believe this due to an issue in how we're optimizing loss when fine-tuning as we currently still do optimize over the 4D Gaussian and the language features but it's possible that the weighting of language features for optimization are being diluted resulting in subpar results. We are investigating this more.</p>
         <h3>Training LE4GS on Photo-Realistic and Custom Data</h3>
         <p>Our approach is capable of working on photo-realistic scenes however most dynamic datasets collected in the real-world do not provide the ground truth camera poses. This means we much optimize these camera poses using Structure-from-Motion techniques such as COLMAP<sup>9,10</sup>. We are working through setting up COLMAP and have access to both iPhones 
           with LiDAR and Intel Realsense Depth cameras, meaning that we can capture both depth and RGB images. With these we're able to generate 

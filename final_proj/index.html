@@ -268,7 +268,7 @@
         <h3>Getting Language-Embedded 4D Gaussian Splats to Work</h3>
         <p>Our current issues with presently trained model are that the language features at any given point are zero. This results in the blank rendering that was shown in video above in the  We believe this due to an issue in how we're optimizing loss when fine-tuning as we currently still do optimize over the 4D Gaussian and the language features but it's possible that the weighting of language features for optimization are being diluted resulting in subpar results. We are investigating this more.</p>
         <h3>Training LE4GS on Photo-Realistic and Custom Data</h3>
-        <p>Our approach is capable of working on photo-realistic scenes however most dynamic datasets collected in the real-world do not provide the ground truth camera poses. This means we much optimize these camera poses using Structure-from-Motion techniques such as COLMAP<sup>9,10</sup>. We are working through setting up COLMAP and have access to both iPhones 
+        <p>Our approach is capable of working on photo-realistic scenes however most dynamic datasets collected in the real-world do not provide the ground truth camera poses. This means we much optimize these camera poses using Structure-from-Motion techniques such as COLMAP<sup>11,12</sup>. We are working through setting up COLMAP and have access to both iPhones 
           with LiDAR and Intel Realsense Depth cameras, meaning that we can capture both depth and RGB images. With these we're able to generate 
           custom dynamic scenes using real-world data. </p>
         <h3>Controller and VR Interactive Viewer</h3>
@@ -294,6 +294,8 @@
                 <li>
                   https://huggingface.co/blog/gaussian-splatting
                 </li>
+                <li>Schönberger, J. L., Zheng, E., Pollefeys, M., & Frahm, J.-M. (2016). Pixelwise View Selection for Unstructured Multi-View Stereo. In European Conference on Computer Vision (ECCV).</li>
+                <li>Schönberger, J. L., & Frahm, J.-M. (2016). Structure-from-Motion Revisited. In Conference on Computer Vision and Pattern Recognition (CVPR).</li>
 							  </ol>
 						</div>
 					</section>

@@ -3238,33 +3238,36 @@ input, select, textarea {
 		.wrapper.alt {
 			background-color: #DC3238;
 		}
-
 		.wrapper.style1 {
 			background-color: #77AAB8;
 		}
-
 		.wrapper.style1-alt {
 			background-color: #BAD1C6;
 		}
-
 		.wrapper.style2 {
 			background-color: #FDF7D4;
 		}
-
 		.wrapper.style2-alt {
 			background-color: #F3DFB4;
 		}
-
 		.wrapper.style3 {
 			background-color: #E9C793;
 		}
-
 		.wrapper.style3-alt {
-			background-color: #DF9E85;
+			background-color: #E2AC8A;
 		}
 		.wrapper.style4 {
+			background-color: #DF9E85;
+		}
+		.wrapper.style4-alt {
 			background-color: #DF8372;
 		}
+		.wrapper.style5 {
+			background-color: #DE685F;
+		}
+
+		
+		
 
 		.wrapper.fullscreen {
 			display: -moz-flex;

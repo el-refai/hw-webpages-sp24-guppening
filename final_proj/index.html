@@ -41,7 +41,8 @@
 					<section id="intro" class="wrapper style1-alt fullscreen fade-up">
 						<div class="inner">
 							<h1>Abstract</h1>
-							<p>	Given the rise of Gaussian Splatting as a </p>
+							<p>	Given the rise of Gaussian Splatting for efficient high-quality real-time novel-view synthesis, we 
+                 set out to generate a Gaussian splat that not only varies over time but is also    </p>
 							<!-- <ul class="actions">
 								<li><a href="#one" class="button scrolly">Learn more</a></li>
 							</ul> -->
@@ -51,29 +52,27 @@
 				<!-- One -->
 					<section id="technical-approach" class="wrapper style2 spotlights">
 						<section>
-							<a href="shaders.html" class="image"><img src="images/Pencil.png" alt="" data-position="center center" /></a>
 							<div class="content">
 								<div class="inner">
-									<h2>Custom Shaders</h2>
+									<h2>Language Embedded 4D Gaussians</h2>
 									<p>Using a modified verson of HLSL (which is a modified version of the GLSL used in Project 4 of this class), 
 										we were able to create various non-photorealistic shading methods such as Pastel Shading, Manga-Style Shading, and Cel Shading.</p>
 								</div>
-								<ul class="actions">
-									<li><a href="shaders.html" class="button">Learn more</a></li>
+								<!-- <ul class="actions">
+									<li><a href="shaders.html" class="button">Learn more</a></li> -->
 								</ul>
 							</div>
 						</section>
 						<section>
-							<a href="nerf.html" class="image"><img src="images/nerf_geometry.png" alt="" data-position="top center" /></a>
 							<div class="content">
 								<div class="inner">
-									<h2>Live Streaming to NeRF</h2>
+									<h2>Interactive Viewer for Language Embedded and 4D Gaussians</h2>
 									<p>
-										Similar to LERF, we made a new method for nerf studiio which extended the nerfstudio codebase to allow live streaming on a TCP connection. 
-										Specifically, we altered the PyTorch code to allow for a TCP connection to be established, and then we created a C++ DLL that would be injected into the game engine to send the camera poses to the nerf studio.
+                    - talk about initial difficulties with trying to merge with nerf-studio, mention how the architecture involves splatfacto which is fundamentally different
+										- the changes made to the SIBR viewer
 									</p>
-									<ul class="actions">
-										<li><a href="nerf.html" class="button">Learn more</a></li>
+									<!-- <ul class="actions">
+										<li><a href="nerf.html" class="button">Learn more</a></li> -->
 									</ul>
 								</div>
 							</div>
@@ -92,34 +91,9 @@
 							<iframe src="https://www.youtube.com/embed/3tgNSHy1Af4" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:700px;width:100%;border:none;overflow:hidden;"></iframe>
 							<div class="features">
 								<section>
-									<h3>Normal Shading</h3>
-									<span class="image fit"><img src="images/Normal.png" alt="" /></span>
-									<p>Genshin Impact without any custom shading</p>
-								</section>
-								<section>
-									<h3>Square Kuwahara Shading</h3>
-									<span class="image fit"><img src="images/KuwaSquared.png" alt="" /></span>
-									<p>Genshin Impact with Square Kuwahara shading</p>
-								</section>
-								<section>
-									<h3>Circular Kuwahara Shading</h3>
-									<span class="image fit"><img src="images/KuwaCircle.png" alt="" /></span>
-									<p>Genshin Impact with Circular Kuwahara shading</p>
-								</section>
-								<section>
-									<h3>Anisotropic Kuwahara Shading</h3>
-									<span class="image fit"><img src="images/KuwaAnisotropic.png" alt="" /></span>
-									<p>Genshin Impact with Anisotropic Kuwahara shading</p>
-								</section>
-								<section>
-									<h3>Pencil Shading</h3>
-									<span class="image fit"><img src="images/Pencil.png" alt="" /></span>
-									<p>Genshin Impact with Noir Pencil shading</p>
-								</section>
-								<section>
-									<h3>Cel Shading</h3>
-									<span class="image fit"><img src="images/Cel.png" alt="" /></span>
-									<p>Genshin Impact with Cel shading</p>
+									<h3>Language-Embedded 4D Gaussian Splatting</h3>
+									<!-- <span class="image fit"><img src="images/Normal.png" alt="" /></span> -->
+									<p>Here we worked o</p>
 								</section>
 							</div>
 						</div>
@@ -130,6 +104,15 @@
               <h2>
                 In-Progress Work
               </h2>
+              <h3>Semantic Object Querying on the Interactive Viewer</h3>
+              <p>Since we do have </p>
+              <h3>Getting Language-Embedded 4D Gaussian Splats to Work</h3>
+              <p>Our current issues with presently trained model are that the language features at any given point are zero. This results in the blank rendering that was shown in video above in the  We believe this due to  
+                this is </p>
+              <h3>Training LE4GS on Photo-Realistic and Custom Data</h3>
+              <p>Our approach is capable of working on photo-realistic scenes however most dynamic datasets collected in the real-world do not provide the ground truth camera poses. This means we much optimize these camera poses using Structure-from-Motion techniques such as COLMAP [1,2]. We are working through setting up COLMAP and have access to both iPhones 
+                with LiDAR and Intel Realsense Depth cameras, meaning that we can capture both depth and RGB images. With these we're able to generate 
+                custom dynamic scenes using real-world data. </p>
             </div>
           </section>
 
@@ -137,8 +120,14 @@
 					<section id="references" class="wrapper style3-alt fade-up">
 						<div class="inner">
 							<h2>References</h2>
-							<p>Shaders</p>
+							<p>Structure from Motion</p>
 							<ul>
+                <li>
+                  [1], Schönberger, J. L., Zheng, E., Pollefeys, M., & Frahm, J.-M. (2016). Pixelwise View Selection for Unstructured Multi-View Stereo. In European Conference on Computer Vision (ECCV).
+            </li>
+              <li>
+                [2], Schönberger, J. L., & Frahm, J.-M. (2016). Structure-from-Motion Revisited. In Conference on Computer Vision and Pattern Recognition (CVPR).
+                </li>
 								<li><a href="https://github.com/sefinek24/Genshin-Impact-ReShade">Genshin-Impact-ReShade</a></li>
 								<li>Kyprianidis, J. E., Kang, H., & Döllner, J. (2010). Anisotropic Kuwahara Filtering on the GPU. In W. Engel (Ed.), GPU Pro - Advanced Rendering Techniques. AK Peters, pp. 247–264.
 								</li>

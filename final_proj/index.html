@@ -80,7 +80,7 @@
 									<h2>Technical Approach - Background</h2>
                   <h3>Gaussian Splatting</h3>
                   <p>
-                    Gaussian splatting is a rendering technique that is can represent 3 dimensional scenes by "painting" with 3D gaussians. It has quickly gained in popularity due it its ability to render complex scenes without the high computational cost of NERFs or other 3D rendering techniques.
+                    Gaussian splatting is a rendering technique that is can represent 3 dimensional scenes by "painting" with 3D gaussians. It has quickly gained in popularity due it its ability to render complex scenes without the high computational cost of NERFs or other 3D rendering techniques. 3D renders based on scans of the real world have a number of techniques, ranging from autonomous vehicles, to video games, to movies, to the medical field.
                     The first step in generating a splat is to gather data, typically a series of photos or a video of a single object or scene taken with a RGB camera and some sort of depth sensor, such as LIDAR.
                     With many perspectives of the same scene, the underlying depth and 3D structure of the scene can be inferred using structure from motion (SFM) algorithms. 
                     Below is an example of a point cloud generated from an SFM algorithm.
@@ -96,7 +96,7 @@
                   </p>
                   <div style="display: flex; justify-content: center;">
                   <figure>
-                    <img src="images/bicycle.png" alt="A bike rendered with gaussian splatting" style="padding-right:5px; height: 300px;"/>
+                    <img src="images/bicycle.png" alt="A bike rendered with gaussian splatting" style="padding-right:10px; height: 300px;"/>
                     <figcaption style="text-align: center;">A bike rendered with Gaussian Splatting</figcaption>
                   </figure>
                   <figure>
@@ -114,8 +114,33 @@
                   <br>
                   <h3>Dynamic and Language Embedded Splatting</h3>
 									<p>
-                    As Gaussian Splatting has gained in popularity, the original technique has been iterated upon and developed in a number of ways. One such way has been to extend the technique to dynamic scenes, essentially allowing for the rendering of 3D video. This has been accomplished in a number of ways ranging from moving the gaussians throughout the scene to track movement to simply extending the gaussians to a 4th dimension, and allowing them to vary over time. We focused on 
+                    As Gaussian Splatting has gained in popularity, the original technique has been iterated upon and developed in a number of ways. One such way has been to extend the technique to dynamic scenes, essentially allowing for the rendering of 3D video. This is a significant area of interest given its applications to areas like autonomous vehicles, robotics, and entertainement. This has been accomplished in a number of ways ranging from moving the gaussians throughout the scene to track movement to simply extending the gaussians to a 4th dimension, and allowing them to vary over time. We based our approach on the latter technique, working off a 2024 paper, Real-time Photorealistic Dynamic Scene Representation and Rendering with 4D Gaussian Splatting, which presents some of the best open source results. Below are two videos of scenes rendered using this technique. 
                   </p>
+                  <div style="display: flex; justify-content: center;">          
+                    <video width="40%" style="padding-right: 10px;" controls>
+                      <source src="images/cookingguy.mp4" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+                    <video width="40%" controls>
+                      <source src="images/cars.mp4" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+                    </div>
+                    <br>
+                    <p>
+                      A second area of interest has been the addition of semantic encoding to 3D gaussian splats. This allows for computer-based object recognition within the scene and can be used in a number of applications, particularly those involving autonomous systems like robots or cars. It can also allow humans to look for objects in scenes using natural language processing to describe objects. One of the highest quality and most recent implementations of this idea has been in the paper LangSplat: 3D Language Gaussian Splatting. This paper gets embeddings for individual gaussians by first segmenting the scene into three levels of objects using Meta's Segment Anything model. Then, for each of these segments, the object recognition model CLIP is used to get an embedding for these areas. If multiple embeddings overlap the same gaussian, they are all applied to each gaussian. Finally, these embeddings are projected onto a lower dimensional space using an autoencoder to save memory, given that only a small subset of all possible things will ever exist in a single scene. These embeddings can then be rendered in the scene at different levels of specificity (object, parts, and subparts). In addition, because these embeddings are related to each gaussian, they can be used to generate heatmaps of the scene or reply to natural language queries. Below are some examples of scenes processed using this technique.
+                    </p>
+
+                    <div style="display: flex; justify-content: center;">          
+                      <video width="80%" controls>
+                        <source src="images/waldo.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                      </video>
+                      </div>
+                      <br>
+                    <p>
+                      Our primary goal for this project was to, for the first time, combine these two techniques, allowing for dynamic (4D) Gaussian Splatting with semantic embeddings. This would allow for semantic and dymanic object tracking within scenes, once again highly desirable and relevant for real-time autonomous systems operating in the real world. Below, our technical approach is detailed. 
+                    </p>
 								</div>
 					</section>
 

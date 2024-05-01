@@ -88,7 +88,7 @@
                   <div style="display: flex; justify-content: center;">
                   <figure>
                     <img src="images/coli-cloud.jpg" alt="A point cloud of the Coliseum generated from SFM algorithms" style="height: 300px;">
-                    <figcaption style="text-align: center;">A point cloud of the Coliseum generated from SFM algorithms</figcaption>
+                    <figcaption style="text-align: center;">A point cloud of the Coliseum generated from SFM algorithms<sup>9</sup></figcaption>
                   </figure>
                   </div>
                   <p>
@@ -97,11 +97,11 @@
                   <div style="display: flex; justify-content: center;">
                   <figure>
                     <img src="images/bicycle.png" alt="A bike rendered with gaussian splatting" style="padding-right:10px; height: 300px;"/>
-                    <figcaption style="text-align: center;">A bike rendered with Gaussian Splatting</figcaption>
+                    <figcaption style="text-align: center;">A bike rendered with Gaussian Splatting<sup>10</sup></figcaption>
                   </figure>
                   <figure>
                     <img src="images/opaque.png" alt="A bike with fully opaque gaussians" style="height: 300px;"/>
-                    <figcaption style="text-align: center;">The same bike Gaussian Splat with fully opaque gaussians </figcaption>
+                    <figcaption style="text-align: center;">The same bike Gaussian Splat with fully opaque gaussians<sup>10</sup> </figcaption>
                   </figure>
                   </div>          
                   <div style="display: flex; justify-content: center;">          
@@ -110,11 +110,11 @@
                     Your browser does not support the video tag.
                   </video>
                   </div>
-                  <div style="text-align: center;">The same bicycle dynamically rendered in 3D using Gaussian Splatting </div>
+                  <div style="text-align: center;">The same bicycle dynamically rendered in 3D using Gaussian Splatting<sup>10</sup> </div>
                   <br>
                   <h3>Dynamic and Language Embedded Splatting</h3>
 									<p>
-                    As Gaussian Splatting has gained in popularity, the original technique has been iterated upon and developed in a number of ways. One such way has been to extend the technique to dynamic scenes, essentially allowing for the rendering of 3D video. This is a significant area of interest given its applications to areas like autonomous vehicles, robotics, and entertainement. This has been accomplished in a number of ways ranging from moving the gaussians throughout the scene to track movement to simply extending the gaussians to a 4th dimension, and allowing them to vary over time. We based our approach on the latter technique, working off a 2024 paper, Real-time Photorealistic Dynamic Scene Representation and Rendering with 4D Gaussian Splatting, which presents some of the best open source results. Below are two videos of scenes rendered using this technique. 
+                    As Gaussian Splatting has gained in popularity, the original technique has been iterated upon and developed in a number of ways. One such way has been to extend the technique to dynamic scenes, essentially allowing for the rendering of 3D video. This is a significant area of interest given its applications to areas like autonomous vehicles, robotics, and entertainement. This has been accomplished in a number of ways ranging from moving the gaussians throughout the scene to track movement to simply extending the gaussians to a 4th dimension, and allowing them to vary over time. We based our approach on the latter technique, working off a 2024 paper, Real-time Photorealistic Dynamic Scene Representation and Rendering with 4D Gaussian Splatting, which presents some of the best open source results. Below are two videos of scenes rendered using this technique.<sup>1</sup>
                   </p>
                   <div style="display: flex; justify-content: center;">          
                     <video width="40%" style="padding-right: 10px;" controls>
@@ -128,7 +128,7 @@
                     </div>
                     <br>
                     <p>
-                      A second area of interest has been the addition of semantic encoding to 3D gaussian splats. This allows for computer-based object recognition within the scene and can be used in a number of applications, particularly those involving autonomous systems like robots or cars. It can also allow humans to look for objects in scenes using natural language processing to describe objects. One of the highest quality and most recent implementations of this idea has been in the paper LangSplat: 3D Language Gaussian Splatting. This paper gets embeddings for individual gaussians by first segmenting the scene into three levels of objects using Meta's Segment Anything model. Then, for each of these segments, the object recognition model CLIP is used to get an embedding for these areas. If multiple embeddings overlap the same gaussian, they are all applied to each gaussian. Finally, these embeddings are projected onto a lower dimensional space using an autoencoder to save memory, given that only a small subset of all possible things will ever exist in a single scene. These embeddings can then be rendered in the scene at different levels of specificity (object, parts, and subparts). In addition, because these embeddings are related to each gaussian, they can be used to generate heatmaps of the scene or reply to natural language queries. Below are some examples of scenes processed using this technique.
+                      A second area of interest has been the addition of semantic encoding to 3D gaussian splats. This allows for computer-based object recognition within the scene and can be used in a number of applications, particularly those involving autonomous systems like robots or cars. It can also allow humans to look for objects in scenes using natural language processing to describe objects. One of the highest quality and most recent implementations of this idea has been in the paper LangSplat: 3D Language Gaussian Splatting. This paper gets embeddings for individual gaussians by first segmenting the scene into three levels of objects using Meta's Segment Anything model. Then, for each of these segments, the object recognition model CLIP is used to get an embedding for these areas. If multiple embeddings overlap the same gaussian, they are all applied to each gaussian. Finally, these embeddings are projected onto a lower dimensional space using an autoencoder to save memory, given that only a small subset of all possible things will ever exist in a single scene. These embeddings can then be rendered in the scene at different levels of specificity (object, parts, and subparts). In addition, because these embeddings are related to each gaussian, they can be used to generate heatmaps of the scene or reply to natural language queries. Below is an example of a scene processed using this technique.<sup>2</sup>
                     </p>
 
                     <div style="display: flex; justify-content: center;">          
@@ -233,13 +233,13 @@
 								<li>Yuanxing Duan, Fangyin Wei, Qiyu Dai, Yuhang He, Wenzheng Chen, Baoquan Chen (2024). 4D Gaussian Splatting: Towards Efficient Novel View Synthesis for Dynamic Scenes.</li>
 								<li>Justin Yu, Kush Hari, Kishore Srinivas, Karim El-Refai, Adam Rashid, Chung Min Kim, Justin Kerr, Richard Cheng, Ashwin Balakrishna, Thomas Kollar, Ken Goldberg (2024). Incrementally Building Room-Scale Language-Embedded Gaussian Splats (LEGS) with a Mobile Robot. https://berkeleyautomation.github.io/LEGS/.</li>
 								<li>Jonathon Luiten, Georgios kopanas, Bastian Leibe, Deva Ramanan (2023). Dynamic 3D Gaussians: Tracking by Persistent Dynamic View Synthesis. https://dynamic3dgaussians.github.io/.</li>
+                <li>
+                  https://grail.cs.washington.edu/rome/dense.html
+                </li>
+                <li>
+                  https://huggingface.co/blog/gaussian-splatting
+                </li>
 							  </ol>
-							
-							<p>NeRF</p>
-							<ul>
-								<li><a href="https://github.com/nerfstudio-project/nerfstudio">NeRF Studio</a></li>
-								<li><a href="https://godotengine.org/">GoDot</a></li>
-							</ul>
 						</div>
 					</section>
 

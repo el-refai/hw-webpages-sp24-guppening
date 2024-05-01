@@ -149,10 +149,13 @@
                 <h2>Technical Approach - Contributions</h2>
                 <h3>Real-Time Dynamic and Language Embedded Gaussian Visualization</h3>
                 <p>
-                </p>
+                We continuously update the scene represntation based on incoming data streams and track it using timestamps for real-time visualizations of dynamic scenes. The models learns the dynamic scene using 4DGS and LEGS, which allow
+				it to adapt to changes in the environment over time. The initializastion phase establishes a communication channel between the model and the SIBR viewer. The socket listens for updates from the viewer and takes the camera parameters to
+				render in real time.
+				</p>
                 <h3>Language Embedded 4D Gaussian Splatting</h3>
                 <p>
-
+				LEGS extend the capabilities of traditional Gaussian splatting techniques by incorporating temoral dynamics and semantic encoding that capture spatial and temporal variations.
                 </p>
               </div>
           </section>
@@ -202,14 +205,14 @@
 						<div class="inner">
 							<h2>References</h2>
 							<ol>
-								<li>Zeyu Yang, Hongye Yang, Zijie Pan, Li Zhang (2024). Real-time Photorealistic Dynamic Scene Representation and Rendering with 4D Gaussian Splatting</li>
-								<li>Minghan Qin, Wanhua Li, Jiawei Zhou, Haoqian Wang, Hanspeter Pfister, Tsinghua University, Harvard University (2024). LangSplat: 3D Language Gaussian Splatting.</li>
-								<li>Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, Ren Ng (2020). NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis.</li>
-								<li>Justin Kerr, Chung Min Kim, Ken Goldberg, Angjoo Kanazawa, Matthew Tancik (2023). LERF: Language Embedded Radiance Fields.</li>
-								<li>Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler, George Drettakis (2023). 3D Gaussian Splatting for Real-Time Radiance Field Rendering</li>
+								<li>Zeyu Yang, Hongye Yang, Zijie Pan, Li Zhang (2024). Real-time Photorealistic Dynamic Scene Representation and Rendering with 4D Gaussian Splatting. https://fudan-zvg.github.io/4d-gaussian-splatting/. </li>
+								<li>Minghan Qin, Wanhua Li, Jiawei Zhou, Haoqian Wang, Hanspeter Pfister, Tsinghua University, Harvard University (2024). LangSplat: 3D Language Gaussian Splatting. https://langsplat.github.io/.</li>
+								<li>Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, Ren Ng (2020). NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis. https://arxiv.org/pdf/2402.03307. </li>
+								<li>Justin Kerr, Chung Min Kim, Ken Goldberg, Angjoo Kanazawa, Matthew Tancik (2023). LERF: Language Embedded Radiance Fields. https://www.lerf.io/. </li>
+								<li>Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler, George Drettakis (2023). 3D Gaussian Splatting for Real-Time Radiance Field Rendering. https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/. </li>
 								<li>Yuanxing Duan, Fangyin Wei, Qiyu Dai, Yuhang He, Wenzheng Chen, Baoquan Chen (2024). 4D Gaussian Splatting: Towards Efficient Novel View Synthesis for Dynamic Scenes.</li>
-								<li>Justin Yu, Kush Hari, Kishore Srinivas, Karim El-Refai, Adam Rashid, Chung Min Kim, Justin Kerr, Richard Cheng, Ashwin Balakrishna, Thomas Kollar, Ken Goldberg (2024). Incrementally Building Room-Scale Language-Embedded Gaussian Splats (LEGS) with a Mobile Robot.</li>
-								<li>Jonathon Luiten, Georgios kopanas, Bastian Leibe, Deva Ramanan (2023). Dynamic 3D Gaussians: Tracking by Persistent Dynamic View Synthesis.</li>
+								<li>Justin Yu, Kush Hari, Kishore Srinivas, Karim El-Refai, Adam Rashid, Chung Min Kim, Justin Kerr, Richard Cheng, Ashwin Balakrishna, Thomas Kollar, Ken Goldberg (2024). Incrementally Building Room-Scale Language-Embedded Gaussian Splats (LEGS) with a Mobile Robot. https://berkeleyautomation.github.io/LEGS/.</li>
+								<li>Jonathon Luiten, Georgios kopanas, Bastian Leibe, Deva Ramanan (2023). Dynamic 3D Gaussians: Tracking by Persistent Dynamic View Synthesis. https://dynamic3dgaussians.github.io/.</li>
 							  </ol>
 							
 							<p>NeRF</p>

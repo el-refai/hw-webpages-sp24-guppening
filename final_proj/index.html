@@ -1,563 +1,202 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <style>
-    body {
-      background-color: #404040;
-      background-color: white;
-      padding: 100px;
-      width: 1000px;
-      margin: auto;
-      text-align: left;
-      font-weight: 300;
-      font-family: 'Open Sans', sans-serif;
-      color: #121212;
-      cursor: url(images/dwagon.png), default!important;
-      cursor: url(images/dwagon.png), pointer!important;
-    }
-    h1, h2, h3, h4 {
-      font-family: 'Source Sans Pro', sans-serif;
-    }
-    kbd {
-      color: #121212;
-    }
-    blockquote {
-      color: #888;
-      border: 2px solid #333;
-      padding: 10px;
-      background-color: #ccc;
-    }
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>CS 184 Final Project: LE4GS - Language Embedded 4D Gaussian Splatting</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
 
-    table.custom-tbl {
-      border: 1px solid;
-    }
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#intro">Abstract</a></li>
+							<li><a href="#technical-approach">Technical Approach</a></li>
+							<li><a href="#results">Results</a></li>
+							<li><a href="#references">References</a></li>
+							<li><a href="#contributions">Contributions</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
 
-    table.custom-tbl th {
-      border: 1px solid;
-      background-color: rgb(99, 209, 209);
-    }
+		<!-- Wrapper -->
+			<div id="wrapper">
 
-    table.custom-tbl td {
-      border: 1px solid;
-      background-color: #f1e686a8;
-    }
+				<section class="wrapper style1 fullscreen fade-up">
+					<div class="inner">
+						<h1>CS 184 Final Project: GenshinNeRF</h1>
+					</div>
+				</section>
+				<!-- Intro -->
+					<section id="intro" class="wrapper style2 fullscreen fade-up">
+						<div class="inner">
+							<h1>Abstract</h1>
+							<p>	In this project, we started with two objectives in mind: To inject custom shaders into Genshin Impact, and also to attach NeRF onto a game engine so that future applications can leverage this neural representation in use with alternate rendering methods, mesh generation, and scene reconstruction.
+								For the first part of our project, in terms of generating custom shaders, we've decided to do a deep dive exploration on non-photorealistic shading methods, including three versions of Pastel Shading, Manga-Style Shading, and Cel Shading. As for the second part,
+								Game Engines and NeRF have often been somewhat separated by their purpose. Afterall, who wants to wait to query some large model for rendering that could potentially take minutes?
+								In this project, we've decided to create this unlikely fusion by dedicating NeRF to one particular usecase for a Game Engine, to potentially enable future feature sets that allows
+								texture generation via Large Language Models, accurate scene reconstruction, and integration of visual large language models into the game-dev process. To enable these features we've decided to create
+								a link between the game engine and NeRF studio synchronized in real-time. The game engine is secondary to this purpose, however, since the functionality is mainly based upon the application ability to create poses, so any game with a proper <code>.dll</code> injection to capture camera poses will work with our implementation.</p>
+							<!-- <ul class="actions">
+								<li><a href="#one" class="button scrolly">Learn more</a></li>
+							</ul> -->
+						</div>
+					</section>
 
-    /* The alert message box */
-    .alert {
-      padding: 20px;
-      background-color: #f44336; /* Red */
-      color: white;
-      margin-bottom: 15px;
-    }
+				<!-- One -->
+					<section id="technical-approach" class="wrapper style3 spotlights">
+						<section>
+							<a href="shaders.html" class="image"><img src="images/Pencil.png" alt="" data-position="center center" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Custom Shaders</h2>
+									<p>Using a modified verson of HLSL (which is a modified version of the GLSL used in Project 4 of this class), 
+										we were able to create various non-photorealistic shading methods such as Pastel Shading, Manga-Style Shading, and Cel Shading.</p>
+								</div>
+								<ul class="actions">
+									<li><a href="shaders.html" class="button">Learn more</a></li>
+								</ul>
+							</div>
+						</section>
+						<section>
+							<a href="nerf.html" class="image"><img src="images/nerf_geometry.png" alt="" data-position="top center" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Live Streaming to NeRF</h2>
+									<p>
+										Similar to LERF, we made a new method for nerf studiio which extended the nerfstudio codebase to allow live streaming on a TCP connection. 
+										Specifically, we altered the PyTorch code to allow for a TCP connection to be established, and then we created a C++ DLL that would be injected into the game engine to send the camera poses to the nerf studio.
+									</p>
+									<ul class="actions">
+										<li><a href="nerf.html" class="button">Learn more</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+					</section>
 
-    /* The close button */
-    .closebtn {
-      margin-left: 15px;
-      color: white;
-      font-weight: bold;
-      float: right;
-      font-size: 22px;
-      line-height: 20px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+				<!-- Results -->
+					<section id="results" class="wrapper style1 fade-up">
+						<div class="inner">
+							<h2>Results</h2>
+							<p>Upon completing the different shaders, the game runs very smoothly and with different visuals.</p>
 
-    /* When moving the mouse over the close button */
-    .closebtn:hover {
-      color: black;
-    }
-  </style>
+							<h3>Video Demo of Different Shading</h3>
+							<iframe src="https://www.youtube.com/embed/sYbgLip8H1g" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:700px;width:100%;border:none;overflow:hidden;"></iframe>
+							<h3>Final Presentation Video</h3>
+							<iframe src="https://www.youtube.com/embed/3tgNSHy1Af4" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:700px;width:100%;border:none;overflow:hidden;"></iframe>
+							<div class="features">
+								<section>
+									<h3>Normal Shading</h3>
+									<span class="image fit"><img src="images/Normal.png" alt="" /></span>
+									<p>Genshin Impact without any custom shading</p>
+								</section>
+								<section>
+									<h3>Square Kuwahara Shading</h3>
+									<span class="image fit"><img src="images/KuwaSquared.png" alt="" /></span>
+									<p>Genshin Impact with Square Kuwahara shading</p>
+								</section>
+								<section>
+									<h3>Circular Kuwahara Shading</h3>
+									<span class="image fit"><img src="images/KuwaCircle.png" alt="" /></span>
+									<p>Genshin Impact with Circular Kuwahara shading</p>
+								</section>
+								<section>
+									<h3>Anisotropic Kuwahara Shading</h3>
+									<span class="image fit"><img src="images/KuwaAnisotropic.png" alt="" /></span>
+									<p>Genshin Impact with Anisotropic Kuwahara shading</p>
+								</section>
+								<section>
+									<h3>Pencil Shading</h3>
+									<span class="image fit"><img src="images/Pencil.png" alt="" /></span>
+									<p>Genshin Impact with Noir Pencil shading</p>
+								</section>
+								<section>
+									<h3>Cel Shading</h3>
+									<span class="image fit"><img src="images/Cel.png" alt="" /></span>
+									<p>Genshin Impact with Cel shading</p>
+								</section>
+							</div>
+						</div>
+					</section>
 
-  <title>CS 184 Homework 1</title>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <!-- Not using below due to lacking bold fontfaces -->
-  <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro|Source+Sans+Pro:400,700" rel="stylesheet"> -->
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel="stylesheet" />
+				<!-- References -->
+					<section id="references" class="wrapper style2 fade-up">
+						<div class="inner">
+							<h2>References</h2>
+							<p>Shaders</p>
+							<ul>
+								<li><a href="https://github.com/sefinek24/Genshin-Impact-ReShade">Genshin-Impact-ReShade</a></li>
+								<li>Kyprianidis, J. E., Kang, H., & Döllner, J. (2010). Anisotropic Kuwahara Filtering on the GPU. In W. Engel (Ed.), GPU Pro - Advanced Rendering Techniques. AK Peters, pp. 247–264.
+								</li>
+							</ul>
+							
+							<p>NeRF</p>
+							<ul>
+								<li><a href="https://github.com/nerfstudio-project/nerfstudio">NeRF Studio</a></li>
+								<li><a href="https://godotengine.org/">GoDot</a></li>
+							</ul>
+						</div>
+					</section>
 
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
-    };
-  </script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>  
-</head>
+					<section id="contributions" class="wrapper style3 fade-up">
+						<div class="inner">
+							<h2>Contributions</h2>
+							<p>Levy</p>
+							<ul>
+								<li>Worked out on injecting shaders into Genshin Impact</li>
+								<li>Created the oil pastel Shaders, the The cel/toon shader, and the pencil shader from modifying the Noir Shader</li>
+								<li>Created the design for integrating Godot with NeRF-studio</li>
+								<li>Implemented the Godot facing TCP connectivity interface with nerfstudio backend</li>
+								<li>Implemented the <code>StreamDataset(IterableDataset)</code> to query TCP stream and retrieve data</li>
+								<li>Modified the <code>StreamDataManager</code> to synchronize with the StreamDataset and Dataloader</li>
+								<li>Implemented the <code>StreamDataloader</code> to interact with the <code>StreamDataset</code></li>
+								<li>Created the website, videos, slides, administrivia</li>
+							</ul>
+							<p>Jason</p>
+							<ul>
+								<li>Created the website layout, structure, and styling and wrote the shaders technical approach and main page</li>
+								<li>Helped implement the circular generalized kuwahara filter</li>
+								<li>Created the BlackWhite Noir Shader</li>
+								<li>Conducted researched into interesting different shader effects</li>
+								<li>Created the presentation video</li>
+							</ul>
+							<p>Rahul</p>
+							<ul>
+								<li>Created module/skeleton code for the Godot NeRF-integration that builds on top of the NeRF-studio framework</li>
+								<li>Modified <code>StreamDataparser</code> and <code>StreamPipeline</code> to use inheritance for easier implementation</li>
+								<li>Worked on the webiste</li>
+								<li>Wrote NeRF integration with Godot Engine in PyTorch/worked on this site.</li>
+							</ul>
+							<p>Pierre</p>
+							<ul>
+								<li>Did initial research into running NeRF studio</li>
+								<li>Generated NeRF outputs for the milestone</li>
+								<li>Researched data conventions for NeRF.</li>
+							</ul>
+						</div>
+					</section>
 
-<body
-  style="padding-top: 50px;">
+			</div>
 
-  <div align="middle">
-    <img src="images/triangle_dragon_banner.webp" 
-        align="middle" 
-        width="1000vw" />
-  </div>
-  
-  <h1 align="left">Language Embedded Dynamic Gaussian Splatting</h1>
-  <h1 align="left">Project Milestone</h1>
-  <h2 align="left">James Deloye, Karim El-Refai, Andrew Wang, Jenny Nguyen</h2>
-  <h2 align="left">https://el-refai.github.io/the_guppening/milestone/index.html</h2>
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
 
-  <hr />
-  <br />
-
-  <div>
-    <h2 align="center">Summary</h2>
-    <p>
-		We propose the construction of a dynamic 3D gaussian splat which is an explicit representation containing both 3D Gaussians and 4D neural voxels giving us a 4D gaussian splat (4DGS). This representation is capable of changing over time. We intend to embed language representations into this 4DGS allowing us to semantically query objects in this dynamic scene which enables real-time tracking of 3D objects. 
-	</p>
-  </div>
-
-
-
-  <hr />
-  <br />
-  <h2 align="middle">Task 1: Drawing Single-Color Triangles</h2>
-
-  <h3>Overview</h3>
-    <p>
-      <ul>
-      Our initial attempt at rasterizing the triangle begins by determining if the vertices given are done in a clockwise or counter-clockwise order. Next we find the tightest bounding box around the triangle. 
-      We then scan across this bounding box and query the pixels to see if they fall within the triangle. This is done by first generating the norm vectors corresponding to the vectors of the triangle's vertices, i.e. given vertex A,B,C we calculate Norm(A->B), Norm(B->C), Norm(C->A). Then given a pixel P we find the vector from a given vertex to P, ex: A->P. Then we take the dot product of the two vectors. If all of the vertices are given clockwise then the point is inside the triangle if all the dot products are less than or equal to 0. If the vertices are given counter-clockwise then the point is inside the triangle if all of the dot products are greater than or equal to 0. We simply check to see if either of these conditions are met to determine if the point is in the triangle and fill the pixel if so.
-    </ul>
-    <ul>
-      This naive implementation is no worse than an implementation that checks each sample within the bounding box of the triangle as it is doing exactly that. Note that in the extra credit section below we make <b>substantial</b> improvements to our rasterization algorithm that severely outperforms the bounding box implementation. 
-    </ul>
-    </p>
-
-    
-    <blockquote><b>
-      Show a png screenshot of basic/test4.svg with the default viewing parameters and with the pixel inspector centered on an interesting part of the scene.
-    </b></blockquote>
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/task1.png" align="middle" width="700vw" />
-            <figcaption>Here is the rasterizer working on basic/test4.svg. An interesting thing, as evidenced by the pixel inspector, is how on the rightmost end of the red triangle it thins down to just a single pixel in thickness and actually oscillates between rasterizing parts of the triangle and not. </figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-
-    <blockquote><b>
-      Extra credit: Explain any special optimizations you did beyond simple bounding box triangle rasterization.
-    </b></blockquote>    
-    <p>
-      Before doing any optimization, we designed a consistent testing methodology in order to compare between rasterization methods. For each method, we rasterized each of the 4 basic SVGs 10 times at 16x supersampling and took the average of all of them. This was done in order to show the greatest possible differences in the rendering methods. We used the <code> std::chrono::steadyclock </code>to measure the time that it took to render all the triangles for maximum consistency and then found the speedup against the naiive baseline bounding box method. We did the optimizations in stages as follows:
-    </p>
-    <ol>
-      <li>
-        We started with just the basic bounding box algorithm implemented in the most naive way possible. We used this as our baseline that we compared other methods to. 
-      </li>
-      <li>
-      We began by removing unnecessary computations, like repeated square roots for supersampling computations and the subtractions (like $y_1-y_0$) that were previously repeated for checking if each pixel was inside the triangle. Though this does result in more memory accesses, assuming good caching, there will be less operations in total. These results are in the second column below. 
-      </li>
-      <li>
-        From this point on, we approached the rendering in a completely different method than was done previously. Instead of trying individual pixels to determine whether they were in the triangle, we started at the minimum $y$ value in the triangle, found the pixels at which the triangle's edges intercepted that $y$ value, then used the <code> std::fill</code> function to fill all the values between the two (sub)pixels. This was done until the entire triangle had been scanned. Technically, this was done in two phases, first where the triangle was widening and then when it was thinning, identifying the appropriate right and left edges using information about the orientation of the vertices. The loops were done with a while loop method, as this was simplest to implement intially. These results are in the third column below.
-      </li>
-      <li>
-        In preparation for a final optimization using multithreading in order to parallelize the triangle filling loops, we switched the while loops to for loops. While it turned out that the overhead of spawning the threads was too high for the relatively small triangles, the for loops did slightly speed up the overall computation, likely due to assembly and branch prediction compiler optimizations. These results are in the fourth column below.
-      </li>
-    </ol>
-    <head>
-      <title>Performance Table</title>
-      <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        table, th, td {
-          border: 1px solid black;
-        }
-        th, td {
-          padding: 8px;
-          text-align: center;
-        }
-        th {
-          background-color: #f2f2f2;
-        }
-      </style>
-      </head>
-      <div align="middle">
-      
-      <table>
-        <tr>
-          <th>SVG File</th>
-          <th>Slow (naive with bounding box)</th>
-          <th>Fast (repetitive computations removed)</th>
-          <th>Faster (new algorithm)</th>
-          <th>Fastest (for loop)</th>
-        </tr>
-        <tr>
-          <th>Dragon Time (ns)</th>
-          <td>6464845470</td>
-          <td>1461548720</td>
-          <td>49709560</td>
-          <td>46949350</td>
-        </tr>
-        <tr>
-          <th>Dragon Speedup </th>
-          <td>1</td>
-          <td>4.423284275</td>
-          <td>130.0523575</td>
-          <td>137.6982955</td>
-        </tr>
-        <tr>
-          <th>Triangles Time (ns)</th>
-          <td>243896120</td>
-          <td>60255410</td>
-          <td>4316990</td>
-          <td>3689590</td>
-        </tr>
-        <tr>
-          <th>Triangles Speedup</th>
-          <td>1</td>
-          <td>4.047704928</td>
-          <td>56.49679985</td>
-          <td>66.10385436</td>
-        </tr>
-        <tr>
-          <th>Cube Time (ns)</th>
-          <td>451933440</td>
-          <td>129664750</td>
-          <td>10191510</td>
-          <td>9694460</td>
-        </tr>
-        <tr>
-          <th>Cube Speedup</th>
-          <td>1</td>
-          <td>3.485399386</td>
-          <td>44.34410995</td>
-          <td>46.61770124</td>
-        </tr>
-        <tr>
-          <th>Stars and Hexagons Time (ns)</th>
-          <td>916919410</td>
-          <td>223390930</td>
-          <td>11490170</td>
-          <td>11520110</td>
-        </tr>
-        <tr>
-          <th>Stars and Hexagons Speedup</th>
-          <td>1</td>
-          <td>4.104550753</td>
-          <td>79.80033455</td>
-          <td>79.59293878</td>
-        </tr>
-      </table>
-      
-    </div>
-    <p>As can be seen above, simply removing unnecesary computations was enough to speed up overall rasterization by 3-4x. However, the most significant jump came when using the new algorithm, 
-      which allowed for a speedup over baseline of two orders of magnitude, up to <b>over 130x</b >. In the future, these algorithms could be further sped up by using effective multiprocessing to simultaneously render triangles. 
-    </p>
-
-    
-
-  <br />
-  <hr />
-  <br />
-  <h2 align="middle">Task 2: Antialiasing by Supersampling</h2>
-
- 
-  <h3>Overview</h3>
-  <p>
-    In order to implement supersampling, the first thing done was to change the format of our sample buffer. Instead of just one color per pixel, we added an element for every single subpixel, and arranged them in a 1D array, with all of row 1 coming after all of row 0 and so on. 
-    We then created a formula that would allow for translation between the actual coordinates of the SVG and the corresponding element in our sample buffer. Thus when iterating through every subpixel in the triangle's bounding box, we calculated the color of the subpixel and saved the value to the appropriate sample buffer element. 
-    Once the sample buffer had been filled, in the <code>resolve_to_framebuffer</code> function we averaged all the colors in each pixel in order to get that pixel's final value and wrote this value to the framebuffer. 
-    This averaging reduced the aliasing that was present in the edges of the triangles, and to the naked eye virtually eliminated it at 16x. 
-  </p>
-
-
-  <div align="middle">
-    <table style="width:100%">
-      <tr align="center">
-        <td>
-            <img src="images/1ss.png" align="middle" width="400px" />
-            <figcaption>$\text{Supersample Rate} = 1$</figcaption>
-        </td>
-        <td>
-            <img src="images/4ss.png" align="middle" width="400px" />
-            <figcaption>$\text{Supersample Rate} = 4$</figcaption>
-            
-        </td>
-      </tr>
-      <tr align="center">
-        <!-- <td>
-            <img src="images/9ss.png" align="middle" width="400px" />
-            <figcaption>$\text{Supersample Rate} = 9$</figcaption>
-        </td> -->
-        <td>
-            <img src="images/16ss.png" align="middle" width="400px" />
-            <figcaption>$\text{Supersample Rate} = 16$</figcaption>
-        </td>
-      </tr>
-    </table>
-
-  </div>
-
-    <p>
-      We can see that supersample rate has a significant impact on the quality of the rendering. At 1x sampling, or rendering with no supersampling, we can see that particular in thin areas 
-      the triangles are aliased and segmented because the area sampled was not in the thin area of the triangle. However, as the supersample rate gets increased, at least one subpixel is within this thin area, averaging out to a more accurate rendering of the trangle's edges. 
-      As a result, at higher sampling rates, the triangles do not have any major visible aliasing, particularly when zoomed out at 16x. 
-    </p>
-
-    <blockquote><b>
-      Extra Credit: Jitter Supersampling
-    </b></blockquote>
-
-    <p>
-      In addition to traditional grid supersampling, we also implemented jitter supersampling. This was easy to slot into our current implementation, and instead of taking the center of each subgrid cell, we took a uniform random spot within that grid cell and sampled that. Below are some comparisons between the two, supersampled at 4x for the triangles and 9x for the map.  
-    </p>
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-              <img src="images/uniform.png" align="middle" width="400px" />
-              <figcaption>$\text{Grid Sampled Triangles}$</figcaption>
-          </td>
-          <td>
-              <img src="images/jittered.png" align="middle" width="400px" />
-              <figcaption>$\text{Jitter Sampled Triangles}$</figcaption>
-
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-              <img src="images/gridmap.png" align="middle" width="400px" />
-              <figcaption>$\text{Grid Sampled Map}$</figcaption>
-          </td>
-          <td>
-              <img src="images/jittermap.png" align="middle" width="400px" />
-              <figcaption>$\text{Jitter Sampled Map}$</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <p>
-      As can be seen, in areas where there is normally aliasing or discontinuities in the grid sampled rendering, with jitter sampling the edges blend more clearly. 
-      This is due to the fact that the jittered sampling may sample parts of the background or interior of lines, leading to more blended looking pixel. 
-      Though at higher sampling rates they tend to converge in quality, in the case that they are both at a lower rate jittered may outperform grid sampling due to its greater chance of blending around edges. 
-    </p>
-  <br />
-  <hr />
-  <br />
-
-  <h2 align="middle">Task 3: Transforms</h2>
-  
-  <h3>Overview</h3>
-  <p>
-    For task 3 it was relatively straightforward to find the appropriate matrices for rotation, scaling, and translation. Since we are working in 2D space our matrix in homogenous coordinates will be 3x3 with the top-left 2x2 of the matrix corresponding to the rotation/scaling of the object and the last 2 elements of the first 2 rows corresponding to the translation vector.  
-  </p>
-  
-  <blockquote><b>
-    Create an updated version of svg/transforms/robot.svg with cubeman doing something more interesting, like waving or running. Feel free to change his colors or proportions to suit your creativity. Save your svg file as my_robot.svg in your docs/ directory and show a png screenshot of your rendered drawing in your write-up. Explain what you were trying to do with cubeman in words.
-  </b></blockquote>
-
-  <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-            <img src="images/robot_meditate.png" align="middle" width="700vw" />
-            <figcaption> Here we have the cubeman crossing its knees while have its arms outstretched. The idea was to go for a more meditative pose with the cubeman while also incorporating a rainbow-like gradient across each major body part.</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-  <br />
-  <hr />
-  <br />
-
-  <h2 align="middle">Task 4: Barycentric Coordinates</h2>
-  </a>
-  <h3>Overview</h3>
-  <p>
-    <ul>Barycentric coordinates are a way to represent points in a triangle as a linear combination of the vertices of that triangle. The sum of this linear combination must always equal one or else the point will not lie within the triangle. A clear example of this is when we consider a vertex itself. 
-    In this scenario the coefficient corresponding to that vertex is 1 and all other coefficients are 0. If this were not the case, say that the coefficient for the vertex was greater than 1 then the point would actually be past the vertex and outside of the triangle. 
-    </ul>
-    <ul> With barycentric coordinates, color sampling becomes very intuitive as we can then use the linear coefficients of these vertices for these points to set the color of the pixel equal to the linear combination of the colors of the vertices. Take the color triangle below as an example. Each vertex is one of red, green, or blue (the colors of the vertices). The color of each point in the triangle is just a linear combination of red, green, and blue.
-     As the point gets closer to a given vertex we see it taking on more of that vertex's color. 
-  </ul>
-    </p>
-
-  <div align="middle">
-    <table style="width:100%">
-      <tr align="center">
-        <td>
-            <img src="images/bary_tri.png" align="middle" width="400px" />
-            <figcaption>Color Triangle</figcaption>
-        </td>
-        <td>
-            <img src="images/test7.png" align="middle" width="400px" />
-            <figcaption>Color Wheel</figcaption>
-        </td>
-      </tr>
-    </table>
-  </div>
-  
-
-
-  <br />
-  <hr />
-  <br />
-
-  <h2 align="middle">Task 5: "Pixel Sampling" for Texture Mapping</h2>
-  </a>
-
-  <h3>Overview</h3>
-  <p>
-    <ul>
-    Pixel sampling is a method in which we decide which texel in the texture map should be sampled for the value of a given pixel in the image. This is determined by using the barycentric coordinates of the pixel in the image and then scaling these coordinates according to the resolution of the texture map in order to get the proper barycentric coords for the corresponding texel in the texture map. 
-    It is often that the barycentric coords of the texel do not exactly align to the coordinates of any given texel center and this where we must decide which texel to sample. 
-  </ul>
-    <ul>Nearest neighbor sampling will choose the nearest texel to the given coordinates while bilinear interpolation will look at the four closest texels to the point. These points are then bilinearly interpolated (linearly interpolated horizontally and vertically) to get a linear combination of the texture to sample for the pixel.   
-      </ul>
-  </p>
-    <blockquote><b>
-      Check out the svg files in the svg/texmap/ directory. Use the pixel inspector to find a good example of where bilinear sampling clearly defeats nearest sampling. Show and compare four png screenshots using nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear
-    </b></blockquote>
-
-    <p>
-     
-    </p>
-
-
-    <div align="middle">
-      <table style="width:100%">
-        <tr align="center">
-          <td>
-              <img src="images/nn_1ss.png" align="middle" width="400px" />
-              <figcaption>$\text{Nearest Neighbor Supersample Rate 1}$</figcaption>
-          </td>
-          <td>
-              <img src="images/bi_1ss.png" align="middle" width="400px" />
-              <figcaption>$\text{Bilinear Supersample Rate 1}$</figcaption>
-              
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-              <img src="images/nn_16ss.png" align="middle" width="400px" />
-              <figcaption>$\text{Nearest Neighbor Supersample Rate 16}$</figcaption>
-          </td>
-          <td>
-              <img src="images/bi_16ss.png" align="middle" width="400px" />
-              <figcaption>$\text{Bilinear Supersample Rate 16}$</figcaption>
-          </td>
-        </tr>
-      </table>
-
-    </div>
-    <blockquote>
-    Comment on the relative differences. Discuss when there will be a large difference between the two methods and why.
-  </blockquote>
-    <p>
-      When the supersample rate is low we find that there is a substantial difference in the smoothness of nearest neighbors vs bilinear sampling with bilinear pixel sampling. 
-      This is due to the fact that nearest neighbors will only select one texel to sample from while bilinear sampling is able to average across four texels which include both the grid and the ocean in the cause of the pixel inspector, reducing discontinuities.
-      When supersampling is increased to 16 samples per pixel the difference between nearest neighbor and bilinear is reduced however there are still more noticeable high and low points in nearest neighbor.
-    </p>
-  <hr />
-
-
-
-  <h2 align="middle">Task 6: "Level Sampling" with Mipmaps for Texture Mapping</h2>
-  <p>
-    Level sampling is a method in which we decide the mipmap level to sample from based on how a sample is changing in the x or y direction. Mipmaps store a series of downsampled versions of the original texture that filter out high frequencies, allowing for less aliasing for textures that are compressed (or viewed from a distance). 
-    We select the mipmap level by estimating the texture footprint at that (sub)pixel by using the $(u,v)$ coordinate distances between our point $(x, y)$ and that of the neighboring points $(x, y+1)$ and $(x+1, y)$. From this we determine the mipmap level by taking the log of the max of these distances. When performing our texture mapping, we sample from the mipmap level that corresponds to the calculated level. 
-  </p>
-
-  <p>
-    Pixel sampling, level sampling, and supersampling all present possible methods for dealing with aliasing when rendering textures. 
-    Pixel sampling allows for the bridging of the gap between our texture space and screen space by linearly interpolating between texels to get our pixel color. This is relatively low cost, not using any extra memory for storage while using a modest amount of computation in the form of 3 Lerp operations. 
-    However, compared to nearest pixel sampling it typically does not provide significant antialiasing benefits. 
-    Level sampling significantly improves antialiasing benefits by using mipmaps in order to sample from a downsampled texture appropriate to the size of the texture footprint at a given pixel. This improves antialiasing in compressed textures far away because the high frequencies are filtered out. However, creating a mipmap requires $\frac 43$ of the memory of the original texture. In addition, there is additional computational overhead for determining the mipmap level, since you need to convert two more $(x, y)$ coordinates to $(u, v)$ coordinates and then do additional calculations with those values. However, this gives excellent antialiasing performance that adapts to the position of the texture on the screen, and combined with bilinear pixel sampling gives trilinear filtering which offers excellent antialiasing behavior. 
-    Supersampling averages the values of some number of samples within a given pixel, essentially multiplying the per-pixel computation by however many subsamples that there are, which of course is quite computationally expensive. In addition, you need $n$ times the memory to store the sample buffer, where $n$ is the number of subsamples per pixel. However, this is extremely effective at reducing antialiasing in almost all cases, and is a very reliable method when computation time and memory isn't a concern. Combined with the other methods above, it prevents a critical component to any antialiasing toolkit. 
-  </p>
-  <div align="middle">
-    <table style="width:100%">
-      <tr align="center">
-        <td>
-            <img src="images/l0_pbi.png" align="middle" width="500px" />
-            <figcaption>$\text{Level Zero Billinear Sampling}$</figcaption>
-        </td>
-        <td>
-            <img src="images/l0_pnear.png" align="middle" width="500px" />
-            <figcaption>$\text{Level Zero Nearest Sampling}$</figcaption>
-            
-        </td>
-      </tr>
-      <tr align="center">
-        <td>
-            <img src="images/lnear_pbi.png" align="middle" width="500px" />
-            <figcaption>$\text{Nearest Level Bilinear Sampling}$</figcaption>
-        </td>
-        <td>
-            <img src="images/lnear_pnear.png" align="middle" width="500px" />
-            <figcaption>$\text{Nearest Level Nearest Sampling}$</figcaption>
-        </td>
-      </tr>
-      <tr align="center">
-        <td>
-            <img src="images/lbi_pbi.png" align="middle" width="500px" />
-            <figcaption>$\text{Trilinear Level Bilinear Sampling}$</figcaption>
-        </td>
-        <td>
-            <img src="images/lbi_pnear.png" align="middle" width="500px" />
-            <figcaption>$\text{Linear Level Nearest Sampling}$</figcaption>
-        </td>
-      </tr>
-    </table>
-
-  </div>
-  <p>
-    We implemented trilinear sampling by taking the weighted sum of the texels in the adjacent texture maps. This produces results that were blurrier than both level zero and nearest neighbors texture sampling.   
-  </p>
-
-  <blockquote><b>
-    Extra credit: If you implemented any extra filtering methods, describe them and show comparisons between your results with the other above methods.
-  </b></blockquote>
-
-  <p>
-    In addition to the required methods, we also implemented anisotropic filtering. To do this, we used the description of the anisotropic filter in the <a href="https://registry.khronos.org/OpenGL/extensions/EXT/EXT_texture_filter_anisotropic.txt">OpenGL Anisotropic Filter Specification</a>.
-    This involved selecting the mipmap level based on the minor (smaller) axis of the derivatives of the texture, while sampling along a number of points along the major axis dependent on the magnitude of the derivative. In effect, this better accounts for points which have a very high frequency change in one direction but not in another, allowing for a better averaging of the texture value at that corresponding (sub)pixel.  
-  </p>
-
-  <div align="middle">
-    <table style="width:100%">
-      <tr align="center">
-        <td>
-            <img src="images/nearest.png" align="middle" width="400px" />
-            <figcaption>$\text{Nearest Neighbor Supersample Rate 16 Level 0}$</figcaption>
-        </td>
-        <td>
-            <img src="images/bilinear.png" align="middle" width="400px" />
-            <figcaption>$\text{Bilinear Supersample Rate 16 Level 0}$</figcaption>
-            
-        </td>
-      </tr>
-      <tr align="center">
-        <td>
-            <img src="images/trilinear.png" align="middle" width="400px" />
-            <figcaption>$\text{Trilinear Supersample Rate 16}$</figcaption>
-        </td>
-        <td>
-            <img src="images/aniso.png" align="middle" width="400px" />
-            <figcaption>$\text{Anisotropic Supersample Rate 16}$</figcaption>
-        </td>
-      </tr>
-    </table>
-
-   <p align="left">
-     From these, we can see that the anisotropic filtering better captures detail by accounting for how quickly the texture changes 
-     in either the $x$ or $y$ direction. We can see this in how anisotropic filtering captures the graunular details of the texture, while others tend to blur them out. 
-     Performance-wise, anisotropic filtering takes around 1.3x as long as nearest pixel and bilinear filtering, while it takes around 1.2x as long as trilinear filtering. 
-     Depending on the application, this difference may be worth it depending on the visual fidelity required.
-   </p>
-
-</body>
+	</body>
 </html>

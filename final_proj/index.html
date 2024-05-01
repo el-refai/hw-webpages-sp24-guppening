@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>CS 184 Final Project: LE4GS - Language Embedded 4D Gaussian Splatting</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#intro">Abstract</a></li>
+							<li><a href="#technical-approach">Technical Approach</a></li>
+							<li><a href="#results">Results</a></li>
+							<li><a href="#references">References</a></li>
+							<li><a href="#contributions">Contributions</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<section class="wrapper style1 fullscreen fade-up">
+					<div class="inner">
+						<h1>CS 184 Final Project: GenshinNeRF</h1>
+					</div>
+				</section>
+				<!-- Intro -->
+					<section id="intro" class="wrapper style1-alt fullscreen fade-up">
+						<div class="inner">
+							<h1>Abstract</h1>
+							<p>	In this project, we started with two objectives in mind: To inject custom shaders into Genshin Impact, and also to attach NeRF onto a game engine so that future applications can leverage this neural representation in use with alternate rendering methods, mesh generation, and scene reconstruction.
+								For the first part of our project, in terms of generating custom shaders, we've decided to do a deep dive exploration on non-photorealistic shading methods, including three versions of Pastel Shading, Manga-Style Shading, and Cel Shading. As for the second part,
+								Game Engines and NeRF have often been somewhat separated by their purpose. Afterall, who wants to wait to query some large model for rendering that could potentially take minutes?
+								In this project, we've decided to create this unlikely fusion by dedicating NeRF to one particular usecase for a Game Engine, to potentially enable future feature sets that allows
+								texture generation via Large Language Models, accurate scene reconstruction, and integration of visual large language models into the game-dev process. To enable these features we've decided to create
+								a link between the game engine and NeRF studio synchronized in real-time. The game engine is secondary to this purpose, however, since the functionality is mainly based upon the application ability to create poses, so any game with a proper <code>.dll</code> injection to capture camera poses will work with our implementation.</p>
+							<!-- <ul class="actions">
+								<li><a href="#one" class="button scrolly">Learn more</a></li>
+							</ul> -->
+						</div>
+					</section>
+
+				<!-- One -->
+					<section id="technical-approach" class="wrapper style2 spotlights">
+						<section>
+							<a href="shaders.html" class="image"><img src="images/Pencil.png" alt="" data-position="center center" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Custom Shaders</h2>
+									<p>Using a modified verson of HLSL (which is a modified version of the GLSL used in Project 4 of this class), 
+										we were able to create various non-photorealistic shading methods such as Pastel Shading, Manga-Style Shading, and Cel Shading.</p>
+								</div>
+								<ul class="actions">
+									<li><a href="shaders.html" class="button">Learn more</a></li>
+								</ul>
+							</div>
+						</section>
+						<section>
+							<a href="nerf.html" class="image"><img src="images/nerf_geometry.png" alt="" data-position="top center" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Live Streaming to NeRF</h2>
+									<p>
+										Similar to LERF, we made a new method for nerf studiio which extended the nerfstudio codebase to allow live streaming on a TCP connection. 
+										Specifically, we altered the PyTorch code to allow for a TCP connection to be established, and then we created a C++ DLL that would be injected into the game engine to send the camera poses to the nerf studio.
+									</p>
+									<ul class="actions">
+										<li><a href="nerf.html" class="button">Learn more</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+					</section>
+
+				<!-- Results -->
+					<section id="results" class="wrapper style2-alt fade-up">
+						<div class="inner">
+							<h2>Results</h2>
+							<p>Upon completing the different shaders, the game runs very smoothly and with different visuals.</p>
+
+							<h3>Video Demo of Different Shading</h3>
+							<iframe src="https://www.youtube.com/embed/sYbgLip8H1g" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:700px;width:100%;border:none;overflow:hidden;"></iframe>
+							<h3>Final Presentation Video</h3>
+							<iframe src="https://www.youtube.com/embed/3tgNSHy1Af4" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:700px;width:100%;border:none;overflow:hidden;"></iframe>
+							<div class="features">
+								<section>
+									<h3>Normal Shading</h3>
+									<span class="image fit"><img src="images/Normal.png" alt="" /></span>
+									<p>Genshin Impact without any custom shading</p>
+								</section>
+								<section>
+									<h3>Square Kuwahara Shading</h3>
+									<span class="image fit"><img src="images/KuwaSquared.png" alt="" /></span>
+									<p>Genshin Impact with Square Kuwahara shading</p>
+								</section>
+								<section>
+									<h3>Circular Kuwahara Shading</h3>
+									<span class="image fit"><img src="images/KuwaCircle.png" alt="" /></span>
+									<p>Genshin Impact with Circular Kuwahara shading</p>
+								</section>
+								<section>
+									<h3>Anisotropic Kuwahara Shading</h3>
+									<span class="image fit"><img src="images/KuwaAnisotropic.png" alt="" /></span>
+									<p>Genshin Impact with Anisotropic Kuwahara shading</p>
+								</section>
+								<section>
+									<h3>Pencil Shading</h3>
+									<span class="image fit"><img src="images/Pencil.png" alt="" /></span>
+									<p>Genshin Impact with Noir Pencil shading</p>
+								</section>
+								<section>
+									<h3>Cel Shading</h3>
+									<span class="image fit"><img src="images/Cel.png" alt="" /></span>
+									<p>Genshin Impact with Cel shading</p>
+								</section>
+							</div>
+						</div>
+					</section>
+
+				<!-- References -->
+					<section id="references" class="wrapper style3 fade-up">
+						<div class="inner">
+							<h2>References</h2>
+							<p>Shaders</p>
+							<ul>
+								<li><a href="https://github.com/sefinek24/Genshin-Impact-ReShade">Genshin-Impact-ReShade</a></li>
+								<li>Kyprianidis, J. E., Kang, H., & Döllner, J. (2010). Anisotropic Kuwahara Filtering on the GPU. In W. Engel (Ed.), GPU Pro - Advanced Rendering Techniques. AK Peters, pp. 247–264.
+								</li>
+							</ul>
+							
+							<p>NeRF</p>
+							<ul>
+								<li><a href="https://github.com/nerfstudio-project/nerfstudio">NeRF Studio</a></li>
+								<li><a href="https://godotengine.org/">GoDot</a></li>
+							</ul>
+						</div>
+					</section>
+
+					<section id="contributions" class="wrapper style3-alt fade-up">
+						<div class="inner">
+							<h2>Contributions</h2>
+							<p>Levy</p>
+							<ul>
+								<li>Worked out on injecting shaders into Genshin Impact</li>
+								<li>Created the oil pastel Shaders, the The cel/toon shader, and the pencil shader from modifying the Noir Shader</li>
+								<li>Created the design for integrating Godot with NeRF-studio</li>
+								<li>Implemented the Godot facing TCP connectivity interface with nerfstudio backend</li>
+								<li>Implemented the <code>StreamDataset(IterableDataset)</code> to query TCP stream and retrieve data</li>
+								<li>Modified the <code>StreamDataManager</code> to synchronize with the StreamDataset and Dataloader</li>
+								<li>Implemented the <code>StreamDataloader</code> to interact with the <code>StreamDataset</code></li>
+								<li>Created the website, videos, slides, administrivia</li>
+							</ul>
+							<p>Jason</p>
+							<ul>
+								<li>Created the website layout, structure, and styling and wrote the shaders technical approach and main page</li>
+								<li>Helped implement the circular generalized kuwahara filter</li>
+								<li>Created the BlackWhite Noir Shader</li>
+								<li>Conducted researched into interesting different shader effects</li>
+								<li>Created the presentation video</li>
+							</ul>
+							<p>Rahul</p>
+							<ul>
+								<li>Created module/skeleton code for the Godot NeRF-integration that builds on top of the NeRF-studio framework</li>
+								<li>Modified <code>StreamDataparser</code> and <code>StreamPipeline</code> to use inheritance for easier implementation</li>
+								<li>Worked on the webiste</li>
+								<li>Wrote NeRF integration with Godot Engine in PyTorch/worked on this site.</li>
+							</ul>
+							<p>Pierre</p>
+							<ul>
+								<li>Did initial research into running NeRF studio</li>
+								<li>Generated NeRF outputs for the milestone</li>
+								<li>Researched data conventions for NeRF.</li>
+							</ul>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
